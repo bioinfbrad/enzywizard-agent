@@ -9,4 +9,4 @@ def normalize_path(value: str | Path | None) -> str | None:
     value_text = str(value).strip()
     if not value_text:
         return None
-    return str(Path(value_text))
+    return str(Path(value_text).expanduser().resolve())

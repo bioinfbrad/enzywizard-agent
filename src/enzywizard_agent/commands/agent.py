@@ -16,6 +16,8 @@ def add_agent_parser(parser: ArgumentParser) -> None:
     parser.add_argument("--msa_file", default=None, help="Optional MSA file (.sto/.a3m/.fasta). Requires --structure_file.")
     parser.add_argument("--mut_structure_file", default=None, help="Optional mutant protein structure file (.cif/.pdb). Requires --structure_file.")
     parser.add_argument("--mut_msa_file", default=None, help="Optional mutant MSA file. Requires --structure_file.")
+    parser.add_argument("--substrate_name", default=None, help="Optional single substrate name or SMILES string. Requires --structure_file.")
+    parser.add_argument("--amino_acid_substitution", default=None, help="Optional single amino acid substitution such as A123V. Requires --structure_file and --mut_structure_file.")
     parser.add_argument("--max_turns", type=int, default=3, help="Maximum agent turns (default: 3).")
 
     parser.set_defaults(func=run_agent)
@@ -32,6 +34,8 @@ def run_agent(args: Namespace) -> None:
         msa_file=args.msa_file,
         mut_structure_file=args.mut_structure_file,
         mut_msa_file=args.mut_msa_file,
+        substrate_name=args.substrate_name,
+        amino_acid_substitution=args.amino_acid_substitution,
         max_turns=args.max_turns,
     )
     if not success:

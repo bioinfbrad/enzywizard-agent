@@ -26,7 +26,7 @@ def build_graph():
         route_from_state,
         {
             "tool_plan_generated": "user_confirmation_interrupt",
-            "tool_use_unneeded": "analysis",
+            "tool_unused": "analysis",
         },
     )
     graph.add_conditional_edges(

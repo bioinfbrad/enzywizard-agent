@@ -3,26 +3,23 @@ from __future__ import annotations
 from typing import Dict, List, TypedDict
 
 from .conf import AgentConfig
-from .data_models import (
-    AgentMessage,
-    AnalysisResult,
-    Artifact,
-    CleanedFiles,
-    InputFiles,
-    PlanningResult,
-    ToolCall,
-    UserConfirmation,
-)
+from .data_models.analysis import AnalysisResult
+from .data_models.agent_inputs import AgentInputs
+from .data_models.artifact import Artifact, CleanedFiles
+from .data_models.planning import PlanningResult
+from .data_models.tool_execution import ToolExecution
+from .data_models.user_confirmation import UserConfirmation
+from .data_models.user_message import UserMessage
 
 
 class AgentState(TypedDict, total=False):
     config: AgentConfig
-    input_files: InputFiles
+    agent_inputs: AgentInputs
     turn_count: int
     route: str
 
     current_user_message: str
-    user_messages: List[AgentMessage]
+    user_messages: List[UserMessage]
     user_message_summary: str
 
     current_planning_result: PlanningResult
@@ -33,8 +30,8 @@ class AgentState(TypedDict, total=False):
     user_confirmations: List[UserConfirmation]
     user_confirmation_summary: str
 
-    current_tool_call: ToolCall
-    tool_calls: List[ToolCall]
+    current_tool_execution: ToolExecution
+    tool_executions: List[ToolExecution]
     tool_calling_summary: str
 
     current_analysis_result: AnalysisResult

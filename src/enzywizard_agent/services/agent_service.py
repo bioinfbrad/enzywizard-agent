@@ -3,9 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 
 from ..conf import AgentConfig
-from ..data_models import CleanedFiles, InputFiles
+from ..data_models.artifact import CleanedFiles
+from ..data_models.agent_inputs import AgentInputs
+from ..graph import build_graph
 from ..state import AgentState
 from ..utils.IO_utils import normalize_path
+from ..validators.input_validators import validate_single_amino_acid_substitution
 
 
 def run_agent_service(
@@ -18,6 +21,8 @@ def run_agent_service(
     msa_file: str | Path | None = None,
     mut_structure_file: str | Path | None = None,
     mut_msa_file: str | Path | None = None,
+    substrate_name: str | None = None,
+    amino_acid_substitution: str | None = None,
     max_turns: int = 3,
 ) -> bool:
     try:
@@ -64,6 +69,38 @@ def run_agent_service(
         print("[ERROR] Invalid input parameter combination: mut_msa_file was provided without mut_structure_file. Mutant MSA analysis needs a reference mutant protein structure to fetch the sequence for residue mapping.")
         return False
 
+    if substrate_name is not None:
+        substrate_name = str(substrate_name).strip()
+        if not substrate_name:
+            print("[ERROR] Invalid substrate_name: empty value is not allowed.")
+            return False
+        if ";" in substrate_name:
+            print("[ERROR] Invalid substrate_name: multiple substrates are not supported yet. Provide one substrate name or SMILES string.")
+            return False
+        if structure_file is None:
+            print("[ERROR] Invalid input parameter combination: substrate_name was provided without structure_file. Substrate analysis needs a reference protein structure.")
+            return False
+
+    if amino_acid_substitution is not None:
+        amino_acid_substitution = str(amino_acid_substitution).strip().upper()
+        if not amino_acid_substitution:
+            print("[ERROR] Invalid amino_acid_substitution: empty value is not allowed.")
+            return False
+        if structure_file is None:
+            print("[ERROR] Invalid input parameter combination: amino_acid_substitution was provided without structure_file. Mutation analysis needs a wild-type reference structure.")
+            return False
+        if mut_structure_file is None:
+            print("[ERROR] Invalid input parameter combination: amino_acid_substitution was provided without mut_structure_file. The amino acid substitution must describe the residue replacement between the wild-type and mutant structures.")
+            return False
+        error_message = validate_single_amino_acid_substitution(amino_acid_substitution)
+        if error_message is not None:
+            print(f"[ERROR] {error_message}")
+            return False
+
+    if mut_structure_file is not None and amino_acid_substitution is None:
+        print("[ERROR] Invalid input parameter combination: mut_structure_file was provided without amino_acid_substitution. Mutation comparison needs the residue replacement, such as A123V, to align biological meaning between wild-type and mutant structures.")
+        return False
+
     config = AgentConfig(
         api_key=str(api_key).strip(),
         base_url=str(base_url).strip(),
@@ -71,16 +108,18 @@ def run_agent_service(
         workdir=workdir,
         max_turns=max_turns,
     )
-    input_files = InputFiles(
+    agent_inputs = AgentInputs(
         structure_file=normalize_path(structure_file),
         msa_file=normalize_path(msa_file),
         mut_structure_file=normalize_path(mut_structure_file),
         mut_msa_file=normalize_path(mut_msa_file),
+        substrate_name=substrate_name,
+        amino_acid_substitution=amino_acid_substitution,
     )
     state: AgentState = {
         "config": config,
         "turn_count": 0,
-        "input_files": input_files,
+        "agent_inputs": agent_inputs,
         "current_user_message": str(message).strip(),
         "user_messages": [],
         "user_message_summary": "",
@@ -88,7 +127,7 @@ def run_agent_service(
         "planning_summary": "",
         "user_confirmations": [],
         "user_confirmation_summary": "",
-        "tool_calls": [],
+        "tool_executions": [],
         "tool_calling_summary": "",
         "analysis_results": [],
         "analysis_summary": "",
@@ -98,5 +137,5 @@ def run_agent_service(
     }
 
     print("[INFO] Agent parameter validation finished")
-    print("[INFO] Agent workflow execution is not implemented yet")
+    build_graph()
     return True
