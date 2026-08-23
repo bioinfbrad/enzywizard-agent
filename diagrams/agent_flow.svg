@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="1650" viewBox="0 0 2600 1650">
+<defs>
+<marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+<path d="M2,2 L10,6 L2,10 z" fill="#333333" />
+</marker>
+</defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white" />
+<text x="90" y="110" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="38" fill="#222222">EnzyWizard-Agent 生物信息学工具智能体</text>
+<rect x="1100" y="80" width="300" height="90" fill="#d9f7c8" stroke="#333333" stroke-width="3" />
+<text x="1250.0" y="136.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">用户输入会话</text>
+<rect x="1030" y="260" width="440" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1250.0" y="316.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">规划模块</text>
+<rect x="540" y="520" width="720" height="90" fill="#d9f7c8" stroke="#333333" stroke-width="3" />
+<text x="900.0" y="576.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">中断：等待用户批准</text>
+<rect x="240" y="780" width="420" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="450.0" y="836.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">工具调用模块</text>
+<rect x="300" y="1040" width="430" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="515.0" y="1096.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">分析模块</text>
+<rect x="250" y="1300" width="620" height="90" fill="#d9f7c8" stroke="#333333" stroke-width="3" />
+<text x="560.0" y="1356.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">中断：等待输入下一轮会话</text>
+<rect x="735" y="780" width="420" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="945.0" y="836.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">规划模块</text>
+<rect x="1260" y="780" width="620" height="90" fill="#d9f7c8" stroke="#333333" stroke-width="3" />
+<text x="1570.0" y="836.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">中断：等待输入下一轮会话</text>
+<rect x="1740" y="520" width="440" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1960.0" y="576.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">分析模块</text>
+<rect x="1580" y="1040" width="600" height="90" fill="#d9f7c8" stroke="#333333" stroke-width="3" />
+<text x="1880.0" y="1096.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">中断：等待输入下一轮会话</text>
+<rect x="2350" y="1040" width="170" height="90" fill="#e767ad" stroke="#333333" stroke-width="3" />
+<text x="2435.0" y="1096.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">END</text>
+<rect x="1120" y="1480" width="440" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1340.0" y="1536.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">规划模块</text>
+<polyline points="1250,170 1250,260" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1305" y="225" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">提交</text>
+<polyline points="1250,350 1250,440 900,440 900,520" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="980" y="420" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">得出工具执行计划；分支A：需要执行工具</text>
+<polyline points="1250,350 1250,440 1960,440 1960,520" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1630" y="420" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支B：不执行工具，直接分析回答</text>
+<polyline points="720,610 720,705 450,705 450,780" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="550" y="675" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">提交；分支A：允许执行</text>
+<polyline points="900,610 900,780" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="800" y="725" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支B：用户输入修改意见，重新思考</text>
+<polyline points="1080,610 1080,705 1570,705 1570,780" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1320" y="675" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支C：拒绝执行</text>
+<polyline points="450,870 450,1040" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="560" y="970" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">输出执行结果</text>
+<polyline points="515,1130 515,1300" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="585" y="1230" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">回答用户</text>
+<polyline points="1960,610 1960,1040" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="2135" y="835" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支A：回答用户</text>
+<polyline points="2180,565 2435,565 2435,1040" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="2315" y="725" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支B：决定退出</text>
+<polyline points="560,1390 560,1440 1340,1440 1340,1480" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="950" y="1430" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">提交下一轮会话</text>
+<polyline points="1880,1130 1880,1440 1340,1440 1340,1480" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1660" y="1430" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">提交下一轮会话</text>
+</svg>

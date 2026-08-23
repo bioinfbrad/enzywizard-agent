@@ -17,9 +17,3 @@ env/
 build/
 dist/
 *.egg-info/
-
-diagrams/*.dot
-diagrams/*.png
-diagrams/*.svg
-diagrams/*.jpg
-diagrams/*.jpeg

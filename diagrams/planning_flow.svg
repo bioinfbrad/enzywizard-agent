@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1800" viewBox="0 0 2400 1800">
+<defs>
+<marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+<path d="M2,2 L10,6 L2,10 z" fill="#333333" />
+</marker>
+</defs>
+<rect x="0" y="0" width="100%" height="100%" fill="white" />
+<text x="90" y="110" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="38" fill="#222222">EnzyWizard-Agent 规划模块</text>
+<rect x="1100" y="80" width="300" height="90" fill="#d9f7c8" stroke="#333333" stroke-width="3" />
+<text x="1250.0" y="136.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">输入</text>
+<rect x="955" y="260" width="590" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1250.0" y="316.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">意图判断</text>
+<rect x="170" y="520" width="560" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="450.0" y="557.3" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">需要调用EnzyWizard工具</text>
+<text x="450.0" y="592.3" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">进行单蛋白分析</text>
+<rect x="830" y="520" width="620" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1140.0" y="557.3" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">需要调用EnzyWizard工具</text>
+<text x="1140.0" y="592.3" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">进行野生型-突变体对比分析</text>
+<rect x="1640" y="520" width="520" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1900.0" y="576.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">不需要调用工具，直接回答</text>
+<rect x="760" y="780" width="760" height="120" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1140.0" y="814.8" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">规划工具调用：EnzyWizard-Clean，EnzyWizard-Mut-Clean，</text>
+<text x="1140.0" y="849.8" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">EnzyWizard-AAprops，EnzyWizard-Energy，...，</text>
+<text x="1140.0" y="884.8" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">EnzyWizard-Batch，EnzyWizard-Mut-Batch</text>
+<rect x="1650" y="760" width="560" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1930.0" y="816.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">EnzyWizard软件文档知识库</text>
+<rect x="720" y="1060" width="840" height="120" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1140.0" y="1112.3" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">输出工具调用计划：</text>
+<text x="1140.0" y="1147.3" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="28" fill="#222222">（多）确定选择的工具，调用顺序和所需参数</text>
+<rect x="520" y="1340" width="520" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="780.0" y="1396.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">根据用户输入决定工具参数</text>
+<rect x="1260" y="1340" width="500" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1510.0" y="1396.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">失败返回错误原因</text>
+<rect x="360" y="1600" width="460" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="590.0" y="1656.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">成功返回工具调用方案</text>
+<rect x="900" y="1600" width="500" height="90" fill="#f6d6b5" stroke="#333333" stroke-width="3" />
+<text x="1150.0" y="1656.9" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="34" fill="#222222">失败返回错误原因</text>
+<polyline points="1250,170 1250,260" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1305" y="225" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">提交</text>
+<polyline points="1250,350 1250,430 450,430 450,520" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="740" y="410" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">得出判断；分支A</text>
+<polyline points="1250,350 1250,520" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1300" y="455" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支B</text>
+<polyline points="1250,350 1250,430 1900,430 1900,520" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1630" y="410" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支C</text>
+<polyline points="450,610 450,700 1140,700 1140,780" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<polyline points="1140,610 1140,780" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<polyline points="1520,840 1650,805" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1590" y="790" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">查询</text>
+<polyline points="1140,900 1140,1060" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1205" y="1000" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">输出</text>
+<polyline points="1140,1180 1140,1260 780,1260 780,1340" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="860" y="1240" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支A：工具规划成功</text>
+<polyline points="1140,1180 1140,1260 1510,1260 1510,1340" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1410" y="1240" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支B：工具规划失败</text>
+<polyline points="780,1430 780,1510 590,1510 590,1600" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="685" y="1490" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支A：成功规划工具参数</text>
+<polyline points="780,1430 780,1510 1150,1510 1150,1600" fill="none" stroke="#333333" stroke-width="3" marker-end="url(#arrow)" />
+<text x="1030" y="1490" text-anchor="middle" font-family="Noto Sans CJK SC, Noto Sans CJK, Helvetica, Arial, sans-serif" font-size="25" fill="#222222">分支B：失败规划工具参数</text>
+</svg>
