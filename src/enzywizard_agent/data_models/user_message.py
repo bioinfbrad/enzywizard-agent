@@ -19,5 +19,5 @@ from pydantic import BaseModel
 
 
 class UserMessage(BaseModel):
-    turn: int
+    turn_id: int
     content: str

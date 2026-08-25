@@ -1,0 +1,1902 @@
+tools:
+  enzywizard-clean:
+    display_name: EnzyWizard-Clean
+    command_name: enzywizard-clean
+    allowed_in_purpose_types:
+      - single_protein_analysis
+    description: >
+      Cleans one raw protein structure and produces standardized cleaned
+      CIF/PDB/FASTA files plus a traceable JSON cleaning report. It removes
+      unsupported heterogens, repairs missing heavy atoms, optionally adds
+      hydrogens, standardizes chain and residue numbering, and records the
+      original-to-cleaned residue mapping.
+    capabilities:
+      - Clean a raw CIF or PDB protein structure.
+      - Generate cleaned CIF, PDB, and FASTA files.
+      - Generate a clean report containing residue mapping and cleaning statistics.
+    use_when:
+      - A single-protein workflow starts from a user-provided raw structure.
+      - No suitable cleaned structure is already available for the protein.
+    do_not_use_when:
+      - The workflow is a wild-type/mutant comparison; use enzywizard-mut-clean instead.
+      - A trusted cleaned structure for the current protein is already available.
+    input_file_requirements:
+      - Requires one raw or untrusted protein structure file in CIF or PDB format.
+      - Does not require a cleaned structure as input.
+    upstream_tools: []
+    downstream_tools:
+      - enzywizard-aaprops
+      - enzywizard-hydrocluster
+      - enzywizard-energy
+      - enzywizard-flexibility
+      - enzywizard-disorder
+      - enzywizard-conservation
+      - enzywizard-embedding
+      - enzywizard-pocket
+      - enzywizard-dock
+      - enzywizard-interaction
+      - enzywizard-integrate
+      - enzywizard-batch
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Input raw protein structure file in CIF or PDB format.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for cleaned files and the clean report.
+    optional_arguments:
+      - name: add_H
+        cli_flags: ["--no_add_H"]
+        cli_action: store_false
+        python_type: bool
+        default: true
+        description: Hydrogens are added by default; the CLI flag disables hydrogen addition.
+      - name: pH
+        cli_flags: ["--pH"]
+        python_type: float
+        default: 7.0
+        description: pH value used for hydrogen addition.
+    argument_rules:
+      - input_path must point to a CIF or PDB file.
+      - output_dir is created automatically by the tool.
+      - If add_H is false, downstream energy, docking, and interaction behavior may be less reliable.
+    output_files:
+      - artifact_type: cleaned_structure_cif
+        filename_pattern: cleaned_{name}.cif
+        pattern_description: "{name} is derived from the input file stem after filename normalization."
+        description: Cleaned protein structure in CIF format.
+      - artifact_type: cleaned_structure_pdb
+        filename_pattern: cleaned_{name}.pdb
+        pattern_description: "{name} is derived from the input file stem after filename normalization."
+        description: Cleaned protein structure in PDB format.
+      - artifact_type: cleaned_sequence_fasta
+        filename_pattern: cleaned_{name}.fasta
+        pattern_description: "{name} is derived from the input file stem after filename normalization."
+        description: FASTA sequence extracted from the cleaned protein structure.
+      - artifact_type: clean_report_json
+        filename_pattern: clean_report_{name}.json
+        pattern_description: "{name} is derived from the input file stem after filename normalization."
+        description: JSON report containing residue mapping and cleaning statistics.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: residue_mapping
+        source_file: clean_report_json
+        description: Mapping from original residue identifiers to cleaned residue numbering.
+    planning_rules:
+      - For a single-protein workflow, schedule this before tools that require a cleaned structure unless a trusted cleaned structure is already available.
+      - Prefer the cleaned CIF file as the downstream structure input when both cleaned CIF and PDB are available.
+    additional_notes:
+      - This is the canonical entry point for single-protein workflows that start from a user-supplied structure.
+
+  enzywizard-mut-clean:
+    display_name: EnzyWizard-Mut-Clean
+    command_name: enzywizard-mut-clean
+    allowed_in_purpose_types:
+      - wildtype_mutant_comparison
+    description: >
+      Cleans a matched wild-type and mutant protein structure pair, remaps the
+      user-provided mutation into cleaned residue numbering, and produces
+      cleaned structure/sequence files plus a mut-clean report. The report is
+      the anchor for downstream paired mutation workflows.
+    capabilities:
+      - Clean WT and MUT structures consistently.
+      - Generate cleaned WT and MUT CIF/PDB/FASTA files.
+      - Convert the raw amino acid substitution into cleaned residue numbering.
+      - Generate a mut-clean report containing paired residue mappings.
+    use_when:
+      - A wild-type/mutant comparison starts from raw WT and MUT structures.
+      - cleaned_amino_acid_substitution is not already known for the current pair.
+    do_not_use_when:
+      - The request is a single-protein analysis.
+      - Both cleaned WT/MUT structures and the cleaned mutation string are already recorded for the same pair.
+    input_file_requirements:
+      - Requires a wild-type CIF or PDB structure.
+      - Requires a mutant CIF or PDB structure.
+      - Requires the raw amino acid substitution string describing the WT-to-MUT replacement.
+    upstream_tools: []
+    downstream_tools:
+      - enzywizard-aaprops
+      - enzywizard-hydrocluster
+      - enzywizard-energy
+      - enzywizard-flexibility
+      - enzywizard-disorder
+      - enzywizard-conservation
+      - enzywizard-embedding
+      - enzywizard-pocket
+      - enzywizard-dock
+      - enzywizard-interaction
+      - enzywizard-mut-batch
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: wt_input_path
+        cli_flags: ["-w", "--wt_input_path"]
+        python_type: str
+        value_type: path
+        description: Raw wild-type protein structure file in CIF or PDB format.
+      - name: mut_input_path
+        cli_flags: ["-m", "--mut_input_path"]
+        python_type: str
+        value_type: path
+        description: Raw mutant protein structure file in CIF or PDB format.
+      - name: mutation
+        cli_flags: ["-s", "--mutation"]
+        python_type: str
+        value_type: amino_acid_substitution
+        description: Raw mutation string such as A123V.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for paired cleaned files and the mut-clean report.
+    optional_arguments:
+      - name: add_H
+        cli_flags: ["--no_add_H"]
+        cli_action: store_false
+        python_type: bool
+        default: true
+        description: Hydrogens are added by default; the CLI flag disables hydrogen addition.
+      - name: pH
+        cli_flags: ["--pH"]
+        python_type: float
+        default: 7.0
+        description: pH value used for hydrogen addition.
+    argument_rules:
+      - wt_input_path and mut_input_path must both be CIF or PDB files.
+      - The numeric position in mutation is an actual residue identifier from the original PDB or CIF structures, not a one-based sequence ordinal.
+      - The mutation residue identifier must exist in both the WT and MUT protein structures.
+      - The tool does not verify that the residue letters in mutation match the WT and MUT structures; their biological correctness remains the user's responsibility.
+      - The cleaned_amino_acid_substitution needed by mut-batch must be read from the mut-clean report, not copied from the raw user input.
+    output_files:
+      - artifact_type: wt_cleaned_structure_cif
+        filename_pattern: cleaned_{wt_name}.cif
+        pattern_description: "{wt_name} is derived from the wild-type input file stem."
+        description: Cleaned wild-type CIF structure.
+      - artifact_type: wt_cleaned_structure_pdb
+        filename_pattern: cleaned_{wt_name}.pdb
+        pattern_description: "{wt_name} is derived from the wild-type input file stem."
+        description: Cleaned wild-type PDB structure.
+      - artifact_type: wt_cleaned_sequence_fasta
+        filename_pattern: cleaned_{wt_name}.fasta
+        pattern_description: "{wt_name} is derived from the wild-type input file stem."
+        description: Cleaned wild-type FASTA sequence.
+      - artifact_type: mut_cleaned_structure_cif
+        filename_pattern: cleaned_{mut_name}.cif
+        pattern_description: "{mut_name} is derived from the mutant input file stem."
+        description: Cleaned mutant CIF structure.
+      - artifact_type: mut_cleaned_structure_pdb
+        filename_pattern: cleaned_{mut_name}.pdb
+        pattern_description: "{mut_name} is derived from the mutant input file stem."
+        description: Cleaned mutant PDB structure.
+      - artifact_type: mut_cleaned_sequence_fasta
+        filename_pattern: cleaned_{mut_name}.fasta
+        pattern_description: "{mut_name} is derived from the mutant input file stem."
+        description: Cleaned mutant FASTA sequence.
+      - artifact_type: mut_clean_report_json
+        filename_pattern: mut_clean_report_{wt_name}_to_{mut_name}.json
+        pattern_description: "{wt_name} and {mut_name} are derived from the WT and MUT input file stems."
+        description: JSON report containing paired cleaning results and cleaned mutation mapping.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: cleaned_amino_acid_substitution
+        source_file: mut_clean_report_json
+        required_by:
+          - enzywizard-mut-batch
+          - enzywizard-mut-integrate
+        description: Mutation string remapped to cleaned residue numbering.
+    planning_rules:
+      - For a wild-type/mutant workflow, schedule this before mut-batch unless all paired cleaned files and cleaned_amino_acid_substitution are already known.
+      - Prefer cleaned CIF structures as downstream WT/MUT structure inputs.
+    additional_notes:
+      - The agent currently supports a single user-specified amino acid substitution even though the underlying tool can handle multiple semicolon-separated mutations.
+
+  enzywizard-aaprops:
+    display_name: EnzyWizard-AAprops
+    command_name: enzywizard-aaprops
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Calculates residue-level structural and physicochemical properties from a
+      cleaned protein structure. It reports amino acid identity, chemical class,
+      DSSP-style secondary structure, solvent accessibility, backbone torsion
+      angles, AAindex-derived properties, residue coordinates, and summary
+      statistics.
+    capabilities:
+      - Produce residue property tables for graph nodes and interpretation.
+      - Summarize residue composition, chemical classes, and secondary structure distribution.
+    use_when:
+      - The user asks about residue properties, secondary structure, amino acid composition, residue-level features, or graph node attributes.
+      - Integrate or mut-integrate needs residue property side reports.
+    do_not_use_when:
+      - No cleaned protein structure is available and no clean step is planned.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+    downstream_tools:
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for the amino acid property report.
+    optional_arguments: []
+    argument_rules:
+      - input_path must be a cleaned CIF or PDB file.
+    output_files:
+      - artifact_type: aaprops_report_json
+        filename_pattern: aaprops_report_{name}.json
+        pattern_description: "{name} is derived from the cleaned input structure file stem."
+        description: JSON report with residue properties and summary statistics.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: amino_acid_residue_properties
+        source_file: aaprops_report_json
+        description: Residue-level feature records usable as graph node attributes.
+    planning_rules:
+      - In a paired mutation workflow, run separately for WT and MUT cleaned structures unless mut-batch is selected to orchestrate the side workflows.
+    additional_notes:
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run this analysis internally.
+
+  enzywizard-hydrocluster:
+    display_name: EnzyWizard-Hydrocluster
+    command_name: enzywizard-hydrocluster
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Detects hydrophobic residue-residue contact networks and hydrophobic
+      clusters from a cleaned protein structure. The report describes hydrophobic
+      contacts, cluster membership, and cluster-level statistics.
+    capabilities:
+      - Identify hydrophobic contacts between residues.
+      - Build hydrophobic cluster information for protein graph edges or interpretation.
+    use_when:
+      - The user asks about hydrophobic clusters, hydrophobic contacts, residue-residue packing, or hydrophobic network changes.
+      - Integrate or mut-integrate needs hydrophobic side reports.
+    do_not_use_when:
+      - No cleaned structure is available and no clean step is planned.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+    downstream_tools:
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for the hydrophobic cluster report.
+    optional_arguments:
+      - name: cutoff
+        cli_flags: ["--cutoff"]
+        python_type: float
+        default: 10.0
+        description: Minimum residue-residue contact area cutoff for hydrophobic cluster edges.
+    argument_rules:
+      - Higher cutoff values produce fewer, stronger hydrophobic contacts; lower values produce more edges.
+    output_files:
+      - artifact_type: hydrocluster_report_json
+        filename_pattern: hydrocluster_report_{name}.json
+        pattern_description: "{name} is derived from the cleaned input structure file stem."
+        description: JSON report containing hydrophobic contacts and cluster statistics.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: hydrophobic_cluster_edges
+        source_file: hydrocluster_report_json
+        description: Residue-residue hydrophobic contact records usable as graph edges.
+    planning_rules:
+      - In a paired mutation workflow, run separately for WT and MUT cleaned structures unless mut-batch is selected.
+    additional_notes:
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run this analysis internally.
+
+  enzywizard-energy:
+    display_name: EnzyWizard-Energy
+    command_name: enzywizard-energy
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Evaluates molecular mechanics energy terms for a cleaned protein structure.
+      By default it performs energy minimization before evaluating the structure,
+      then writes a JSON report with energy components.
+    capabilities:
+      - Calculate total and component energy terms.
+      - Optionally disable minimization when the user wants the starting conformation evaluated directly.
+    use_when:
+      - The user asks about energy, minimization, energetic terms, or structure energetics.
+      - Integrate or mut-integrate needs energy side reports.
+    do_not_use_when:
+      - No cleaned protein structure is available and no clean step is planned.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+    downstream_tools:
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for the energy report.
+    optional_arguments:
+      - name: minimize_energy
+        cli_flags: ["--no_minimize_energy"]
+        cli_action: store_false
+        python_type: bool
+        default: true
+        description: Energy minimization is enabled by default; the CLI flag disables it.
+      - name: minimization_iteration
+        cli_flags: ["--minimization_iteration"]
+        python_type: int
+        default: 100
+        description: Maximum number of minimization iterations.
+    argument_rules:
+      - Minimized energy values may differ from instantaneous non-minimized energy values.
+    output_files:
+      - artifact_type: energy_report_json
+        filename_pattern: energy_report_{name}.json
+        pattern_description: "{name} is derived from the cleaned input structure file stem."
+        description: JSON report containing energy terms.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: energy_terms
+        source_file: energy_report_json
+        description: Energy values for downstream interpretation or integration.
+    planning_rules:
+      - In a paired mutation workflow, run separately for WT and MUT cleaned structures unless mut-batch is selected.
+    additional_notes:
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run this analysis internally.
+
+  enzywizard-flexibility:
+    display_name: EnzyWizard-Flexibility
+    command_name: enzywizard-flexibility
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Computes residue flexibility from a cleaned protein structure using normal
+      mode analysis. It reports residue-level RMSF-like flexibility scores and
+      summary information.
+    capabilities:
+      - Estimate residue flexibility using ANM or GNM.
+      - Generate residue-level flexibility features for graph nodes.
+    use_when:
+      - The user asks about flexibility, mobility, RMSF, normal modes, or dynamic tendency.
+      - Integrate or mut-integrate needs flexibility side reports.
+    do_not_use_when:
+      - No cleaned protein structure is available and no clean step is planned.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+    downstream_tools:
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for the flexibility report.
+    optional_arguments:
+      - name: method
+        cli_flags: ["--method"]
+        python_type: str
+        default: ANM
+        allowed_values: ["ANM", "GNM"]
+        description: Normal mode method used for flexibility calculation.
+      - name: cutoff
+        cli_flags: ["--cutoff"]
+        python_type: float
+        default: 15.0
+        description: Distance cutoff for residue connections in ProDy.
+      - name: n_modes
+        cli_flags: ["--n_modes"]
+        python_type: int
+        default: 20
+        description: Number of low-frequency normal modes used for RMSF calculation.
+    argument_rules:
+      - method must be ANM or GNM.
+    output_files:
+      - artifact_type: flexibility_report_json
+        filename_pattern: flexibility_report_{name}.json
+        pattern_description: "{name} is derived from the cleaned input structure file stem."
+        description: JSON report containing residue flexibility scores.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: residue_flexibility
+        source_file: flexibility_report_json
+        description: Residue-level flexibility values.
+    planning_rules:
+      - In a paired mutation workflow, run separately for WT and MUT cleaned structures unless mut-batch is selected.
+    additional_notes:
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run this analysis internally.
+
+  enzywizard-disorder:
+    display_name: EnzyWizard-Disorder
+    command_name: enzywizard-disorder
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Predicts and summarizes intrinsically disordered regions from a cleaned
+      protein structure. It uses a sliding-window style calculation to produce
+      residue disorder scores and disordered region annotations.
+    capabilities:
+      - Generate residue-level disorder scores.
+      - Identify continuous disordered regions above the configured minimum length.
+    use_when:
+      - The user asks about disorder, disordered regions, ordered/disordered tendency, or flexible unstructured segments.
+      - Integrate or mut-integrate needs disorder side reports.
+    do_not_use_when:
+      - No cleaned protein structure is available and no clean step is planned.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+    downstream_tools:
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for the disorder report.
+    optional_arguments:
+      - name: window_size
+        cli_flags: ["--window_size"]
+        python_type: int
+        default: 11
+        description: Sliding window size for disorder score calculation.
+      - name: min_region_length
+        cli_flags: ["--min_region_length"]
+        python_type: int
+        default: 5
+        description: Minimum consecutive residue count needed to report a disordered region.
+    argument_rules:
+      - Larger window sizes smooth regional trends; smaller windows are more sensitive to local changes.
+    output_files:
+      - artifact_type: disorder_report_json
+        filename_pattern: disorder_report_{name}.json
+        pattern_description: "{name} is derived from the cleaned input structure file stem."
+        description: JSON report containing residue disorder scores and region annotations.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: residue_disorder_scores
+        source_file: disorder_report_json
+        description: Residue-level disorder values and disordered region records.
+    planning_rules:
+      - In a paired mutation workflow, run separately for WT and MUT cleaned structures unless mut-batch is selected.
+    additional_notes:
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run this analysis internally.
+
+  enzywizard-conservation:
+    display_name: EnzyWizard-Conservation
+    command_name: enzywizard-conservation
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Computes residue conservation by matching a cleaned protein FASTA sequence
+      against a user-provided multiple sequence alignment. It writes a cleaned
+      MSA, an HMM profile, and a conservation JSON report.
+    capabilities:
+      - Clean and align MSA input to the target cleaned sequence.
+      - Generate HMM profile output.
+      - Produce residue-level conservation scores.
+    use_when:
+      - A corresponding MSA file is available for the protein being analyzed.
+      - The user asks about conservation, alignment, HMM profiles, or sequence variability.
+    do_not_use_when:
+      - No MSA input is available and no MSA-dependent result is needed.
+      - No cleaned FASTA sequence is available and no clean step is planned.
+    input_file_requirements:
+      - Requires one cleaned FASTA sequence file.
+      - Requires one user-prepared MSA file in STO, Stockholm, aligned FASTA, FASTA.GZ, or A3M-like format.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+    downstream_tools:
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_fasta
+        cli_flags: ["-i", "--input_fasta"]
+        python_type: str
+        value_type: path
+        description: Cleaned protein sequence file in FASTA format.
+      - name: input_msa
+        cli_flags: ["-m", "--input_msa"]
+        python_type: str
+        value_type: path
+        description: User-provided multiple sequence alignment file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for cleaned MSA, HMM, conservation report, and log.
+    optional_arguments: []
+    argument_rules:
+      - input_fasta must correspond to the cleaned structure being analyzed.
+      - In paired workflows, WT MSA must be paired with WT FASTA and MUT MSA with MUT FASTA.
+    output_files:
+      - artifact_type: cleaned_msa_sto
+        filename_pattern: cleaned_{msa_name}.sto
+        pattern_description: "{msa_name} is derived from the input MSA file stem."
+        description: Cleaned Stockholm MSA matching the target sequence.
+      - artifact_type: hmm_profile
+        filename_pattern: hmm_profile_{msa_name}.hmm
+        pattern_description: "{msa_name} is derived from the input MSA file stem."
+        description: HMM profile built from the cleaned MSA.
+      - artifact_type: conservation_report_json
+        filename_pattern: conservation_report_{protein_name}.json
+        pattern_description: "{protein_name} is derived from the input FASTA file stem."
+        description: JSON report containing residue conservation scores.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: residue_conservation_scores
+        source_file: conservation_report_json
+        description: Conservation values for cleaned residue positions.
+    planning_rules:
+      - Only include this tool when an MSA is available or the user explicitly asks for conservation analysis and an MSA path has been provided.
+      - EnzyWizard-Batch skips conservation automatically when input_msa is omitted.
+    additional_notes:
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run conservation internally when MSA inputs are provided.
+
+  enzywizard-embedding:
+    display_name: EnzyWizard-Embedding
+    command_name: enzywizard-embedding
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Generates residue-level protein sequence embeddings from a cleaned FASTA
+      sequence using an ESM2 model. The output can be used as graph node
+      features or for downstream machine-learning workflows.
+    capabilities:
+      - Compute residue embeddings from cleaned FASTA input.
+      - Select among supported ESM2 model sizes.
+    use_when:
+      - The user asks about embedding features, protein language model features, graph node features, or ML-ready residue representations.
+      - Integrate or mut-integrate needs embedding side reports.
+    do_not_use_when:
+      - No cleaned FASTA sequence is available and no clean step is planned.
+    input_file_requirements:
+      - Requires one cleaned FASTA sequence file.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+    downstream_tools:
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_fasta
+        cli_flags: ["-i", "--input_fasta"]
+        python_type: str
+        value_type: path
+        description: Cleaned protein FASTA file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for the embedding report.
+    optional_arguments:
+      - name: model_name
+        cli_flags: ["--model_name"]
+        python_type: str
+        default: esm2_t6_8M_UR50D
+        allowed_values: ["esm2_t6_8M_UR50D", "esm2_t12_35M_UR50D", "esm2_t30_150M_UR50D"]
+        description: ESM2 model used for embedding generation.
+    argument_rules:
+      - Larger ESM2 models may produce richer representations but require more memory and time.
+    output_files:
+      - artifact_type: embedding_report_json
+        filename_pattern: embedding_report_{protein_name}.json
+        pattern_description: "{protein_name} is derived from the input FASTA file stem."
+        description: JSON report containing residue embedding vectors.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: residue_embeddings
+        source_file: embedding_report_json
+        description: Residue-level embedding vectors.
+    planning_rules:
+      - In paired mutation workflows, run separately for WT and MUT FASTA sequences unless mut-batch is selected.
+    additional_notes:
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run embedding internally.
+
+  enzywizard-pocket:
+    display_name: EnzyWizard-Pocket
+    command_name: enzywizard-pocket
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Detects and characterizes binding pockets from a cleaned protein structure
+      using PyVOL geometry-based cavity detection. It reports pocket volumes,
+      centers, box sizes, sphere counts, and associated residues.
+    capabilities:
+      - Detect binding pockets and cavities.
+      - Provide pocket geometry for binding-site analysis or docking setup.
+    use_when:
+      - The user asks about binding pockets, active sites, cavities, pocket volume, or docking regions.
+      - Docking needs automatically detected pocket candidates.
+    do_not_use_when:
+      - No cleaned protein structure is available and no clean step is planned.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+    downstream_tools:
+      - enzywizard-dock
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for the pocket report.
+    optional_arguments:
+      - name: min_rad
+        cli_flags: ["--min_rad"]
+        python_type: float
+        default: 1.8
+        description: Minimum PyVOL probe radius.
+      - name: max_rad
+        cli_flags: ["--max_rad"]
+        python_type: float
+        default: 6.2
+        description: Maximum PyVOL probe radius.
+      - name: min_volume
+        cli_flags: ["--min_volume"]
+        python_type: float
+        default: 50
+        description: Minimum pocket volume threshold.
+    argument_rules:
+      - min_rad must be smaller than max_rad.
+      - min_volume filters out smaller predicted pockets.
+    output_files:
+      - artifact_type: pocket_report_json
+        filename_pattern: pocket_report_{name}.json
+        pattern_description: "{name} is derived from the cleaned input structure file stem."
+        description: JSON report containing pocket statistics and pocket details.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: binding_pockets
+        source_file: pocket_report_json
+        description: Pocket records with volume, residues, center coordinate, and box geometry.
+    planning_rules:
+      - If docking is requested without a manually specified catalytic site, pocket detection is useful for selecting docking boxes.
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run pocket detection internally.
+    additional_notes:
+      - Pocket detection is geometry-based and can be sensitive to probe radius and volume parameters.
+
+  enzywizard-substrate:
+    display_name: EnzyWizard-Substrate
+    command_name: enzywizard-substrate
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Processes substrate names or SMILES strings, resolves names through
+      external chemical databases when needed, computes substrate descriptors
+      and fingerprints, generates 3D conformers, and writes SDF files for
+      downstream docking and interaction analysis.
+    capabilities:
+      - Resolve substrate names to SMILES.
+      - Accept direct SMILES input.
+      - Generate molecular fingerprints and descriptors.
+      - Generate 3D substrate conformers in SDF format.
+    use_when:
+      - A substrate name or SMILES is available and an explicit standalone substrate step is being planned.
+      - The user asks for substrate features or substrate structure generation.
+    do_not_use_when:
+      - No substrate input is available.
+      - EnzyWizard-Batch or EnzyWizard-Mut-Batch is selected and can manage substrate processing internally.
+    input_file_requirements:
+      - Does not require a protein structure.
+      - Requires one or more substrate names or SMILES strings.
+    upstream_tools: []
+    downstream_tools:
+      - enzywizard-dock
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: substrate_names
+        cli_flags: ["-s", "--substrate_names"]
+        python_type: str
+        value_type: substrate_name_or_smiles
+        description: Substrate names or SMILES strings; the current agent supports one substrate input.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for substrate report and generated SDF files.
+    optional_arguments:
+      - name: max_synonyms
+        cli_flags: ["--max_synonyms"]
+        python_type: int
+        default: 20
+        description: Maximum number of synonyms retried for name-to-SMILES resolution.
+      - name: fp_radius
+        cli_flags: ["--fp_radius"]
+        python_type: int
+        default: 2
+        description: Morgan fingerprint radius.
+      - name: n_bits
+        cli_flags: ["--n_bits"]
+        python_type: int
+        default: 512
+        description: Morgan fingerprint bit vector size.
+      - name: num_confs
+        cli_flags: ["--num_confs"]
+        python_type: int
+        default: 5
+        description: Maximum number of 3D conformers generated per substrate.
+      - name: prune_rms
+        cli_flags: ["--prune_rms"]
+        python_type: float
+        default: 0.5
+        description: RMS threshold for pruning similar conformers.
+    argument_rules:
+      - The underlying tool supports semicolon-separated multiple substrates; the current agent accepts only one substrate input for now.
+      - Direct SMILES input skips external name lookup.
+    output_files:
+      - artifact_type: substrate_report_json
+        filename_pattern: substrate_report_{substrate_name}.json
+        pattern_description: "{substrate_name} is the resolved name or generated internal name; multiple inputs are joined in order."
+        description: JSON report containing substrate descriptors, fingerprints, and generated structure metadata.
+      - artifact_type: substrate_sdf
+        filename_pattern: "{substrate_name}_{index}.sdf"
+        pattern_description: "{substrate_name} is the resolved substrate name or smilesN; {index} is the conformer index."
+        description: Generated 3D substrate conformer files for docking.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: resolved_substrate_names
+        source_file: substrate_report_json
+        description: Names used to match generated SDF files in downstream docking.
+    planning_rules:
+      - When using standalone tools, schedule substrate before dock.
+      - When using batch or mut-batch, prefer passing substrate_names directly to those tools instead of scheduling standalone substrate.
+    additional_notes:
+      - Substrate name resolution uses external ChEBI/PubChem services, so direct SMILES can be more deterministic.
+
+  enzywizard-dock:
+    display_name: EnzyWizard-Dock
+    command_name: enzywizard-dock
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Docks generated substrate SDF structures into a cleaned protein structure.
+      It can use automatically detected pockets or user-specified catalytic
+      residue/coordinate boxes, and writes docked SDF files plus a docking report.
+    capabilities:
+      - Perform enzyme-substrate docking using AutoDock Vina.
+      - Generate docked substrate poses for downstream interaction analysis.
+      - Use pocket-derived or manually specified docking boxes.
+    use_when:
+      - The user asks for docking, ligand pose generation, substrate binding poses, or docking score analysis.
+      - Substrate SDF files are available from enzywizard-substrate or another trusted source.
+    do_not_use_when:
+      - No substrate names and substrate SDF directory are available.
+      - EnzyWizard-Batch or EnzyWizard-Mut-Batch is selected and can manage docking internally.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+      - Requires substrate_names matching SDF files in substrate_dir.
+      - Requires substrate_dir containing SDF files named as substrate or substrate_index patterns.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+      - enzywizard-substrate
+      - enzywizard-pocket
+    downstream_tools:
+      - enzywizard-interaction
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: substrate_names
+        cli_flags: ["-s", "--substrate_names"]
+        python_type: str
+        value_type: substrate_name
+        description: Substrate names separated by semicolons; each must match SDF files in substrate_dir.
+      - name: substrate_dir
+        cli_flags: ["-d", "--substrate_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory containing generated substrate SDF files.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for docking outputs and report.
+    optional_arguments:
+      - name: max_docking_attempt_num
+        cli_flags: ["--max_docking_attempt_num"]
+        python_type: int
+        default: 20
+        description: Maximum docking attempts.
+      - name: early_stop
+        cli_flags: ["--no_early_stop"]
+        cli_action: store_false
+        python_type: bool
+        default: true
+        description: Stop after first successful docking result by default; the CLI flag disables early stop.
+      - name: exhaustiveness
+        cli_flags: ["--exhaustiveness"]
+        python_type: int
+        default: 8
+        description: AutoDock Vina search exhaustiveness.
+      - name: cpu
+        cli_flags: ["--cpu"]
+        python_type: int
+        default: 0
+        description: Number of CPUs for Vina; 0 lets Vina decide.
+      - name: min_rad
+        cli_flags: ["--min_rad"]
+        python_type: float
+        default: 1.8
+        description: Pocket detection minimum probe radius.
+      - name: max_rad
+        cli_flags: ["--max_rad"]
+        python_type: float
+        default: 6.2
+        description: Pocket detection maximum probe radius.
+      - name: min_volume
+        cli_flags: ["--min_volume"]
+        python_type: int
+        default: 50
+        description: Minimum pocket volume threshold.
+      - name: catalytic_residue
+        cli_flags: ["--catalytic_residue"]
+        python_type: int
+        default: null
+        description: Cleaned residue index used as docking box center; requires box_size.
+      - name: catalytic_site_coord
+        cli_flags: ["--catalytic_site_coord"]
+        python_type: str
+        default: null
+        description: Explicit x,y,z docking box center coordinate; requires box_size.
+      - name: box_size
+        cli_flags: ["--box_size"]
+        python_type: str
+        default: null
+        description: Docking box size as x,y,z; required with catalytic_residue or catalytic_site_coord.
+    argument_rules:
+      - catalytic_residue and catalytic_site_coord are alternative manual box centers.
+      - box_size is required when either catalytic_residue or catalytic_site_coord is provided.
+      - substrate_names must match SDF file stems in substrate_dir.
+    output_files:
+      - artifact_type: dock_report_json
+        filename_pattern: dock_report_{protein_name}_{substrate_names}.json
+        pattern_description: "{protein_name} is derived from the cleaned structure stem; {substrate_names} summarizes requested substrate names."
+        description: JSON report containing docking attempts and selected docking results.
+      - artifact_type: docked_substrate_sdf
+        filename_pattern: docked_{substrate_name}.sdf
+        pattern_description: "{substrate_name} is the resolved substrate name from substrate_names."
+        description: Docked substrate pose for downstream interaction analysis.
+      - artifact_type: docked_complex_structure
+        filename_pattern: docked_{protein_name}_{substrate_name}.{cif_or_pdb}
+        pattern_description: File stem combines protein and substrate names; extension depends on generated complex format.
+        description: Optional docked protein-substrate complex structure.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: selected_docking_poses
+        source_file: dock_report_json
+        description: Docking pose information and docking scores.
+    planning_rules:
+      - When using standalone tools, schedule substrate before dock and interaction after dock.
+      - When batch or mut-batch is selected, prefer passing substrate_names directly and let the batch tool manage docking.
+    additional_notes:
+      - Docking can fall back across pocket boxes and conformers until a successful pose is found or attempts are exhausted.
+
+  enzywizard-interaction:
+    display_name: EnzyWizard-Interaction
+    command_name: enzywizard-interaction
+    allowed_in_purpose_types:
+      - single_protein_analysis
+      - wildtype_mutant_comparison
+    description: >
+      Calculates molecular interactions from a cleaned protein structure. It can
+      run protein-only intra-enzyme interaction analysis or include docked
+      substrates when substrate_names and docked SDF files are provided.
+    capabilities:
+      - Detect residue-residue interactions within the protein.
+      - Detect protein-substrate interactions from docked SDF poses.
+      - Report hydrogen bonds, ionic interactions, pi interactions, disulfide bonds, and related edge records.
+    use_when:
+      - The user asks about molecular interactions, hydrogen bonds, ionic contacts, pi-pi stacking, pi-cation contacts, disulfide bonds, or graph edges.
+      - Integrate or mut-integrate needs interaction reports to build graph edges.
+    do_not_use_when:
+      - No cleaned protein structure is available and no clean step is planned.
+      - Substrate interaction analysis is requested but docked SDF files are unavailable and no dock step is planned.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+      - For protein-substrate interactions, also requires substrate_names and a directory of docked SDF files.
+      - If substrate_names and substrate_dir are both omitted, protein-only interactions are calculated.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-mut-clean
+      - enzywizard-dock
+    downstream_tools:
+      - enzywizard-integrate
+      - enzywizard-mut-integrate
+    required_arguments:
+      - name: input_path
+        cli_flags: ["-i", "--input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for the interaction report.
+    optional_arguments:
+      - name: substrate_names
+        cli_flags: ["-s", "--substrate_names"]
+        python_type: str
+        default: null
+        description: Substrate names matching docked SDF files; optional for protein-only interaction analysis.
+      - name: substrate_dir
+        cli_flags: ["-d", "--substrate_dir"]
+        python_type: str
+        default: null
+        description: Directory containing docked SDF files; must be paired with substrate_names.
+      - name: hbond_da_max_distance
+        cli_flags: ["--hbond_da_max_distance"]
+        python_type: float
+        default: 3.9
+        description: Donor-acceptor distance cutoff for hydrogen bond detection.
+      - name: hbond_ha_max_distance
+        cli_flags: ["--hbond_ha_max_distance"]
+        python_type: float
+        default: 2.5
+        description: Hydrogen-acceptor distance cutoff for hydrogen bond detection.
+      - name: hbond_angle
+        cli_flags: ["--hbond_angle"]
+        python_type: float
+        default: 90.0
+        description: Minimum donor-hydrogen-acceptor angle.
+      - name: ionic_distance_cutoff
+        cli_flags: ["--ionic_distance_cutoff"]
+        python_type: float
+        default: 4.0
+        description: Ionic interaction distance cutoff.
+      - name: ppstack_center_distance_cutoff
+        cli_flags: ["--ppstack_center_distance_cutoff"]
+        python_type: float
+        default: 6.5
+        description: Pi-pi stacking ring-center distance cutoff.
+      - name: pication_distance_cutoff
+        cli_flags: ["--pication_distance_cutoff"]
+        python_type: float
+        default: 5.0
+        description: Pi-cation ring-cation distance cutoff.
+      - name: pication_angle_cutoff
+        cli_flags: ["--pication_angle_cutoff"]
+        python_type: float
+        default: 45.0
+        description: Pi-cation angle cutoff.
+      - name: ssbond_max_distance
+        cli_flags: ["--ssbond_max_distance"]
+        python_type: float
+        default: 2.5
+        description: Sulfur-sulfur distance cutoff for disulfide bond detection.
+    argument_rules:
+      - substrate_names and substrate_dir must be provided together for substrate interaction mode.
+      - Without substrate inputs, the tool calculates intra-protein interactions only.
+    output_files:
+      - artifact_type: interaction_report_json
+        filename_pattern: interaction_report_{protein_name}[_{substrate_names}].json
+        pattern_description: "Protein-only mode omits the optional substrate suffix; substrate mode appends the resolved substrate names."
+        description: JSON report containing intra-protein interactions and, in substrate mode, protein-substrate interactions.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: molecular_interactions
+        source_file: interaction_report_json
+        description: Molecular interaction edge records for integration and interpretation.
+    planning_rules:
+      - Schedule after dock when substrate interaction analysis is needed.
+      - Schedule before integrate or mut-integrate when graph edges are required.
+      - EnzyWizard-Batch and EnzyWizard-Mut-Batch can run interaction internally.
+    additional_notes:
+      - A graph integration without interaction reports may contain isolated nodes or limited edge information.
+
+  enzywizard-integrate:
+    display_name: EnzyWizard-Integrate
+    command_name: enzywizard-integrate
+    allowed_in_purpose_types:
+      - single_protein_analysis
+    description: >
+      Integrates EnzyWizard JSON side reports for one protein into graph-oriented
+      outputs. It merges residue, substrate, pocket, energy, flexibility,
+      conservation, embedding, and interaction information when available.
+    capabilities:
+      - Merge side reports into a unified single-protein graph dataset.
+      - Produce full graph report, node-only JSON, and edge-only JSON.
+      - Run in non-strict mode with partial reports or strict mode requiring complete supported inputs.
+    use_when:
+      - No more than five distinct standalone analysis or report types are involved.
+      - The user explicitly requests a partial or quick graph representation from those reports.
+    do_not_use_when:
+      - EnzyWizard-Batch is selected and already performs final integration.
+      - More than five distinct analysis or report types are involved; use enzywizard-batch instead.
+      - The user requests a complete graph or broad analysis; use enzywizard-batch instead.
+      - The user does not request graph generation.
+      - The workflow is a wild-type/mutant comparison; use enzywizard-mut-integrate instead.
+    input_file_requirements:
+      - Requires a directory containing JSON reports from upstream EnzyWizard tools.
+      - The directory must contain exactly one valid enzywizard-clean report, including in non-strict mode.
+      - Non-strict mode permits missing side-report types; strict mode requires all supported side-report types and node fields.
+    upstream_tools:
+      - enzywizard-clean
+      - enzywizard-aaprops
+      - enzywizard-hydrocluster
+      - enzywizard-energy
+      - enzywizard-flexibility
+      - enzywizard-disorder
+      - enzywizard-conservation
+      - enzywizard-embedding
+      - enzywizard-pocket
+      - enzywizard-substrate
+      - enzywizard-dock
+      - enzywizard-interaction
+    downstream_tools: []
+    required_arguments:
+      - name: input_dir
+        cli_flags: ["-i", "--input_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory containing JSON reports to integrate.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for integrated JSON outputs.
+    optional_arguments:
+      - name: strict
+        cli_flags: ["--strict"]
+        cli_action: store_true
+        python_type: bool
+        default: false
+        description: Require all supported report types and node fields.
+    argument_rules:
+      - input_dir should not include unrelated JSON files.
+      - input_dir must contain exactly one valid enzywizard-clean report.
+      - Use strict only when a complete, validated side-report set is expected.
+    output_files:
+      - artifact_type: integrate_report_json
+        filename_pattern: integrate_report_{protein_name}.json
+        pattern_description: "{protein_name} is derived from the integrated report set, usually the cleaned protein name."
+        description: Full integrated graph report.
+      - artifact_type: integrate_nodes_json
+        filename_pattern: integrate_nodes_{protein_name}.json
+        pattern_description: "{protein_name} is derived from the integrated report set."
+        description: Node-only JSON for graph workflows.
+      - artifact_type: integrate_edges_json
+        filename_pattern: integrate_edges_{protein_name}.json
+        pattern_description: "{protein_name} is derived from the integrated report set."
+        description: Edge-only JSON for graph workflows.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: integrated_graph
+        source_file: integrate_report_json
+        description: Graph representation with residue/substrate nodes and molecular interaction edges.
+    planning_rules:
+      - Use standalone integrate only for an explicitly requested partial graph involving no more than five distinct analysis or report types.
+      - The batch rule takes priority; never select enzywizard-integrate together with enzywizard-batch.
+      - When the current plan generates the inputs, tool calling must prepare an input directory containing exactly one clean report before running integrate.
+    additional_notes:
+      - The underlying CLI supports strict complete integration, but EnzyWizard-Agent uses enzywizard-batch for complete standard graph workflows.
+
+  enzywizard-batch:
+    display_name: EnzyWizard-Batch
+    command_name: enzywizard-batch
+    allowed_in_purpose_types:
+      - single_protein_analysis
+    description: >
+      Runs the standard integrated single-protein EnzyWizard workflow on a
+      cleaned structure. It executes residue property analysis, hydrophobic
+      clusters, energy, flexibility, disorder, optional conservation, embedding,
+      pocket detection, optional substrate processing, optional docking,
+      molecular interactions, and final graph integration.
+    capabilities:
+      - Produce a complete integrated single-protein graph dataset.
+      - Automatically skip conservation when no MSA is provided.
+      - Automatically skip substrate, docking, and protein-substrate interaction steps when no substrate input is provided.
+      - Fall back to protein-only output if substrate generation or docking fails.
+    use_when:
+      - The user requests a broad or integrated single-protein analysis.
+      - The agent should use the standard full single-protein workflow instead of manually selecting many side tools.
+      - More than five distinct analysis or report types are requested.
+      - The user requests a complete graph representation.
+    do_not_use_when:
+      - The workflow is a WT/MUT comparison; use enzywizard-mut-batch instead.
+      - The user explicitly requests only one small side report and no integration.
+      - The user explicitly requests a partial graph from no more than five analysis or report types; use standalone tools followed by enzywizard-integrate.
+    input_file_requirements:
+      - Requires one cleaned CIF or PDB protein structure.
+      - Optional MSA enables conservation analysis.
+      - Optional substrate name or SMILES enables substrate, docking, and protein-substrate interaction steps.
+    upstream_tools:
+      - enzywizard-clean
+    downstream_tools: []
+    required_arguments:
+      - name: cleaned_input_path
+        cli_flags: ["-i", "--cleaned_input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned CIF or PDB protein structure file.
+      - name: output_dir
+        cli_flags: ["-o", "--output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for final integrated outputs and optional intermediate files.
+    optional_arguments:
+      - name: input_msa
+        cli_flags: ["-m", "--input_msa"]
+        python_type: str
+        default: null
+        description: Optional MSA file; enables conservation, cleaned MSA, and HMM outputs.
+      - name: substrate_names
+        cli_flags: ["-s", "--substrate_names"]
+        python_type: str
+        default: null
+        description: Optional substrate name or SMILES; enables substrate, docking, and protein-substrate interaction workflow.
+      - name: save_extra_outputs
+        cli_flags: ["--save_extra_outputs"]
+        cli_action: store_true
+        python_type: bool
+        default: false
+        description: Keep intermediate files such as HMM, SDFs, docked structures, and complex structures.
+      - name: hydrocluster_cutoff
+        cli_flags: ["--hydrocluster_cutoff"]
+        python_type: float
+        default: 10.0
+        description: Hydrophobic cluster contact area cutoff.
+      - name: minimize_energy
+        cli_flags: ["--no_minimize_energy"]
+        cli_action: store_false
+        python_type: bool
+        default: true
+        description: Energy minimization is enabled by default; the CLI flag disables it.
+      - name: energy_minimization_iteration
+        cli_flags: ["--energy_minimization_iteration"]
+        python_type: int
+        default: 100
+        description: Maximum energy minimization iterations.
+      - name: flexibility_method
+        cli_flags: ["--flexibility_method"]
+        python_type: str
+        default: ANM
+        allowed_values: ["ANM", "GNM"]
+        description: Flexibility method.
+      - name: flexibility_cutoff
+        cli_flags: ["--flexibility_cutoff"]
+        python_type: float
+        default: 15.0
+        description: Flexibility residue connection cutoff.
+      - name: flexibility_n_modes
+        cli_flags: ["--flexibility_n_modes"]
+        python_type: int
+        default: 20
+        description: Number of flexibility modes.
+      - name: disorder_window_size
+        cli_flags: ["--disorder_window_size"]
+        python_type: int
+        default: 11
+        description: Disorder sliding window size.
+      - name: disorder_min_region_length
+        cli_flags: ["--disorder_min_region_length"]
+        python_type: int
+        default: 5
+        description: Minimum disordered region length.
+      - name: embedding_model_name
+        cli_flags: ["--embedding_model_name"]
+        python_type: str
+        default: esm2_t6_8M_UR50D
+        allowed_values: ["esm2_t6_8M_UR50D", "esm2_t12_35M_UR50D", "esm2_t30_150M_UR50D"]
+        description: ESM2 embedding model.
+      - name: pocket_min_rad
+        cli_flags: ["--pocket_min_rad"]
+        python_type: float
+        default: 1.8
+        description: Minimum pocket probe radius.
+      - name: pocket_max_rad
+        cli_flags: ["--pocket_max_rad"]
+        python_type: float
+        default: 6.2
+        description: Maximum pocket probe radius.
+      - name: pocket_min_volume
+        cli_flags: ["--pocket_min_volume"]
+        python_type: int
+        default: 50
+        description: Minimum pocket volume.
+      - name: substrate_max_synonyms
+        cli_flags: ["--substrate_max_synonyms"]
+        python_type: int
+        default: 20
+        description: Maximum substrate synonyms for name lookup.
+      - name: substrate_fp_radius
+        cli_flags: ["--substrate_fp_radius"]
+        python_type: int
+        default: 2
+        description: Morgan fingerprint radius.
+      - name: substrate_n_bits
+        cli_flags: ["--substrate_n_bits"]
+        python_type: int
+        default: 512
+        description: Morgan fingerprint bit length.
+      - name: substrate_num_confs
+        cli_flags: ["--substrate_num_confs"]
+        python_type: int
+        default: 5
+        description: Maximum substrate conformers.
+      - name: substrate_prune_rms
+        cli_flags: ["--substrate_prune_rms"]
+        python_type: float
+        default: 0.5
+        description: Conformer pruning RMS threshold.
+      - name: dock_max_attempt_num
+        cli_flags: ["--dock_max_attempt_num"]
+        python_type: int
+        default: 20
+        description: Maximum docking attempts.
+      - name: dock_early_stop
+        cli_flags: ["--dock_no_early_stop"]
+        cli_action: store_false
+        python_type: bool
+        default: true
+        description: Stop after first successful docking result by default.
+      - name: dock_exhaustiveness
+        cli_flags: ["--dock_exhaustiveness"]
+        python_type: int
+        default: 8
+        description: Vina search exhaustiveness.
+      - name: dock_cpu
+        cli_flags: ["--dock_cpu"]
+        python_type: int
+        default: 0
+        description: Vina CPU count.
+      - name: dock_catalytic_residue
+        cli_flags: ["--dock_catalytic_residue"]
+        python_type: int
+        default: null
+        description: Cleaned residue index used as docking box center; requires dock_box_size.
+      - name: dock_catalytic_site_coord
+        cli_flags: ["--dock_catalytic_site_coord"]
+        python_type: str
+        default: null
+        description: Manual docking center coordinate x,y,z; requires dock_box_size.
+      - name: dock_box_size
+        cli_flags: ["--dock_box_size"]
+        python_type: str
+        default: null
+        description: Docking box size x,y,z required for manual docking centers.
+      - name: hbond_bonded_h_min_distance
+        cli_flags: ["--hbond_bonded_h_min_distance"]
+        python_type: float
+        default: 0.8
+        description: Minimum bonded heavy atom-hydrogen distance used for hydrogen bond donor detection.
+      - name: hbond_bonded_h_max_distance
+        cli_flags: ["--hbond_bonded_h_max_distance"]
+        python_type: float
+        default: 1.3
+        description: Maximum bonded heavy atom-hydrogen distance used for hydrogen bond donor detection.
+      - name: hbond_da_max_distance
+        cli_flags: ["--hbond_da_max_distance"]
+        python_type: float
+        default: 3.9
+        description: Maximum donor-acceptor distance for hydrogen bond detection.
+      - name: hbond_ha_max_distance
+        cli_flags: ["--hbond_ha_max_distance"]
+        python_type: float
+        default: 2.5
+        description: Maximum hydrogen-acceptor distance for hydrogen bond detection.
+      - name: hbond_angle
+        cli_flags: ["--hbond_angle"]
+        python_type: float
+        default: 90.0
+        description: Minimum donor-hydrogen-acceptor angle for hydrogen bond detection.
+      - name: ionic_distance_cutoff
+        cli_flags: ["--ionic_distance_cutoff"]
+        python_type: float
+        default: 4.0
+        description: Maximum distance for ionic interaction detection.
+      - name: vdw_mu
+        cli_flags: ["--vdw_mu"]
+        python_type: float
+        default: 0.01
+        description: Mu parameter used for van der Waals interaction detection.
+      - name: ppstack_center_distance_cutoff
+        cli_flags: ["--ppstack_center_distance_cutoff"]
+        python_type: float
+        default: 6.5
+        description: Maximum ring-center distance for pi-pi stacking detection.
+      - name: pication_distance_cutoff
+        cli_flags: ["--pication_distance_cutoff"]
+        python_type: float
+        default: 5.0
+        description: Maximum ring-cation distance for pi-cation interaction detection.
+      - name: pication_angle_cutoff
+        cli_flags: ["--pication_angle_cutoff"]
+        python_type: float
+        default: 45.0
+        description: Maximum angle for pi-cation interaction detection.
+      - name: ssbond_max_distance
+        cli_flags: ["--ssbond_max_distance"]
+        python_type: float
+        default: 2.5
+        description: Maximum sulfur-sulfur distance for disulfide bond detection.
+    argument_rules:
+      - cleaned_input_path must already be cleaned.
+      - If input_msa is omitted, conservation and HMM outputs are skipped.
+      - If substrate_names is omitted, substrate, docking, and protein-substrate interaction steps are skipped.
+      - dock_box_size is required when dock_catalytic_residue or dock_catalytic_site_coord is provided.
+    output_files:
+      - artifact_type: integrate_report_json
+        filename_pattern: integrate_report_{protein_name}.json
+        pattern_description: "{protein_name} is derived from the cleaned input structure file stem."
+        description: Final integrated single-protein graph report.
+      - artifact_type: integrate_nodes_json
+        filename_pattern: integrate_nodes_{protein_name}.json
+        pattern_description: "{protein_name} is derived from the cleaned input structure file stem."
+        description: Node-only JSON graph output.
+      - artifact_type: integrate_edges_json
+        filename_pattern: integrate_edges_{protein_name}.json
+        pattern_description: "{protein_name} is derived from the cleaned input structure file stem."
+        description: Edge-only JSON graph output.
+      - artifact_type: optional_intermediate_outputs
+        filename_pattern: multiple batch side-report and intermediate files
+        pattern_description: Written only when --save_extra_outputs is enabled or during internal workflow execution.
+        description: Cleaned MSA, HMM, substrate SDF, docking, interaction, and side-report outputs.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the output directory.
+        description: Processing log.
+    output_metadata:
+      - name: integrated_graph
+        source_file: integrate_report_json
+        description: Final graph dataset for single-protein analysis.
+    planning_rules:
+      - For broad single-protein analysis, prefer clean followed by batch over manually scheduling all side tools.
+      - If no suitable cleaned single-protein structure is available, schedule enzywizard-clean before this tool.
+      - Pass an MSA only when a corresponding MSA input is available.
+      - Pass a substrate only when a substrate name or SMILES is available.
+    additional_notes:
+      - This is the preferred standard orchestrator for complete single-protein workflows.
+
+  enzywizard-mut-batch:
+    display_name: EnzyWizard-Mut-Batch
+    command_name: enzywizard-mut-batch
+    allowed_in_purpose_types:
+      - wildtype_mutant_comparison
+    description: >
+      Runs the standard paired WT/MUT EnzyWizard workflow on cleaned WT and MUT
+      structures. It performs side analyses on both proteins, optionally uses
+      WT/MUT MSA inputs, optionally runs substrate/docking/interaction workflows
+      on both sides, and writes mutation-integrated graph outputs.
+    capabilities:
+      - Run paired WT and MUT integrated analyses.
+      - Compare matched side reports through mutation integration.
+      - Use cleaned_amino_acid_substitution from mut-clean as the mutation anchor.
+      - Skip conservation when side MSA inputs are absent.
+      - Fall back to paired protein-only output when substrate or docking fails.
+    use_when:
+      - The user requests a broad WT/MUT comparison.
+      - The agent should run the standard complete paired workflow.
+      - More than five distinct paired analysis or report types are requested.
+      - The user requests a complete WT/MUT graph comparison.
+    do_not_use_when:
+      - The request is a single-protein analysis.
+      - cleaned_amino_acid_substitution is unknown and no mut-clean step is planned.
+      - The user explicitly requests a partial paired graph from no more than five analysis or report types; use standalone tools followed by enzywizard-mut-integrate.
+    input_file_requirements:
+      - Requires cleaned WT and MUT CIF or PDB structures.
+      - Requires cleaned_amino_acid_substitution from mut-clean.
+      - Optional WT and MUT MSA files enable side conservation analyses.
+      - Optional substrate name or SMILES enables paired substrate, docking, and interaction analyses.
+    upstream_tools:
+      - enzywizard-mut-clean
+    downstream_tools: []
+    required_arguments:
+      - name: wt_cleaned_input_path
+        cli_flags: ["-w", "--wt_cleaned_input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned wild-type CIF or PDB structure.
+      - name: mut_cleaned_input_path
+        cli_flags: ["-m", "--mut_cleaned_input_path"]
+        python_type: str
+        value_type: path
+        description: Cleaned mutant CIF or PDB structure.
+      - name: cleaned_amino_acid_substitution
+        cli_flags: ["-a", "--cleaned_amino_acid_substitution"]
+        python_type: str
+        value_type: amino_acid_substitution
+        description: Cleaned residue-numbering mutation string from mut-clean.
+      - name: wt_output_dir
+        cli_flags: ["-wo", "--wt_output_dir"]
+        python_type: str
+        value_type: directory
+        description: Wild-type output directory.
+      - name: mut_output_dir
+        cli_flags: ["-mo", "--mut_output_dir"]
+        python_type: str
+        value_type: directory
+        description: Mutant output directory.
+    optional_arguments:
+      - name: wt_input_msa
+        cli_flags: ["-wm", "--wt_input_msa"]
+        python_type: str
+        default: null
+        description: Optional WT MSA file.
+      - name: mut_input_msa
+        cli_flags: ["-mm", "--mut_input_msa"]
+        python_type: str
+        default: null
+        description: Optional MUT MSA file.
+      - name: substrate_names
+        cli_flags: ["-s", "--substrate_names"]
+        python_type: str
+        default: null
+        description: Optional substrate name or SMILES applied to both WT and MUT sides.
+      - name: save_extra_outputs
+        cli_flags: ["--save_extra_outputs"]
+        cli_action: store_true
+        python_type: bool
+        default: false
+        description: Keep side reports and intermediate files.
+      - name: hydrocluster_cutoff
+        cli_flags: ["--hydrocluster_cutoff"]
+        python_type: float
+        default: 10.0
+        description: Hydrophobic cluster contact area cutoff applied to both WT and MUT.
+      - name: minimize_energy
+        cli_flags: ["--no_minimize_energy"]
+        cli_action: store_false
+        python_type: bool
+        default: true
+        description: Energy minimization is enabled on both sides by default; the CLI flag disables it.
+      - name: energy_minimization_iteration
+        cli_flags: ["--energy_minimization_iteration"]
+        python_type: int
+        default: 100
+        description: Maximum energy minimization iterations applied to each side.
+      - name: flexibility_method
+        cli_flags: ["--flexibility_method"]
+        python_type: str
+        default: ANM
+        allowed_values: ["ANM", "GNM"]
+        description: Flexibility method applied to both WT and MUT.
+      - name: flexibility_cutoff
+        cli_flags: ["--flexibility_cutoff"]
+        python_type: float
+        default: 15.0
+        description: Flexibility residue connection cutoff applied to both sides.
+      - name: flexibility_n_modes
+        cli_flags: ["--flexibility_n_modes"]
+        python_type: int
+        default: 20
+        description: Number of flexibility modes calculated for each side.
+      - name: disorder_window_size
+        cli_flags: ["--disorder_window_size"]
+        python_type: int
+        default: 11
+        description: Disorder sliding window size applied to both sides.
+      - name: disorder_min_region_length
+        cli_flags: ["--disorder_min_region_length"]
+        python_type: int
+        default: 5
+        description: Minimum disordered region length applied to both sides.
+      - name: embedding_model_name
+        cli_flags: ["--embedding_model_name"]
+        python_type: str
+        default: esm2_t6_8M_UR50D
+        allowed_values: ["esm2_t6_8M_UR50D", "esm2_t12_35M_UR50D", "esm2_t30_150M_UR50D"]
+        description: ESM2 embedding model used for both sides.
+      - name: pocket_min_rad
+        cli_flags: ["--pocket_min_rad"]
+        python_type: float
+        default: 1.8
+        description: Minimum pocket probe radius applied to both sides.
+      - name: pocket_max_rad
+        cli_flags: ["--pocket_max_rad"]
+        python_type: float
+        default: 6.2
+        description: Maximum pocket probe radius applied to both sides.
+      - name: pocket_min_volume
+        cli_flags: ["--pocket_min_volume"]
+        python_type: int
+        default: 50
+        description: Minimum pocket volume applied to both sides.
+      - name: substrate_max_synonyms
+        cli_flags: ["--substrate_max_synonyms"]
+        python_type: int
+        default: 20
+        description: Maximum substrate synonyms retried during name resolution.
+      - name: substrate_fp_radius
+        cli_flags: ["--substrate_fp_radius"]
+        python_type: int
+        default: 2
+        description: Morgan fingerprint radius used for the shared substrate.
+      - name: substrate_n_bits
+        cli_flags: ["--substrate_n_bits"]
+        python_type: int
+        default: 512
+        description: Morgan fingerprint bit length used for the shared substrate.
+      - name: substrate_num_confs
+        cli_flags: ["--substrate_num_confs"]
+        python_type: int
+        default: 5
+        description: Maximum substrate conformers generated for paired docking.
+      - name: substrate_prune_rms
+        cli_flags: ["--substrate_prune_rms"]
+        python_type: float
+        default: 0.5
+        description: Conformer pruning RMS threshold for the shared substrate.
+      - name: dock_max_attempt_num
+        cli_flags: ["--dock_max_attempt_num"]
+        python_type: int
+        default: 20
+        description: Maximum docking attempts on each side.
+      - name: dock_early_stop
+        cli_flags: ["--dock_no_early_stop"]
+        cli_action: store_false
+        python_type: bool
+        default: true
+        description: Stop after the first successful docking result on each side by default.
+      - name: dock_exhaustiveness
+        cli_flags: ["--dock_exhaustiveness"]
+        python_type: int
+        default: 8
+        description: Vina search exhaustiveness applied to both sides.
+      - name: dock_cpu
+        cli_flags: ["--dock_cpu"]
+        python_type: int
+        default: 0
+        description: Vina CPU count used for paired docking.
+      - name: dock_catalytic_residue
+        cli_flags: ["--dock_catalytic_residue"]
+        python_type: int
+        default: null
+        description: Cleaned residue index used as the docking center on both sides; requires dock_box_size.
+      - name: dock_catalytic_site_coord
+        cli_flags: ["--dock_catalytic_site_coord"]
+        python_type: str
+        default: null
+        description: Manual docking center x,y,z applied to both sides; requires dock_box_size.
+      - name: dock_box_size
+        cli_flags: ["--dock_box_size"]
+        python_type: str
+        default: null
+        description: Docking box size x,y,z required for a manual docking center.
+      - name: hbond_bonded_h_min_distance
+        cli_flags: ["--hbond_bonded_h_min_distance"]
+        python_type: float
+        default: 0.8
+        description: Minimum bonded heavy atom-hydrogen distance used on both sides.
+      - name: hbond_bonded_h_max_distance
+        cli_flags: ["--hbond_bonded_h_max_distance"]
+        python_type: float
+        default: 1.3
+        description: Maximum bonded heavy atom-hydrogen distance used on both sides.
+      - name: hbond_da_max_distance
+        cli_flags: ["--hbond_da_max_distance"]
+        python_type: float
+        default: 3.9
+        description: Maximum donor-acceptor distance for hydrogen bond detection.
+      - name: hbond_ha_max_distance
+        cli_flags: ["--hbond_ha_max_distance"]
+        python_type: float
+        default: 2.5
+        description: Maximum hydrogen-acceptor distance for hydrogen bond detection.
+      - name: hbond_angle
+        cli_flags: ["--hbond_angle"]
+        python_type: float
+        default: 90.0
+        description: Minimum donor-hydrogen-acceptor angle for hydrogen bond detection.
+      - name: ionic_distance_cutoff
+        cli_flags: ["--ionic_distance_cutoff"]
+        python_type: float
+        default: 4.0
+        description: Maximum distance for ionic interaction detection.
+      - name: vdw_mu
+        cli_flags: ["--vdw_mu"]
+        python_type: float
+        default: 0.01
+        description: Mu parameter used for van der Waals interaction detection.
+      - name: ppstack_center_distance_cutoff
+        cli_flags: ["--ppstack_center_distance_cutoff"]
+        python_type: float
+        default: 6.5
+        description: Maximum ring-center distance for pi-pi stacking detection.
+      - name: pication_distance_cutoff
+        cli_flags: ["--pication_distance_cutoff"]
+        python_type: float
+        default: 5.0
+        description: Maximum ring-cation distance for pi-cation interaction detection.
+      - name: pication_angle_cutoff
+        cli_flags: ["--pication_angle_cutoff"]
+        python_type: float
+        default: 45.0
+        description: Maximum angle for pi-cation interaction detection.
+      - name: ssbond_max_distance
+        cli_flags: ["--ssbond_max_distance"]
+        python_type: float
+        default: 2.5
+        description: Maximum sulfur-sulfur distance for disulfide bond detection.
+    argument_rules:
+      - wt_output_dir and mut_output_dir must be different.
+      - cleaned_amino_acid_substitution must come from the mut-clean report.
+      - If WT or MUT MSA is omitted, conservation for that side is skipped.
+      - If substrate_names is omitted, paired substrate, docking, and protein-substrate interactions are skipped.
+    output_files:
+      - artifact_type: mut_integrate_report_json
+        filename_pattern: mut_integrate_report_{wt_protein_name}_to_{mut_protein_name}.json
+        pattern_description: "{wt_protein_name} and {mut_protein_name} are derived from cleaned WT and MUT structure stems."
+        description: Final paired WT/MUT integrated graph report.
+      - artifact_type: wt_integrate_nodes_json
+        filename_pattern: wt_integrate_nodes_{wt_protein_name}.json
+        pattern_description: "{wt_protein_name} is derived from the cleaned WT structure stem."
+        description: WT node-only graph JSON.
+      - artifact_type: wt_integrate_edges_json
+        filename_pattern: wt_integrate_edges_{wt_protein_name}.json
+        pattern_description: "{wt_protein_name} is derived from the cleaned WT structure stem."
+        description: WT edge-only graph JSON.
+      - artifact_type: mut_integrate_nodes_json
+        filename_pattern: mut_integrate_nodes_{mut_protein_name}.json
+        pattern_description: "{mut_protein_name} is derived from the cleaned MUT structure stem."
+        description: MUT node-only graph JSON.
+      - artifact_type: mut_integrate_edges_json
+        filename_pattern: mut_integrate_edges_{mut_protein_name}.json
+        pattern_description: "{mut_protein_name} is derived from the cleaned MUT structure stem."
+        description: MUT edge-only graph JSON.
+      - artifact_type: optional_intermediate_outputs
+        filename_pattern: multiple paired side-report and intermediate files
+        pattern_description: Written when --save_extra_outputs is enabled or during internal workflow execution.
+        description: WT/MUT side reports, cleaned MSA, HMM, substrate SDF, docking, and interaction outputs.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the WT output directory.
+        description: Processing log.
+    output_metadata:
+      - name: wild_type_integrated_graph
+        source_file: mut_integrate_report_json
+        description: Integrated WT graph data.
+      - name: mutant_integrated_graph
+        source_file: mut_integrate_report_json
+        description: Integrated MUT graph data.
+    planning_rules:
+      - For broad WT/MUT comparison, prefer mut-clean followed by mut-batch.
+      - If paired cleaned structures or the cleaned mutation are unavailable, schedule enzywizard-mut-clean before this tool.
+      - Pass the same substrate name or SMILES to both sides when a substrate input is available.
+    additional_notes:
+      - This is the preferred standard orchestrator for complete WT/MUT comparison workflows.
+
+  enzywizard-mut-integrate:
+    display_name: EnzyWizard-Mut-Integrate
+    command_name: enzywizard-mut-integrate
+    allowed_in_purpose_types:
+      - wildtype_mutant_comparison
+    description: >
+      Integrates matched wild-type and mutant EnzyWizard side reports into
+      paired graph outputs. The mut-clean report provides the mutation anchor,
+      residue mapping, and cleaned amino acid substitution.
+    capabilities:
+      - Merge WT and MUT side report directories.
+      - Generate paired integrated graph reports and side-specific node/edge JSON files.
+      - Support non-strict partial integration or strict complete report integration.
+    use_when:
+      - No more than five distinct paired analysis or report types are involved.
+      - The user explicitly requests a partial or quick WT/MUT graph comparison from those reports.
+    do_not_use_when:
+      - enzywizard-mut-batch is selected and already performs mutation integration.
+      - More than five distinct analysis or report types are involved; use enzywizard-mut-batch instead.
+      - The user requests a complete paired graph or broad comparison; use enzywizard-mut-batch instead.
+      - The user does not request graph generation.
+      - No mut-clean report is available and no mut-clean step is planned.
+    input_file_requirements:
+      - Requires a mut-clean report JSON file.
+      - Requires a WT report directory and a MUT report directory.
+    upstream_tools:
+      - enzywizard-mut-clean
+      - enzywizard-aaprops
+      - enzywizard-hydrocluster
+      - enzywizard-energy
+      - enzywizard-flexibility
+      - enzywizard-disorder
+      - enzywizard-conservation
+      - enzywizard-embedding
+      - enzywizard-pocket
+      - enzywizard-substrate
+      - enzywizard-dock
+      - enzywizard-interaction
+    downstream_tools: []
+    required_arguments:
+      - name: mut_clean_report_path
+        cli_flags: ["-i", "--mut_clean_report_path"]
+        python_type: str
+        value_type: path
+        description: Required mut-clean report JSON file.
+      - name: wt_input_dir
+        cli_flags: ["-w", "--wt_input_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory containing WT side JSON reports.
+      - name: mut_input_dir
+        cli_flags: ["-m", "--mut_input_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory containing MUT side JSON reports.
+      - name: wt_output_dir
+        cli_flags: ["-wo", "--wt_output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for WT mutation-integrated outputs.
+      - name: mut_output_dir
+        cli_flags: ["-mo", "--mut_output_dir"]
+        python_type: str
+        value_type: directory
+        description: Directory for MUT mutation-integrated outputs.
+    optional_arguments:
+      - name: strict
+        cli_flags: ["--strict"]
+        cli_action: store_true
+        python_type: bool
+        default: false
+        description: Require all supported side report types and node fields.
+    argument_rules:
+      - wt_output_dir and mut_output_dir must be different directories.
+      - mut_clean_report_path must point to an enzywizard_mut_clean report.
+      - The mut-clean report should not be included inside wt_input_dir or mut_input_dir as a side report.
+    output_files:
+      - artifact_type: mut_integrate_report_json
+        filename_pattern: mut_integrate_report_{wt_protein_name}_to_{mut_protein_name}.json
+        pattern_description: Protein names are derived from the mut-clean report file name and content.
+        description: Full paired WT/MUT integrated graph report.
+      - artifact_type: wt_integrate_nodes_json
+        filename_pattern: wt_integrate_nodes_{wt_protein_name}.json
+        pattern_description: WT protein name is derived from the mut-clean report.
+        description: WT node-only JSON.
+      - artifact_type: wt_integrate_edges_json
+        filename_pattern: wt_integrate_edges_{wt_protein_name}.json
+        pattern_description: WT protein name is derived from the mut-clean report.
+        description: WT edge-only JSON.
+      - artifact_type: mut_integrate_nodes_json
+        filename_pattern: mut_integrate_nodes_{mut_protein_name}.json
+        pattern_description: MUT protein name is derived from the mut-clean report.
+        description: MUT node-only JSON.
+      - artifact_type: mut_integrate_edges_json
+        filename_pattern: mut_integrate_edges_{mut_protein_name}.json
+        pattern_description: MUT protein name is derived from the mut-clean report.
+        description: MUT edge-only JSON.
+      - artifact_type: log_file
+        filename_pattern: log.txt
+        pattern_description: Fixed log filename in the WT output directory.
+        description: Processing log.
+    output_metadata:
+      - name: paired_integrated_graphs
+        source_file: mut_integrate_report_json
+        description: WT and MUT integrated graph data plus mutation mapping.
+    planning_rules:
+      - Use mut-integrate only for an explicitly requested partial paired graph involving no more than five distinct analysis or report types.
+      - The mut-batch rule takes priority; never select enzywizard-mut-integrate together with enzywizard-mut-batch.
+    additional_notes:
+      - Mut-integrate synthesizes clean information from the mut-clean report; separate enzywizard-clean reports are not required for the paired integration anchor.

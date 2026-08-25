@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, TypedDict
+from typing import List, TypedDict
 
 from .conf import AgentConfig
 from .data_models.analysis import AnalysisResult
@@ -14,8 +14,10 @@ from .data_models.user_message import UserMessage
 
 class AgentState(TypedDict, total=False):
     config: AgentConfig
+    session_id: str
     agent_inputs: AgentInputs
-    turn_count: int
+    current_turn_id: int
+    current_plan_id: int
     route: str
 
     current_user_message: str
@@ -39,6 +41,6 @@ class AgentState(TypedDict, total=False):
     analysis_summary: str
 
     cleaned_files: CleanedFiles
-    current_artifact: Artifact
+    current_plan_artifacts: List[Artifact]
     artifacts: List[Artifact]
     artifact_summary: str

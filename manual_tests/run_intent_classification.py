@@ -5,7 +5,7 @@ from pathlib import Path
 
 from enzywizard_agent.conf import AgentConfig
 from enzywizard_agent.data_models.agent_inputs import AgentInputs
-from enzywizard_agent.nodes.planning import planning_node
+from enzywizard_agent.services.planning_service import classify_intent
 from enzywizard_agent.utils.IO_utils import normalize_path
 
 
@@ -38,7 +38,8 @@ def main() -> None:
             workdir=Path(args.workdir).expanduser().resolve(),
             max_turns=3,
         ),
-        "turn_count": 0,
+        "current_turn_id": 1,
+        "current_plan_id": 0,
         "current_user_message": args.message,
         "agent_inputs": AgentInputs(
             structure_file=normalize_path(args.structure_file),
@@ -51,7 +52,8 @@ def main() -> None:
         "user_message_summary": "",
     }
 
-    planning_node(state)
+    intent = classify_intent(state)
+    print(intent.model_dump_json(indent=2))
 
 
 if __name__ == "__main__":

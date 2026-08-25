@@ -7,7 +7,7 @@ from ..data_models.artifact import CleanedFiles
 from ..data_models.agent_inputs import AgentInputs
 from ..graph import build_graph
 from ..state import AgentState
-from ..utils.IO_utils import normalize_path
+from ..utils.IO_utils import create_session_id, normalize_path
 from ..validators.input_validators import validate_single_amino_acid_substitution
 
 
@@ -26,7 +26,7 @@ def run_agent_service(
     max_turns: int = 3,
 ) -> bool:
     try:
-        workdir = Path(workdir)
+        workdir = Path(workdir).expanduser().resolve()
         workdir.mkdir(parents=True, exist_ok=True)
     except Exception as e:
         print(f"[ERROR] Failed to initialize agent workdir: {workdir}. Reason: {e}")
@@ -118,7 +118,9 @@ def run_agent_service(
     )
     state: AgentState = {
         "config": config,
-        "turn_count": 0,
+        "session_id": create_session_id(),
+        "current_turn_id": 1,
+        "current_plan_id": 0,
         "agent_inputs": agent_inputs,
         "current_user_message": str(message).strip(),
         "user_messages": [],
@@ -131,7 +133,26 @@ def run_agent_service(
         "tool_calling_summary": "",
         "analysis_results": [],
         "analysis_summary": "",
-        "cleaned_files": CleanedFiles(),
+        "cleaned_files": CleanedFiles(
+            single_clean_output_dir=None,
+            single_cleaned_structure_file=None,
+            single_cleaned_cif_file=None,
+            single_cleaned_pdb_file=None,
+            single_cleaned_fasta_file=None,
+            single_clean_report_file=None,
+            mut_clean_output_dir=None,
+            wt_cleaned_structure_file=None,
+            wt_cleaned_cif_file=None,
+            wt_cleaned_pdb_file=None,
+            wt_cleaned_fasta_file=None,
+            mut_cleaned_structure_file=None,
+            mut_cleaned_cif_file=None,
+            mut_cleaned_pdb_file=None,
+            mut_cleaned_fasta_file=None,
+            mut_clean_report_file=None,
+            cleaned_amino_acid_substitution=None,
+        ),
+        "current_plan_artifacts": [],
         "artifacts": [],
         "artifact_summary": "",
     }

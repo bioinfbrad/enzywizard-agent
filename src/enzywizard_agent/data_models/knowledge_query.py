@@ -29,7 +29,7 @@ KnowledgeQueryType = Literal[
 
 
 class KnowledgeQuery(BaseModel):
-    turn: int
+    turn_id: int
     query_type: KnowledgeQueryType
     query: str
     knowledge_source: str
