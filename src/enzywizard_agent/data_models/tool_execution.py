@@ -19,4 +19,9 @@ from pydantic import BaseModel
 
 
 class ToolExecution(BaseModel):
+    """一次完整工具计划执行记录的占位模型。
+
+    Tool Calling 模块尚未开发，因此当前不预设字段，避免提前固定错误结构。
+    """
+
     pass

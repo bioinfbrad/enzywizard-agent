@@ -19,4 +19,7 @@ from pydantic import BaseModel
 
 
 class UserConfirmation(BaseModel):
+    """保存用户在计划确认中提出的可选修改要求。"""
+
+    # None 表示用户没有提出修改；非空文本会重新进入 Planning 上下文。
     revision_request: str | None

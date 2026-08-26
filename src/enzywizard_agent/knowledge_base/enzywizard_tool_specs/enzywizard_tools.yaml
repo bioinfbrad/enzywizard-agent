@@ -1129,13 +1129,10 @@ tools:
       - Produce full graph report, node-only JSON, and edge-only JSON.
       - Run in non-strict mode with partial reports or strict mode requiring complete supported inputs.
     use_when:
-      - No more than five distinct standalone analysis or report types are involved.
-      - The user explicitly requests a partial or quick graph representation from those reports.
+      - The program has selected one or more standalone analysis tools whose reports must be combined into a graph representation.
     do_not_use_when:
       - EnzyWizard-Batch is selected and already performs final integration.
-      - More than five distinct analysis or report types are involved; use enzywizard-batch instead.
       - The user requests a complete graph or broad analysis; use enzywizard-batch instead.
-      - The user does not request graph generation.
       - The workflow is a wild-type/mutant comparison; use enzywizard-mut-integrate instead.
     input_file_requirements:
       - Requires a directory containing JSON reports from upstream EnzyWizard tools.
@@ -1199,7 +1196,7 @@ tools:
         source_file: integrate_report_json
         description: Graph representation with residue/substrate nodes and molecular interaction edges.
     planning_rules:
-      - Use standalone integrate only for an explicitly requested partial graph involving no more than five distinct analysis or report types.
+      - EnzyWizard-Agent adds integrate programmatically after any one or more standalone single-protein analysis tools are selected.
       - The batch rule takes priority; never select enzywizard-integrate together with enzywizard-batch.
       - When the current plan generates the inputs, tool calling must prepare an input directory containing exactly one clean report before running integrate.
     additional_notes:
@@ -1224,12 +1221,10 @@ tools:
     use_when:
       - The user requests a broad or integrated single-protein analysis.
       - The agent should use the standard full single-protein workflow instead of manually selecting many side tools.
-      - More than five distinct analysis or report types are requested.
       - The user requests a complete graph representation.
     do_not_use_when:
       - The workflow is a WT/MUT comparison; use enzywizard-mut-batch instead.
-      - The user explicitly requests only one small side report and no integration.
-      - The user explicitly requests a partial graph from no more than five analysis or report types; use standalone tools followed by enzywizard-integrate.
+      - The user explicitly names specific analysis types rather than requesting a complete or broad workflow; use the corresponding standalone tools and let the program add enzywizard-integrate.
     input_file_requirements:
       - Requires one cleaned CIF or PDB protein structure.
       - Optional MSA enables conservation analysis.
@@ -1501,12 +1496,11 @@ tools:
     use_when:
       - The user requests a broad WT/MUT comparison.
       - The agent should run the standard complete paired workflow.
-      - More than five distinct paired analysis or report types are requested.
       - The user requests a complete WT/MUT graph comparison.
     do_not_use_when:
       - The request is a single-protein analysis.
       - cleaned_amino_acid_substitution is unknown and no mut-clean step is planned.
-      - The user explicitly requests a partial paired graph from no more than five analysis or report types; use standalone tools followed by enzywizard-mut-integrate.
+      - The user explicitly names specific paired analysis types rather than requesting a complete or broad workflow; use the corresponding standalone tools and let the program add enzywizard-mut-integrate.
     input_file_requirements:
       - Requires cleaned WT and MUT CIF or PDB structures.
       - Requires cleaned_amino_acid_substitution from mut-clean.
@@ -1804,13 +1798,10 @@ tools:
       - Generate paired integrated graph reports and side-specific node/edge JSON files.
       - Support non-strict partial integration or strict complete report integration.
     use_when:
-      - No more than five distinct paired analysis or report types are involved.
-      - The user explicitly requests a partial or quick WT/MUT graph comparison from those reports.
+      - The program has selected one or more standalone paired analysis tools whose WT and MUT reports must be combined into paired graph outputs.
     do_not_use_when:
       - enzywizard-mut-batch is selected and already performs mutation integration.
-      - More than five distinct analysis or report types are involved; use enzywizard-mut-batch instead.
       - The user requests a complete paired graph or broad comparison; use enzywizard-mut-batch instead.
-      - The user does not request graph generation.
       - No mut-clean report is available and no mut-clean step is planned.
     input_file_requirements:
       - Requires a mut-clean report JSON file.
@@ -1896,7 +1887,7 @@ tools:
         source_file: mut_integrate_report_json
         description: WT and MUT integrated graph data plus mutation mapping.
     planning_rules:
-      - Use mut-integrate only for an explicitly requested partial paired graph involving no more than five distinct analysis or report types.
+      - EnzyWizard-Agent adds mut-integrate programmatically after any one or more standalone WT/MUT analysis tools are selected.
       - The mut-batch rule takes priority; never select enzywizard-mut-integrate together with enzywizard-mut-batch.
     additional_notes:
       - Mut-integrate synthesizes clean information from the mut-clean report; separate enzywizard-clean reports are not required for the paired integration anchor.

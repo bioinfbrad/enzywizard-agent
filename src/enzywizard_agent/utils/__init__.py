@@ -1,1 +1,1 @@
-"""Shared utility modules for EnzyWizard-Agent."""
+"""保存无外部业务副作用、可在多个模块复用的工具函数。"""

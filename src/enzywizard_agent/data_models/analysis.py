@@ -19,4 +19,10 @@ from pydantic import BaseModel
 
 
 class AnalysisResult(BaseModel):
+    """Analysis 节点的结果占位模型。
+
+    当前尚未进入 Analysis 模块开发，因此暂不定义字段；后续字段应在分析流程
+    明确后一次性补充。
+    """
+
     pass

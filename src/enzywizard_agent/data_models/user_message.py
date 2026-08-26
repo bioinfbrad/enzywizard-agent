@@ -19,5 +19,7 @@ from pydantic import BaseModel
 
 
 class UserMessage(BaseModel):
+    """保存一轮用户原始消息及其轮次编号。"""
+
     turn_id: int
     content: str
