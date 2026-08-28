@@ -3,6 +3,9 @@ from __future__ import annotations
 from ..data_models.planning import PlanningResult
 from ..services.planning_service import (
     classify_intent,
+    extract_tool_parameters,
+    finalize_tool_plan,
+    generate_default_tool_plan,
     select_single_protein_tools,
     select_wildtype_mutant_tools,
 )
@@ -11,16 +14,17 @@ from ..utils.planning_utils import purpose_needs_tool
 
 
 def planning_node(state: AgentState) -> AgentState:
-    """执行 Planning 节点当前已实现的意图识别和工具选择步骤。
+    """执行从意图识别到最终 ToolPlan 的完整 Planning 节点。"""
 
-    当前尚未生成 ToolPlan。只有无需工具或工具选择失败的分支会在这里完成状态
-    回填；工具选择成功后将由后续开发继续补充排序、参数和计划。
-    """
+    # 每次进入 Planning 都表示一次新的计划尝试；同一轮用户要求修改计划时
+    # turn_id 不变，但 plan_id 递增，确保目录和产物不会覆盖上一版计划。
+    plan_id = state.get("current_plan_id", 0) + 1
+    state["current_plan_id"] = plan_id
 
     # 先创建一个完整的中间 PlanningResult，后续步骤在同一对象上逐项填写。
     planning_result = PlanningResult(
         turn_id=state.get("current_turn_id", 1),
-        plan_id=state.get("current_plan_id", 1),
+        plan_id=plan_id,
         planning_route="tool_unused",
         planning_flag="started",
         needs_tool=False,
@@ -28,6 +32,7 @@ def planning_node(state: AgentState) -> AgentState:
         purpose_type=None,
         purpose_reason="",
         tool_selection=None,
+        parameter_extraction=None,
         tool_plan=None,
         error_messages=[],
     )
@@ -117,5 +122,91 @@ def planning_node(state: AgentState) -> AgentState:
         state["route"] = planning_result.planning_route
         return state
 
-    # 工具选择成功后，后续逻辑将在这里继续生成完整 ToolPlan。
+    # 工具选择成功后，程序先根据固定依赖、路径和默认参数生成一份默认计划。
+    try:
+        default_tool_plan = generate_default_tool_plan(state, planning_result)
+        planning_result.planning_flag = "default_tool_plan_generated"
+        print(
+            "[INFO] Default tool plan generated: "
+            f"calls={len(default_tool_plan.calls)}"
+        )
+    except Exception as e:
+        error_message = f"Default tool plan generation failed: {e}"
+        planning_result.planning_flag = "planning_failed"
+        planning_result.error_messages.append(error_message)
+        state["current_planning_result"] = planning_result
+        state.setdefault("planning_results", []).append(planning_result)
+        state["route"] = planning_result.planning_route
+        print(f"[ERROR] {error_message}")
+        return state
+
+    # 参数提取只读取用户明确要求，不允许模型重选工具、调整顺序或生成路径。
+    try:
+        parameter_extraction = extract_tool_parameters(
+            state,
+            planning_result,
+            default_tool_plan,
+        )
+        planning_result.parameter_extraction = parameter_extraction
+        planning_result.planning_flag = parameter_extraction.parameter_extraction_status
+        print(
+            "[INFO] Parameter extraction result: "
+            f"status={parameter_extraction.parameter_extraction_status}, "
+            f"adjustments={len(parameter_extraction.parameter_adjustments)}, "
+            f"profiles={len(parameter_extraction.profile_requests)}, "
+            f"unsupported={len(parameter_extraction.unsupported_requests)}"
+        )
+    except Exception as e:
+        error_message = f"Parameter extraction failed: {e}"
+        planning_result.planning_flag = "parameter_extraction_failed"
+        planning_result.error_messages.append(error_message)
+        state["current_planning_result"] = planning_result
+        state.setdefault("planning_results", []).append(planning_result)
+        state["route"] = planning_result.planning_route
+        print(f"[ERROR] {error_message}")
+        return state
+
+    # 模型主动报告提取失败时不继续应用参数，保存其原始错误交给 Analysis。
+    if parameter_extraction.parameter_extraction_status == "parameter_extraction_failed":
+        error_message = (
+            parameter_extraction.error_message
+            or "Parameter extraction failed without an error message."
+        )
+        planning_result.error_messages.append(error_message)
+        state["current_planning_result"] = planning_result
+        state.setdefault("planning_results", []).append(planning_result)
+        state["route"] = planning_result.planning_route
+        print(f"[INFO] Parameter extraction error: {error_message}")
+        return state
+
+    # 程序在最后一步应用 profile 和明确参数，拒绝路径覆盖，并重新校验所有调用。
+    try:
+        final_tool_plan = finalize_tool_plan(
+            state,
+            default_tool_plan,
+            parameter_extraction,
+        )
+    except Exception as e:
+        error_message = f"Tool plan parameter validation failed: {e}"
+        planning_result.planning_flag = "planning_failed"
+        planning_result.error_messages.append(error_message)
+        state["current_planning_result"] = planning_result
+        state.setdefault("planning_results", []).append(planning_result)
+        state["route"] = planning_result.planning_route
+        print(f"[ERROR] {error_message}")
+        return state
+
+    # 完整计划成功后才写入状态并切换到用户确认路由。Planning 阶段只保存路径，
+    # 不创建 ToolCall 目录，也不复制 integrate 输入报告。
+    planning_result.tool_plan = final_tool_plan
+    planning_result.summary = final_tool_plan.summary
+    planning_result.planning_flag = "tool_plan_generated"
+    planning_result.planning_route = "tool_plan_generated"
+    state["current_planning_result"] = planning_result
+    state.setdefault("planning_results", []).append(planning_result)
+    state["route"] = planning_result.planning_route
+    print(
+        "[INFO] Final tool plan generated: "
+        f"plan_id={planning_result.plan_id}, calls={len(final_tool_plan.calls)}"
+    )
     return state

@@ -4,16 +4,20 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
 from ..builders.planning_context_builder import (
+    build_parameter_extraction_context,
     build_planning_context,
     build_tool_selection_context,
 )
 from ..data_models.planning import (
     IntentClassificationOutput,
+    ParameterExtractionOutput,
     PlanningResult,
     ToolSelectionOutput,
+    ToolPlan,
 )
 from ..prompts.planning_prompt import (
     INTENT_CLASSIFICATION_SYSTEM_PROMPT,
+    PARAMETER_EXTRACTION_SYSTEM_PROMPT,
     SINGLE_PROTEIN_TOOL_SELECTION_SYSTEM_PROMPT,
     WILDTYPE_MUTANT_TOOL_SELECTION_SYSTEM_PROMPT,
 )
@@ -24,6 +28,10 @@ from ..utils.planning_utils import (
     determine_preparation_tools,
     load_analysis_tool_specs_for_purpose,
     validate_and_update_tool_selection,
+)
+from ..utils.tool_plan_utils import (
+    apply_parameter_extraction,
+    build_default_tool_plan,
 )
 
 
@@ -194,3 +202,82 @@ def select_wildtype_mutant_tools(
         return create_tool_selection_failure(
             f"Wild-type/mutant tool selection failed: {e}"
         )
+
+
+def generate_default_tool_plan(
+    state: AgentState,
+    planning_result: PlanningResult,
+) -> ToolPlan:
+    """用确定性规则把工具选择展开为有序默认计划。"""
+
+    # 具体顺序、路径、上下游引用和默认值集中由 tool_plan_utils 生成；服务层
+    # 保持 Planning 节点与工具函数之间的稳定调用边界。
+    tool_plan = build_default_tool_plan(state, planning_result)
+
+    # 依赖闭包可能补充 substrate 或 dock。最终 ToolSelectionOutput 必须与实际
+    # ToolPlan 保持一致，避免用户确认时看到两套不同工具集合。
+    planned_tool_names = list(dict.fromkeys(call.tool_name for call in tool_plan.calls))
+    tool_selection = planning_result.tool_selection
+    if tool_selection is not None:
+        added_tool_names = [
+            tool_name
+            for tool_name in planned_tool_names
+            if tool_name not in tool_selection.selected_tools
+        ]
+        tool_selection.selected_tools = planned_tool_names
+        if added_tool_names:
+            added_names = ", ".join(added_tool_names)
+            tool_selection.selection_reason += (
+                f" [System] Added required workflow dependencies: {added_names}."
+            )
+    return tool_plan
+
+
+def extract_tool_parameters(
+    state: AgentState,
+    planning_result: PlanningResult,
+    default_tool_plan: ToolPlan,
+) -> ParameterExtractionOutput:
+    """调用一次 LLM，提取用户对默认 ToolPlan 的稀疏参数要求。"""
+
+    config = state["config"]
+    context = build_parameter_extraction_context(
+        state,
+        planning_result,
+        default_tool_plan,
+    )
+
+    # 与前两次 Planning 调用保持一致：温度为0、禁用 thinking、不自动重试。
+    llm = ChatOpenAI(
+        api_key=config.api_key,
+        base_url=config.base_url,
+        model=config.model,
+        temperature=0,
+        max_retries=0,
+        extra_body={"enable_thinking": False},
+    )
+    structured_llm = llm.with_structured_output(ParameterExtractionOutput)
+
+    # SystemMessage 只包含固定参数政策，HumanMessage 提供当前计划的动态参数表。
+    return structured_llm.invoke(
+        [
+            SystemMessage(content=PARAMETER_EXTRACTION_SYSTEM_PROMPT),
+            HumanMessage(content=context),
+        ]
+    )
+
+
+def finalize_tool_plan(
+    state: AgentState,
+    default_tool_plan: ToolPlan,
+    parameter_extraction: ParameterExtractionOutput,
+) -> ToolPlan:
+    """应用并校验参数提取结果，返回可进入用户确认的最终计划。"""
+
+    # apply_parameter_extraction 会拒绝路径覆盖、未知参数、非法类型、范围错误和
+    # 参数依赖冲突；任何异常由 Planning 节点统一转换为 planning_failed。
+    return apply_parameter_extraction(
+        default_tool_plan,
+        parameter_extraction,
+        state["config"].workdir,
+    )

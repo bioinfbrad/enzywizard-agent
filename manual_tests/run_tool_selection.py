@@ -94,6 +94,7 @@ def main() -> None:
         purpose_type=intent.purpose_type,
         purpose_reason=intent.purpose_reason,
         tool_selection=None,
+        parameter_extraction=None,
         tool_plan=None,
         error_messages=[],
     )

@@ -1220,7 +1220,7 @@ tools:
       - Fall back to protein-only output if substrate generation or docking fails.
     use_when:
       - The user requests a broad or integrated single-protein analysis.
-      - The agent should use the standard full single-protein workflow instead of manually selecting many side tools.
+      - The agent should use the standard full single-protein workflow when the user requests a complete or broad analysis scope.
       - The user requests a complete graph representation.
     do_not_use_when:
       - The workflow is a WT/MUT comparison; use enzywizard-mut-batch instead.

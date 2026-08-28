@@ -3,8 +3,14 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from ..data_models.planning import PlanningResult
+from ..data_models.planning import PlanningResult, ToolPlan
 from ..state import AgentState
+from ..utils.planning_utils import load_enzywizard_tool_specs
+from ..utils.tool_plan_utils import (
+    PARAMETER_PROFILE_VALUES,
+    PARAMETER_VALUE_CONSTRAINTS,
+    PROGRAM_MANAGED_OPTIONAL_PARAMETERS,
+)
 
 
 def build_planning_context(state: AgentState) -> str:
@@ -233,5 +239,113 @@ def build_tool_selection_context(
     # 当前 LLM 选择步骤需要的字段。
     tool_spec_context = json.dumps(tool_specs, ensure_ascii=False, indent=2)
     sections.append(f"Candidate EnzyWizard tool specifications:\n{tool_spec_context}")
+
+    return "\n\n".join(sections)
+
+
+def build_parameter_extraction_context(
+    state: AgentState,
+    planning_result: PlanningResult,
+    tool_plan: ToolPlan,
+) -> str:
+    """构造参数提取步骤使用的精简调用与参数上下文。
+
+    此处只提供已经选定的调用，不再传入17个工具的完整规格。每个调用把可编辑
+    参数和程序管理参数分开，避免模型把路径、输入文件或上游产物当作普通参数。
+    """
+
+    sections: list[str] = []
+
+    # 最新修改意见具有最高优先级；没有修改意见时使用当前轮原始请求。
+    user_confirmation = state.get("current_user_confirmation")
+    if user_confirmation is not None and user_confirmation.revision_request:
+        sections.append(
+            f"User revision request:\n{user_confirmation.revision_request.strip()}"
+        )
+
+    current_user_message = state.get("current_user_message")
+    if current_user_message:
+        sections.append(f"Current user request:\n{current_user_message.strip()}")
+
+    # 历史摘要只能辅助消解“仍按之前参数”等引用，不允许它引入跨轮文件路径。
+    user_message_summary = state.get("user_message_summary")
+    if user_message_summary:
+        sections.append(f"Previous user request summary:\n{user_message_summary.strip()}")
+
+    tool_specs = load_enzywizard_tool_specs()
+    planned_call_contexts: list[dict[str, Any]] = []
+    for call in tool_plan.calls:
+        tool_spec = tool_specs[call.tool_name]
+        serialized_arguments = call.model_dump(mode="json")["arguments"]
+        required_parameter_names = {
+            argument["name"] for argument in tool_spec.get("required_arguments", [])
+        }
+        optional_specs = {
+            argument["name"]: argument
+            for argument in tool_spec.get("optional_arguments", [])
+        }
+
+        # 所有 required 参数和特定可选输入参数均由程序管理。参数值可能是上游
+        # ToolOutputReference，model_dump 会把引用稳定序列化为 JSON 对象。
+        program_managed_parameter_names = required_parameter_names | (
+            set(optional_specs) & PROGRAM_MANAGED_OPTIONAL_PARAMETERS
+        )
+        program_managed_parameters = {
+            parameter_name: serialized_arguments.get(parameter_name)
+            for parameter_name in sorted(program_managed_parameter_names)
+            if parameter_name in serialized_arguments
+        }
+
+        editable_parameters = []
+        for parameter_name, parameter_spec in optional_specs.items():
+            if parameter_name in PROGRAM_MANAGED_OPTIONAL_PARAMETERS:
+                continue
+            editable_parameters.append(
+                {
+                    "parameter_name": parameter_name,
+                    "python_type": parameter_spec["python_type"],
+                    "current_value": serialized_arguments.get(parameter_name),
+                    "allowed_values": parameter_spec.get("allowed_values"),
+                    # 精确范围来自工具 service 的现有校验，并由最终程序校验复核。
+                    "validation_rule": PARAMETER_VALUE_CONSTRAINTS.get(
+                        parameter_name,
+                        "Use the value type and parameter description.",
+                    ),
+                    "description": parameter_spec["description"],
+                }
+            )
+
+        supported_profiles = sorted(
+            PARAMETER_PROFILE_VALUES.get(call.tool_name, {})
+        )
+        planned_call_contexts.append(
+            {
+                "step_index": call.step_index,
+                "tool_name": call.tool_name,
+                "side": call.side,
+                "program_managed_parameters": program_managed_parameters,
+                "editable_parameters": editable_parameters,
+                "supported_profiles": supported_profiles,
+            }
+        )
+
+    # default=str 只处理 Path 等展示类型；Pydantic 子模型已经由 model_dump 转换。
+    serialized_calls = json.dumps(
+        planned_call_contexts,
+        ensure_ascii=False,
+        indent=2,
+        default=str,
+    )
+    sections.append(f"Planned calls and parameter policy:\n{serialized_calls}")
+
+    planning_context = {
+        "turn_id": planning_result.turn_id,
+        "plan_id": planning_result.plan_id,
+        "purpose_type": planning_result.purpose_type,
+    }
+    sections.append(
+        "Current planning identifiers:\n"
+        + json.dumps(planning_context, ensure_ascii=False, indent=2)
+    )
 
     return "\n\n".join(sections)

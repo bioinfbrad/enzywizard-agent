@@ -185,6 +185,7 @@ def run_agent_service(
 
     print("[INFO] Agent parameter validation finished")
 
-    # 当前开发阶段仅验证图能够构建；完整 Planning 后再接入 invoke 和中断恢复。
+    # Planning 已可生成完整 ToolPlan；正式 graph.invoke 仍需等待用户确认 interrupt
+    # 和 Tool Calling 节点实现后接入，避免当前空节点被误当成可执行流程。
     build_graph()
     return True

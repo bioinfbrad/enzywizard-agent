@@ -135,7 +135,8 @@ def determine_preparation_tools(
     cleaned_files = state.get("cleaned_files")
 
     if purpose_type == "single_protein_analysis":
-        # 单蛋白基础状态要求既有可信结构，也有 integrate 需要的 clean report。
+        # 完整单蛋白清理状态必须同时包含结构、FASTA 和 clean report，确保后续
+        # embedding、conservation 和 integrate 都能直接复用。
         cleaned_structure_available = bool(
             cleaned_files is not None
             and (
@@ -147,9 +148,16 @@ def determine_preparation_tools(
         clean_report_available = bool(
             cleaned_files is not None and cleaned_files.single_clean_report_file
         )
+        cleaned_fasta_available = bool(
+            cleaned_files is not None and cleaned_files.single_cleaned_fasta_file
+        )
 
         # 完整清理结果可直接复用，不重复运行 clean。
-        if cleaned_structure_available and clean_report_available:
+        if (
+            cleaned_structure_available
+            and cleaned_fasta_available
+            and clean_report_available
+        ):
             return [], None
 
         # 清理结果不完整但当前有原始结构时，由程序强制加入 clean。
@@ -162,7 +170,8 @@ def determine_preparation_tools(
             "or a current structure_file that enzywizard-clean can process."
         )
 
-    # WT/MUT 基础状态必须同时具有两侧结构、配对报告和标准化替换。
+    # WT/MUT 完整基础状态必须同时具有两侧结构、两侧 FASTA、配对报告和
+    # 标准化替换，才能覆盖所有后续配对分析工具。
     paired_cleaned_inputs_available = bool(
         cleaned_files is not None
         and (
@@ -177,6 +186,8 @@ def determine_preparation_tools(
         )
         and cleaned_files.mut_clean_report_file
         and cleaned_files.cleaned_amino_acid_substitution
+        and cleaned_files.wt_cleaned_fasta_file
+        and cleaned_files.mut_cleaned_fasta_file
     )
     if paired_cleaned_inputs_available:
         return [], None

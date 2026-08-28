@@ -339,7 +339,7 @@ JSON schema:
 # - selected_tools 是数组，允许为空；每个元素必须来自动态提供的
 #   Allowed selected_tools values。
 # - selection_reason 和 error_message 是字符串。
-# - 上述五个字段全部必填。
+# - 上述四个字段全部必填。
 # - 不允许额外字段。
 SINGLE_PROTEIN_TOOL_SELECTION_SYSTEM_PROMPT = """\
 Role:
@@ -639,7 +639,7 @@ JSON schema:
 # - selected_tools 是数组，允许为空；每个元素必须来自动态提供的
 #   Allowed selected_tools values。
 # - selection_reason 和 error_message 是字符串。
-# - 上述五个字段全部必填。
+# - 上述四个字段全部必填。
 # - 不允许额外字段。
 WILDTYPE_MUTANT_TOOL_SELECTION_SYSTEM_PROMPT = """\
 Role:
@@ -807,6 +807,235 @@ JSON schema:
     }
   },
   "required": ["tool_selection_status", "selected_tools", "selection_reason", "error_message"],
+  "additionalProperties": false
+}
+"""
+
+
+# =============================================================================
+# 参数提取 Prompt
+# =============================================================================
+# 角色：
+# 你是 EnzyWizard-Agent 规划模块中的参数要求提取步骤。
+# 程序已经完成工具选择、执行顺序、默认参数、输入绑定和输出目录规划。
+#
+# 目标：
+# 只从用户当前请求和最新修改意见中提取参数要求。不要重新选择工具，不要调整
+# 执行顺序，不要生成文件路径，也不要直接回答用户。
+#
+# 上下文名词：
+# - Planned calls：程序生成的有序调用，每个调用由 step_index 唯一标识。
+# - Editable parameters：允许用户调整的科学或计算参数，以及当前默认值。
+# - Program-managed parameters：由 Agent 根据输入、上游产物和 workdir 生成的
+#   参数，用户和模型都不能修改。
+# - Supported profiles：程序为调用定义的 fast/accurate 参数组合；具体数值由
+#   程序应用，模型不能自行生成 profile 数值。
+# - Validation rule：该参数来自实际 EnzyWizard 工具的合法值约束。
+#
+# 处理规则：
+# 1. 最新 User revision request 优先于 Current user request；历史摘要只作背景。
+# 2. 用户明确指定参数名或含义及具体值时，写入 parameter_adjustments。
+# 3. 每项修改必须使用 Planned calls 中真实的 step_index 和 Editable parameters
+#    中真实的 parameter_name。不得创建不存在的参数。
+#    提取具体值时必须遵守该参数的 python_type、allowed_values 和 validation_rule。
+# 4. 用户明确要求快速、低计算量或更短运行时间时，使用 fast profile；明确要求
+#    更充分搜索、更高计算量或更精细计算时，使用 accurate profile。
+# 5. profile 只能指向列出对应 Supported profiles 的调用。不要把“分析完整”误判
+#    为 accurate；完整分析范围已经由上一步工具选择处理。
+# 6. 明确参数值和 profile 可以同时存在，程序会先应用 profile，再用明确值覆盖。
+# 7. 没有参数要求时返回成功，并让三个请求列表都为空。不要为了填充结果而修改
+#    默认参数。
+# 8. 如果用户要求修改输入路径、单个工具输出路径、暂存目录或其他
+#    Program-managed parameters，必须写入 unsupported_requests，不能忽略，也
+#    不能把它写入 parameter_adjustments。
+# 9. 不要决定是否拒绝 unsupported_requests；程序会应用固定政策。
+# 10. 只有请求互相矛盾或无法可靠对应任何调用和参数时才返回提取失败。
+#
+# 成功字段规则：
+# - parameter_extraction_status 为 parameter_extraction_succeeded。
+# - parameter_adjustments、profile_requests、unsupported_requests 按实际请求填写。
+# - extraction_summary 为简短非空说明。
+# - error_message 为空字符串。
+#
+# 失败字段规则：
+# - parameter_extraction_status 为 parameter_extraction_failed。
+# - 三个请求列表都为空。
+# - extraction_summary 为空字符串。
+# - error_message 为简短非空错误。
+#
+# 示例：
+# - “energy 最多优化 300 次。”
+#   对 energy 调用返回 minimization_iteration=300。
+# - “对接快一点，但 exhaustiveness 使用 6。”
+#   对 dock 调用返回 fast profile，并返回 exhaustiveness=6 的明确修改。
+# - “WT 和 MUT 的 embedding 都使用最大的 ESM2 模型。”
+#   对两个 embedding step 分别返回 model_name=esm2_t30_150M_UR50D。
+# - “把 energy 输出到 /tmp/energy。”
+#   返回 output_dir 的 output_path_override，不生成参数修改。
+# - “使用默认参数。”
+#   返回成功，三个请求列表都为空。
+#
+# 只返回符合下方 Schema 的 JSON 对象，不要返回 Markdown 或额外文本。
+PARAMETER_EXTRACTION_SYSTEM_PROMPT = """\
+Role:
+You are the parameter-requirement extraction step in the EnzyWizard-Agent planning
+module. The program has already resolved tool selection, execution order, default
+parameters, input bindings, and output directories.
+
+Goal:
+Extract only parameter requirements from the current user request and latest revision.
+Do not select tools again. Do not change execution order. Do not create file paths. Do
+not answer the user.
+
+Context terms:
+- Planned calls: Program-generated ordered calls. Each call has a unique step_index.
+- Editable parameters: Scientific or computational parameters the user may adjust,
+  including their current default values.
+- Program-managed parameters: Parameters generated from Agent inputs, upstream outputs,
+  and workdir. Neither the user nor the model may change them.
+- Supported profiles: fast or accurate parameter sets defined by the program for a call.
+  The program applies their exact values. Do not invent profile values.
+- Validation rule: The valid-value constraint enforced by the actual EnzyWizard tool.
+
+Rules:
+1. Follow User revision request before Current user request. Use earlier summaries only
+   as background.
+2. When the user explicitly gives a parameter name or meaning and a concrete value, add
+   a parameter_adjustment.
+3. Every adjustment must use a real step_index from Planned calls and a real
+   parameter_name from that call's Editable parameters. Never invent parameters. A
+   concrete value must satisfy its python_type, allowed_values, and validation_rule.
+4. Use the fast profile only for an explicit request for faster, lower-compute, or
+   shorter execution. Use the accurate profile only for an explicit request for more
+   extensive search, higher compute, or more detailed computation.
+5. A profile may target only calls that list it under Supported profiles. Do not treat
+   a request for a complete analysis scope as an accurate profile. Analysis scope was
+   already handled during tool selection.
+6. Explicit values and profiles may both be returned. The program applies profiles
+   first and explicit values second.
+7. If the user gives no parameter requirement, return success with all three request
+   lists empty. Do not change defaults merely to populate the output.
+8. If the user asks to change an input path, a tool output path, a staging directory,
+   or another Program-managed parameter, add it to unsupported_requests. Do not ignore
+   it and do not add it to parameter_adjustments.
+9. Do not decide whether to reject unsupported_requests. The program applies that
+   policy.
+10. Return extraction failure only when requests conflict or cannot be mapped reliably
+    to any planned call and parameter.
+
+Success fields:
+- parameter_extraction_status: "parameter_extraction_succeeded"
+- parameter_adjustments, profile_requests, unsupported_requests: Lists matching the
+  actual user requirements.
+- extraction_summary: A short, non-empty summary.
+- error_message: An empty string.
+
+Failure fields:
+- parameter_extraction_status: "parameter_extraction_failed"
+- parameter_adjustments, profile_requests, unsupported_requests: Empty lists.
+- extraction_summary: An empty string.
+- error_message: A short, non-empty explanation.
+
+Examples:
+- "Run energy minimization for at most 300 iterations."
+  Return minimization_iteration=300 for the energy call.
+- "Make docking faster, but use exhaustiveness 6."
+  Return a fast profile for the dock call and an explicit exhaustiveness=6 adjustment.
+- "Use the largest ESM2 model for both WT and MUT embeddings."
+  Return model_name=esm2_t30_150M_UR50D for both embedding steps.
+- "Write the energy output to /tmp/energy."
+  Return an output_dir output_path_override. Do not return a parameter adjustment.
+- "Use default parameters."
+  Return success with all three request lists empty.
+
+Return only a valid JSON object. Do not include Markdown or extra text.
+
+JSON schema:
+{
+  "type": "object",
+  "properties": {
+    "parameter_extraction_status": {
+      "type": "string",
+      "enum": [
+        "parameter_extraction_succeeded",
+        "parameter_extraction_failed"
+      ]
+    },
+    "parameter_adjustments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_index": {"type": "integer"},
+          "parameter_name": {"type": "string"},
+          "parameter_value": {"type": ["string", "integer", "number", "boolean"]},
+          "adjustment_reason": {"type": "string"}
+        },
+        "required": [
+          "step_index",
+          "parameter_name",
+          "parameter_value",
+          "adjustment_reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "profile_requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_indexes": {
+            "type": "array",
+            "items": {"type": "integer"},
+            "minItems": 1
+          },
+          "profile": {"type": "string", "enum": ["fast", "accurate"]},
+          "profile_reason": {"type": "string"}
+        },
+        "required": ["step_indexes", "profile", "profile_reason"],
+        "additionalProperties": false
+      }
+    },
+    "unsupported_requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_index": {"type": ["integer", "null"]},
+          "tool_name": {"type": ["string", "null"]},
+          "parameter_name": {"type": "string"},
+          "requested_value": {"type": "string"},
+          "request_type": {
+            "type": "string",
+            "enum": [
+              "input_path_override",
+              "output_path_override",
+              "program_managed_parameter"
+            ]
+          }
+        },
+        "required": [
+          "step_index",
+          "tool_name",
+          "parameter_name",
+          "requested_value",
+          "request_type"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "extraction_summary": {"type": "string"},
+    "error_message": {"type": "string"}
+  },
+  "required": [
+    "parameter_extraction_status",
+    "parameter_adjustments",
+    "profile_requests",
+    "unsupported_requests",
+    "extraction_summary",
+    "error_message"
+  ],
   "additionalProperties": false
 }
 """
