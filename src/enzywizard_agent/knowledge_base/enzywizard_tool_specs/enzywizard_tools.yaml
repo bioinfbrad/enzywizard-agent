@@ -1097,7 +1097,7 @@ tools:
       - Without substrate inputs, the tool calculates intra-protein interactions only.
     output_files:
       - artifact_type: interaction_report_json
-        filename_pattern: interaction_report_{protein_name}[_{substrate_names}].json
+        filename_pattern: interaction_report_*.json
         pattern_description: "Protein-only mode omits the optional substrate suffix; substrate mode appends the resolved substrate names."
         description: JSON report containing intra-protein interactions and, in substrate mode, protein-substrate interactions.
       - artifact_type: log_file
@@ -1458,7 +1458,8 @@ tools:
         pattern_description: "{protein_name} is derived from the cleaned input structure file stem."
         description: Edge-only JSON graph output.
       - artifact_type: optional_intermediate_outputs
-        filename_pattern: multiple batch side-report and intermediate files
+        filename_pattern: "**/*"
+        required: false
         pattern_description: Written only when --save_extra_outputs is enabled or during internal workflow execution.
         description: Cleaned MSA, HMM, substrate SDF, docking, interaction, and side-report outputs.
       - artifact_type: log_file
@@ -1763,7 +1764,8 @@ tools:
         pattern_description: "{mut_protein_name} is derived from the cleaned MUT structure stem."
         description: MUT edge-only graph JSON.
       - artifact_type: optional_intermediate_outputs
-        filename_pattern: multiple paired side-report and intermediate files
+        filename_pattern: "**/*"
+        required: false
         pattern_description: Written when --save_extra_outputs is enabled or during internal workflow execution.
         description: WT/MUT side reports, cleaned MSA, HMM, substrate SDF, docking, and interaction outputs.
       - artifact_type: log_file

@@ -105,6 +105,7 @@ def select_single_protein_tools(
         extra_body={"enable_thinking": False},
     )
     # 动态模型把本次候选名称写入 selected_tools 的 JSON Schema 枚举。
+    # 用于根据当前允许选择的工具，动态创建一个更严格的 Pydantic 输出模型
     output_model = create_tool_selection_output_model(
         set(analysis_tool_specs),
         purpose_type,

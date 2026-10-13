@@ -14,6 +14,8 @@ def build_graph():
     """按照既定模块流向创建并编译 EnzyWizard-Agent 状态图。"""
 
     # StateGraph 使用 AgentState 作为所有节点共享的数据结构。
+    # StateGraph(AgentState)并没有真正建我们定义的图状态对象，只是让图状态机知道这个图类中有哪些状态变量，
+    # 后续还要编译图，编译图就是一个可以用的agent了，运行它时传入我们初始化的图状态对象
     graph = StateGraph(AgentState)
 
     # 节点名称同时也是条件边映射中的目标标识。

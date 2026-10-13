@@ -270,12 +270,14 @@ class ToolOutputReference(BaseModel):
     json_field: str | None
 
 
-class ExpectedToolOutput(BaseModel):
-    """描述一次工具调用预计产生的一类文件。"""
+class ToolOutputArtifact(BaseModel):
+    """描述一次工具调用可能产生并需要追踪的一类文件。"""
 
     artifact_type: str
     path_pattern: str
     side: ToolCallSide
+    # 必需产物缺失表示工具执行不完整；可选产物缺失不影响执行成功。
+    required: bool
 
 
 class ReportStagingRule(BaseModel):
@@ -311,8 +313,8 @@ class ToolCall(BaseModel):
     # 调用 CLI 前解析 ToolOutputReference。
     arguments: dict[str, ToolArgumentValue]
 
-    # expected_outputs 用于执行后扫描产物；staging_rules 仅供整合工具使用。
-    expected_outputs: list[ExpectedToolOutput]
+    # output_artifacts 声明全部可能产物；staging_rules 仅供整合工具使用。
+    output_artifacts: list[ToolOutputArtifact]
     staging_rules: list[ReportStagingRule]
 
     # 解释当前计划为什么需要这次调用。

@@ -18,6 +18,7 @@ def planning_node(state: AgentState) -> AgentState:
 
     # 每次进入 Planning 都表示一次新的计划尝试；同一轮用户要求修改计划时
     # turn_id 不变，但 plan_id 递增，确保目录和产物不会覆盖上一版计划。
+    # turn_id 在这一轮完整完成后再加
     plan_id = state.get("current_plan_id", 0) + 1
     state["current_plan_id"] = plan_id
 

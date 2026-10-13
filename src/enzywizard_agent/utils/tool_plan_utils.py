@@ -7,11 +7,11 @@ from pathlib import Path
 from typing import Any
 
 from ..data_models.planning import (
-    ExpectedToolOutput,
     ParameterExtractionOutput,
     ReportStagingRule,
     ToolCall,
     ToolCallSide,
+    ToolOutputArtifact,
     ToolOutputReference,
     ToolPlan,
     PlanningResult,
@@ -326,29 +326,28 @@ def get_default_optional_arguments(tool_spec: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def build_expected_outputs(
+def build_output_artifacts(
     tool_name: str,
     execution_dir: Path,
     side: ToolCallSide,
     tool_spec: dict[str, Any],
-) -> list[ExpectedToolOutput]:
-    """把 YAML 输出文件模式绑定到当前工具执行目录。"""
+) -> list[ToolOutputArtifact]:
+    """把 YAML 声明的全部输出产物绑定到当前工具执行目录。"""
 
-    expected_outputs: list[ExpectedToolOutput] = []
+    output_artifacts: list[ToolOutputArtifact] = []
     for output_spec in tool_spec.get("output_files", []):
         artifact_type = output_spec["artifact_type"]
         filename_pattern = str(output_spec["filename_pattern"])
 
         # 花括号字段只能在工具运行后由真实蛋白名或底物名确定，计划阶段以 glob
-        # 通配符表达；固定文件名仍保留为精确路径。
+        # 通配符表达；YAML 中已经写成标准 glob 的模式则直接保留。
         filename_pattern = re.sub(r"\{[^{}]+\}", "*", filename_pattern)
-        filename_pattern = filename_pattern.replace("[_*]", "*")
-        if filename_pattern.startswith("multiple "):
-            filename_pattern = "**/*"
 
         # mut-batch 和 mut-integrate 在调用目录下使用两个输出子目录，因此采用
-        # 递归模式；其他工具的输出直接位于 tool_execution_dir。
-        if tool_name in ("enzywizard-mut-batch", "enzywizard-mut-integrate"):
+        # 递归模式。YAML 已明确提供递归 glob 时不能再次添加递归层。
+        if filename_pattern.startswith("**/"):
+            path_pattern = str(execution_dir / filename_pattern)
+        elif tool_name in ("enzywizard-mut-batch", "enzywizard-mut-integrate"):
             path_pattern = str(execution_dir / "**" / filename_pattern)
         else:
             path_pattern = str(execution_dir / filename_pattern)
@@ -367,14 +366,15 @@ def build_expected_outputs(
         elif side == "shared" and artifact_type.startswith("mut_"):
             output_side = "mut"
 
-        expected_outputs.append(
-            ExpectedToolOutput(
+        output_artifacts.append(
+            ToolOutputArtifact(
                 artifact_type=artifact_type,
                 path_pattern=path_pattern,
                 side=output_side,
+                required=bool(output_spec.get("required", True)),
             )
         )
-    return expected_outputs
+    return output_artifacts
 
 
 def create_tool_output_reference(
@@ -384,20 +384,20 @@ def create_tool_output_reference(
 ) -> ToolOutputReference:
     """从上游调用的预期产物中创建可延迟解析的参数引用。"""
 
-    matching_outputs = [
-        output
-        for output in source_call.expected_outputs
-        if output.artifact_type == artifact_type
+    matching_artifacts = [
+        artifact
+        for artifact in source_call.output_artifacts
+        if artifact.artifact_type == artifact_type
     ]
-    if len(matching_outputs) != 1:
+    if len(matching_artifacts) != 1:
         raise ValueError(
-            f"Step {source_call.step_index} does not provide exactly one expected "
+            f"Step {source_call.step_index} does not declare exactly one output "
             f"artifact of type {artifact_type}."
         )
     return ToolOutputReference(
         source_step_index=source_call.step_index,
         artifact_type=artifact_type,
-        expected_path_pattern=matching_outputs[0].path_pattern,
+        expected_path_pattern=matching_artifacts[0].path_pattern,
         json_field=json_field,
     )
 
@@ -433,7 +433,7 @@ def create_tool_call(
         side=side,
         tool_execution_dir=str(execution_dir),
         arguments=arguments,
-        expected_outputs=build_expected_outputs(
+        output_artifacts=build_output_artifacts(
             tool_name,
             execution_dir,
             side,
@@ -541,12 +541,13 @@ def build_single_protein_tool_plan(
                 f"clean_report_{raw_name}.json"
             ),
         }
-        for expected_output in clean_call.expected_outputs:
-            exact_name = exact_clean_outputs.get(expected_output.artifact_type)
+        for output_artifact in clean_call.output_artifacts:
+            exact_name = exact_clean_outputs.get(output_artifact.artifact_type)
             if exact_name is not None:
-                expected_output.path_pattern = str(execution_dir / exact_name)
+                output_artifact.path_pattern = str(execution_dir / exact_name)
         calls.append(clean_call)
 
+        # 创建延迟引用，就是把上一级call输入进去，之后执行这个call时，用上一步call的实际输出文件,再将这步ToolOutputReference替换为真实路径
         cleaned_structure: Any = create_tool_output_reference(
             clean_call,
             "cleaned_structure_cif",
@@ -851,10 +852,10 @@ def build_wildtype_mutant_tool_plan(
                 f"mut_clean_report_{wt_name}_to_{mut_name}.json"
             ),
         }
-        for expected_output in mut_clean_call.expected_outputs:
-            exact_name = exact_outputs.get(expected_output.artifact_type)
+        for output_artifact in mut_clean_call.output_artifacts:
+            exact_name = exact_outputs.get(output_artifact.artifact_type)
             if exact_name is not None:
-                expected_output.path_pattern = str(execution_dir / exact_name)
+                output_artifact.path_pattern = str(execution_dir / exact_name)
         calls.append(mut_clean_call)
 
         wt_structure: Any = create_tool_output_reference(

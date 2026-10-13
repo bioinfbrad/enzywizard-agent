@@ -1,0 +1,1010 @@
+{
+  "cases": [
+    {
+      "case_id": "other_scientific_question",
+      "message": "Explain why glycine often increases local protein backbone flexibility.",
+      "inputs": {},
+      "expected": {
+        "purpose_type": "other",
+        "route": "tool_unused",
+        "planning_flag": "tool_unused",
+        "exact_selected_tools": [],
+        "exact_call_sequence": []
+      }
+    },
+    {
+      "case_id": "single_clean_only",
+      "message": "Clean this enzyme structure only. Do not run any downstream analysis.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "exact_selected_tools": [
+          "enzywizard-clean"
+        ],
+        "exact_call_sequence": [
+          "enzywizard-clean:single"
+        ]
+      }
+    },
+    {
+      "case_id": "single_binding_pocket",
+      "message": "Identify the binding pockets of this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-pocket",
+          "enzywizard-integrate"
+        ],
+        "exact_call_sequence": [
+          "enzywizard-clean:single",
+          "enzywizard-pocket:single",
+          "enzywizard-integrate:single"
+        ]
+      }
+    },
+    {
+      "case_id": "single_conservation",
+      "message": "Analyze residue conservation for this enzyme using the supplied alignment.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "msa_file": "test_inputs/jhmm_3GP6.sto"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-conservation",
+          "enzywizard-integrate"
+        ],
+        "exact_call_sequence": [
+          "enzywizard-clean:single",
+          "enzywizard-conservation:single",
+          "enzywizard-integrate:single"
+        ]
+      }
+    },
+    {
+      "case_id": "single_substrate_docking_interaction",
+      "message": "Process glucose, dock it to this enzyme, and analyze protein-substrate interactions.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "substrate_name": "glucose"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-substrate",
+          "enzywizard-dock",
+          "enzywizard-interaction",
+          "enzywizard-integrate"
+        ],
+        "exact_call_sequence": [
+          "enzywizard-clean:single",
+          "enzywizard-substrate:single",
+          "enzywizard-dock:single",
+          "enzywizard-interaction:single",
+          "enzywizard-integrate:single"
+        ]
+      }
+    },
+    {
+      "case_id": "single_fast_energy",
+      "message": "Run a fast energy analysis for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-energy",
+          "enzywizard-integrate"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-energy",
+            "side": "single",
+            "parameter_name": "minimization_iteration",
+            "value": 25
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_complete_analysis",
+      "message": "Run the complete EnzyWizard analysis workflow for this enzyme and generate the full integrated graph.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "msa_file": "test_inputs/jhmm_3GP6.sto",
+        "substrate_name": "glucose"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "exact_selected_tools": [
+          "enzywizard-clean",
+          "enzywizard-batch"
+        ],
+        "exact_call_sequence": [
+          "enzywizard-clean:single",
+          "enzywizard-batch:single"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_binding_pocket_comparison",
+      "message": "Compare the binding pockets of the wild-type enzyme and the S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-pocket",
+          "enzywizard-mut-integrate"
+        ],
+        "exact_call_sequence": [
+          "enzywizard-mut-clean:shared",
+          "enzywizard-pocket:wt",
+          "enzywizard-pocket:mut",
+          "enzywizard-mut-integrate:shared"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_conservation_comparison",
+      "message": "Compare residue conservation between the wild type and the S70G mutant using both alignments.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "msa_file": "test_inputs/jhmm_1ZG4_WT.sto",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "mut_msa_file": "test_inputs/jhmm_1ZG6_S70G.sto",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-conservation",
+          "enzywizard-mut-integrate"
+        ],
+        "exact_call_sequence": [
+          "enzywizard-mut-clean:shared",
+          "enzywizard-conservation:wt",
+          "enzywizard-conservation:mut",
+          "enzywizard-mut-integrate:shared"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_complete_analysis",
+      "message": "Run the complete paired analysis for the wild-type enzyme and the S70G mutant and generate the full comparative graph.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "msa_file": "test_inputs/jhmm_1ZG4_WT.sto",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "mut_msa_file": "test_inputs/jhmm_1ZG6_S70G.sto",
+        "substrate_name": "glucose",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "exact_selected_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-mut-batch"
+        ],
+        "exact_call_sequence": [
+          "enzywizard-mut-clean:shared",
+          "enzywizard-mut-batch:shared"
+        ]
+      }
+    },
+    {
+      "case_id": "other_agent_help",
+      "message": "What inputs, analysis capabilities, and workflows does this agent support?",
+      "inputs": {},
+      "expected": {
+        "purpose_type": "other",
+        "route": "tool_unused",
+        "planning_flag": "tool_unused",
+        "exact_selected_tools": [],
+        "exact_call_sequence": []
+      }
+    },
+    {
+      "case_id": "other_exit_request",
+      "message": "Stop the analysis and end this session.",
+      "inputs": {},
+      "expected": {
+        "purpose_type": "other",
+        "route": "tool_unused",
+        "planning_flag": "tool_unused",
+        "exact_selected_tools": [],
+        "exact_call_sequence": []
+      }
+    },
+    {
+      "case_id": "other_scientific_concept",
+      "message": "What is a catalytic residue in an enzyme?",
+      "inputs": {},
+      "expected": {
+        "purpose_type": "other",
+        "route": "tool_unused",
+        "planning_flag": "tool_unused",
+        "exact_selected_tools": [],
+        "exact_call_sequence": []
+      }
+    },
+    {
+      "case_id": "other_no_run_interpretation",
+      "message": "Explain what a negative docking score generally means without running any tools.",
+      "inputs": {},
+      "expected": {
+        "purpose_type": "other",
+        "route": "tool_unused",
+        "planning_flag": "tool_unused",
+        "exact_selected_tools": [],
+        "exact_call_sequence": []
+      }
+    },
+    {
+      "case_id": "single_aaprops",
+      "message": "Analyze the amino-acid residue properties of this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-aaprops",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_hydrocluster",
+      "message": "Identify hydrophobic residue clusters in this enzyme structure.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-hydrocluster",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_energy",
+      "message": "Calculate the residue-level energy terms for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-energy",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_flexibility",
+      "message": "Analyze residue flexibility for this protein structure.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-flexibility",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_disorder",
+      "message": "Predict intrinsically disordered regions in this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-disorder",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_embedding",
+      "message": "Generate residue-level protein language model embeddings for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-embedding",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_internal_interactions",
+      "message": "Analyze internal noncovalent interactions within this enzyme, without a substrate.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-interaction",
+          "enzywizard-integrate"
+        ],
+        "forbidden_tools": [
+          "enzywizard-substrate",
+          "enzywizard-dock"
+        ]
+      }
+    },
+    {
+      "case_id": "single_substrate_processing",
+      "message": "Process glucose and generate its substrate descriptors and conformers only.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "substrate_name": "glucose"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-substrate",
+          "enzywizard-integrate"
+        ],
+        "forbidden_tools": [
+          "enzywizard-dock",
+          "enzywizard-interaction"
+        ]
+      }
+    },
+    {
+      "case_id": "single_docking",
+      "message": "Dock glucose to this enzyme and report the docking results.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "substrate_name": "glucose"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-substrate",
+          "enzywizard-dock",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_residue_energy_combo",
+      "message": "Analyze amino-acid properties and residue energy for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-aaprops",
+          "enzywizard-energy",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_dynamics_combo",
+      "message": "Analyze hydrophobic clusters, flexibility, and disorder for this protein.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-hydrocluster",
+          "enzywizard-flexibility",
+          "enzywizard-disorder",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_pocket_interaction_combo",
+      "message": "Identify binding pockets and analyze internal protein interactions for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-pocket",
+          "enzywizard-interaction",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_conservation_embedding_combo",
+      "message": "Analyze sequence conservation and generate residue embeddings for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "msa_file": "test_inputs/jhmm_3GP6.sto"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-clean",
+          "enzywizard-conservation",
+          "enzywizard-embedding",
+          "enzywizard-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "single_complete_without_optional_inputs",
+      "message": "Run the complete standard analysis and generate the full integrated graph for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "exact_selected_tools": [
+          "enzywizard-clean",
+          "enzywizard-batch"
+        ]
+      }
+    },
+    {
+      "case_id": "single_clean_custom_ph",
+      "message": "Clean this enzyme structure only at pH 6.5.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "exact_selected_tools": [
+          "enzywizard-clean"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-clean",
+            "side": "single",
+            "parameter_name": "pH",
+            "value": 6.5
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_clean_without_hydrogens",
+      "message": "Clean this enzyme structure only and do not add hydrogens.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "exact_selected_tools": [
+          "enzywizard-clean"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-clean",
+            "side": "single",
+            "parameter_name": "add_H",
+            "value": false
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_energy_custom_iterations",
+      "message": "Run energy analysis with exactly 250 minimization iterations.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-energy"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-energy",
+            "side": "single",
+            "parameter_name": "minimization_iteration",
+            "value": 250
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_accurate_energy",
+      "message": "Run an accurate energy analysis for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-energy"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-energy",
+            "side": "single",
+            "parameter_name": "minimization_iteration",
+            "value": 500
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_fast_flexibility",
+      "message": "Run a fast flexibility analysis for this protein.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-flexibility"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-flexibility",
+            "side": "single",
+            "parameter_name": "n_modes",
+            "value": 10
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_accurate_embedding",
+      "message": "Generate accurate residue embeddings for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-embedding"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-embedding",
+            "side": "single",
+            "parameter_name": "model_name",
+            "value": "esm2_t30_150M_UR50D"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_disorder_custom_parameters",
+      "message": "Analyze disorder with window size 15 and minimum region length 7.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-disorder"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-disorder",
+            "side": "single",
+            "parameter_name": "window_size",
+            "value": 15
+          },
+          {
+            "tool_name": "enzywizard-disorder",
+            "side": "single",
+            "parameter_name": "min_region_length",
+            "value": 7
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_pocket_custom_parameters",
+      "message": "Find binding pockets using minimum radius 2.0, maximum radius 5.5, and minimum volume 80.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-pocket"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-pocket",
+            "side": "single",
+            "parameter_name": "min_rad",
+            "value": 2.0
+          },
+          {
+            "tool_name": "enzywizard-pocket",
+            "side": "single",
+            "parameter_name": "max_rad",
+            "value": 5.5
+          },
+          {
+            "tool_name": "enzywizard-pocket",
+            "side": "single",
+            "parameter_name": "min_volume",
+            "value": 80.0
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_fast_docking",
+      "message": "Quickly dock glucose to this enzyme using the fast profile.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "substrate_name": "glucose"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-substrate",
+          "enzywizard-dock"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-dock",
+            "side": "single",
+            "parameter_name": "max_docking_attempt_num",
+            "value": 10
+          },
+          {
+            "tool_name": "enzywizard-dock",
+            "side": "single",
+            "parameter_name": "exhaustiveness",
+            "value": 4
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_aaprops_comparison",
+      "message": "Compare amino-acid residue properties between the wild type and the S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-aaprops",
+          "enzywizard-mut-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_energy_comparison",
+      "message": "Compare residue energy between the wild-type enzyme and the S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-energy",
+          "enzywizard-mut-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_flexibility_comparison",
+      "message": "Compare residue flexibility between the wild type and mutant protein.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-flexibility",
+          "enzywizard-mut-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_disorder_comparison",
+      "message": "Compare disordered regions between this wild-type enzyme and its S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-disorder",
+          "enzywizard-mut-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_embedding_comparison",
+      "message": "Generate and compare residue embeddings for the wild type and S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-embedding",
+          "enzywizard-mut-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_internal_interaction_comparison",
+      "message": "Compare internal protein interactions between the wild type and mutant, without a substrate.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-interaction",
+          "enzywizard-mut-integrate"
+        ],
+        "forbidden_tools": [
+          "enzywizard-substrate",
+          "enzywizard-dock"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_substrate_docking_comparison",
+      "message": "Dock glucose to both the wild type and S70G mutant and compare their protein-substrate interactions.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "substrate_name": "glucose",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-substrate",
+          "enzywizard-dock",
+          "enzywizard-interaction",
+          "enzywizard-mut-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_multi_property_comparison",
+      "message": "Compare amino-acid properties, residue energy, and binding pockets between the wild type and S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-mut-clean",
+          "enzywizard-aaprops",
+          "enzywizard-energy",
+          "enzywizard-pocket",
+          "enzywizard-mut-integrate"
+        ]
+      }
+    },
+    {
+      "case_id": "mutant_fast_energy_comparison",
+      "message": "Run a fast residue-energy comparison between the wild type and S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_plan_generated",
+        "planning_flag": "tool_plan_generated",
+        "required_tools": [
+          "enzywizard-energy"
+        ],
+        "parameter_values": [
+          {
+            "tool_name": "enzywizard-energy",
+            "side": "wt",
+            "parameter_name": "minimization_iteration",
+            "value": 25
+          },
+          {
+            "tool_name": "enzywizard-energy",
+            "side": "mut",
+            "parameter_name": "minimization_iteration",
+            "value": 25
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "single_missing_structure",
+      "message": "Identify binding pockets in my enzyme structure.",
+      "inputs": {},
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_unused",
+        "planning_flag": "tool_selection_failed",
+        "exact_selected_tools": [],
+        "exact_call_sequence": []
+      }
+    },
+    {
+      "case_id": "mutant_missing_required_inputs",
+      "message": "Compare binding pockets between the wild-type enzyme and its S70G mutant.",
+      "inputs": {},
+      "expected": {
+        "purpose_type": "wildtype_mutant_comparison",
+        "route": "tool_unused",
+        "planning_flag": "tool_selection_failed",
+        "exact_selected_tools": [],
+        "exact_call_sequence": []
+      }
+    },
+    {
+      "case_id": "single_missing_msa_for_conservation",
+      "message": "Analyze residue conservation for this enzyme using an alignment.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_unused",
+        "planning_flag": "tool_selection_failed",
+        "exact_call_sequence": []
+      }
+    },
+    {
+      "case_id": "single_external_output_override",
+      "message": "Identify binding pockets and write the pocket output directly to /tmp/my-pocket-results.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "expected": {
+        "purpose_type": "single_protein_analysis",
+        "route": "tool_unused",
+        "planning_flag": "planning_failed",
+        "required_tools": [
+          "enzywizard-pocket"
+        ],
+        "exact_call_sequence": []
+      }
+    }
+  ]
+}
