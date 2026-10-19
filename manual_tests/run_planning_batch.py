@@ -9,6 +9,7 @@ import os
 from contextlib import redirect_stdout
 from datetime import datetime, timezone
 from pathlib import Path
+import time
 from typing import Any
 
 from enzywizard_agent.conf import AgentConfig
@@ -16,6 +17,8 @@ from enzywizard_agent.data_models.agent_inputs import AgentInputs
 from enzywizard_agent.data_models.artifact import CleanedFiles
 from enzywizard_agent.nodes.planning import planning_node
 from enzywizard_agent.utils.IO_utils import create_session_id, normalize_path
+
+from evaluation_utils import aggregate_usage, runtime_usage_payload
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -34,7 +37,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="LLM API key. Defaults to ENZYWIZARD_API_KEY.",
     )
     parser.add_argument("--base_url", required=True)
-    parser.add_argument("--model", default="qwen3-8b")
+    parser.add_argument("--model", default="qwen3.7-plus")
+    parser.add_argument(
+        "--reasoning_effort",
+        default=None,
+        help="Optional OpenAI-compatible reasoning effort, such as 'none'.",
+    )
     parser.add_argument("--workdir", default="/tmp/enzywizard-agent-planning-batch")
     parser.add_argument("--cases", default=str(DEFAULT_CASES_PATH))
     parser.add_argument(
@@ -104,6 +112,7 @@ def build_case_state(
     api_key: str,
     base_url: str,
     model: str,
+    reasoning_effort: str | None,
     workdir: Path,
 ) -> dict[str, Any]:
     """Build the first-turn Agent state for one Planning test case."""
@@ -129,6 +138,7 @@ def build_case_state(
             api_key=api_key,
             base_url=base_url,
             model=model,
+            reasoning_effort=reasoning_effort,
             workdir=workdir.resolve(),
             max_turns=3,
         ),
@@ -291,6 +301,7 @@ def run_case(
         args.api_key,
         args.base_url,
         args.model,
+        args.reasoning_effort,
         case_workdir,
     )
     captured_log = io.StringIO()
@@ -312,6 +323,7 @@ def run_case(
             "call_sequence": call_labels,
             "planning_result": planning_result.model_dump(mode="json"),
             "planning_log": captured_log.getvalue().splitlines(),
+            "usage": runtime_usage_payload(final_state.get("runtime_session")),
         }
     except Exception as error:
         return {
@@ -320,6 +332,7 @@ def run_case(
             "passed": False,
             "failures": [f"Unhandled test exception: {error}"],
             "planning_log": captured_log.getvalue().splitlines(),
+            "usage": runtime_usage_payload(state.get("runtime_session")),
         }
 
 
@@ -343,36 +356,76 @@ def main() -> None:
             parser.error(f"Unknown case IDs: {', '.join(sorted(unknown_ids))}")
         cases = [case for case in cases if case["case_id"] in requested_ids]
 
+    output_path = Path(args.output).expanduser().resolve()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    def save_current_results(results: list[dict[str, Any]]) -> None:
+        passed = sum(result["passed"] for result in results)
+        payload = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "model": args.model,
+            "reasoning_effort": args.reasoning_effort,
+            "cases_file": str(cases_path),
+            "summary": {
+                "total": len(results),
+                "passed": passed,
+                "failed": len(results) - passed,
+            },
+            "usage": aggregate_usage(result.get("usage") for result in results),
+            "results": results,
+        }
+        output_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+    print("[运行模式] Planning 批量语义测试", flush=True)
+    print(f"[模型] {args.model}", flush=True)
+    print(f"[推理强度] {args.reasoning_effort or '模型默认值'}", flush=True)
+    print(f"[案例数量] {len(cases)} x {args.repeat}", flush=True)
+    print(f"[运行目录] {Path(args.workdir).expanduser().resolve()}", flush=True)
+    print(f"[结果文件] {output_path}", flush=True)
+    print("[失败策略] 单个案例失败后记录错误并继续", flush=True)
+
     results: list[dict[str, Any]] = []
     should_stop = False
+    total = len(cases) * args.repeat
     for repetition in range(1, args.repeat + 1):
         for case in cases:
+            index = len(results) + 1
+            print(
+                f"\n[案例 {index}/{total}] 开始：{case['case_id']} "
+                f"（第 {repetition} 次）",
+                flush=True,
+            )
+            started_at = time.monotonic()
             result = run_case(case, repetition, args)
+            duration = time.monotonic() - started_at
+            result["duration_seconds"] = round(duration, 3)
             results.append(result)
-            status = "PASS" if result["passed"] else "FAIL"
-            print(f"[{status}] {case['case_id']} (run {repetition})")
+            save_current_results(results)
+            status = "通过" if result["passed"] else "失败"
+            print(f"[案例结果] {status}，用时 {duration:.1f} 秒", flush=True)
             if "planning_result" in result:
-                print(f"  purpose_type: {result['purpose_type']}")
-                print(f"  planning_flag: {result['planning_flag']}")
-                print(f"  route: {result['route']}")
                 print(
-                    "  selected_tools: "
-                    + json.dumps(result["selected_tools"], ensure_ascii=False)
+                    f"  [规划] 类型={result['purpose_type']}，"
+                    f"状态={result['planning_flag']}，路由={result['route']}",
+                    flush=True,
                 )
                 print(
-                    "  call_sequence: "
-                    + json.dumps(result["call_sequence"], ensure_ascii=False)
+                    "  [调用顺序] " + " -> ".join(result["call_sequence"]),
+                    flush=True,
                 )
                 error_messages = result["planning_result"].get("error_messages", [])
                 if error_messages:
                     print(
-                        "  error_messages: "
-                        + json.dumps(error_messages, ensure_ascii=False)
+                        "  [规划错误] " + "; ".join(error_messages),
+                        flush=True,
                     )
             for failure in result["failures"]:
-                print(f"  - {failure}")
+                print(f"  [失败原因] {failure}", flush=True)
             if args.verbose and "planning_result" in result:
-                print("  planning_result:")
+                print("  [完整规划结果]")
                 print(
                     json.dumps(
                         result["planning_result"],
@@ -380,6 +433,11 @@ def main() -> None:
                         indent=2,
                     )
                 )
+            failed = sum(not item["passed"] for item in results)
+            print(
+                f"[当前进度] 已完成 {len(results)}/{total}，失败 {failed}",
+                flush=True,
+            )
             if not result["passed"] and args.stop_on_failure:
                 should_stop = True
                 break
@@ -388,29 +446,12 @@ def main() -> None:
 
     passed_count = sum(result["passed"] for result in results)
     failed_count = len(results) - passed_count
-    output_payload = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "model": args.model,
-        "cases_file": str(cases_path),
-        "summary": {
-            "total": len(results),
-            "passed": passed_count,
-            "failed": failed_count,
-        },
-        "results": results,
-    }
-
-    output_path = Path(args.output).expanduser().resolve()
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(output_payload, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    save_current_results(results)
     print(
-        f"\nSummary: total={len(results)}, passed={passed_count}, "
-        f"failed={failed_count}"
+        f"\n[全部完成] 总数={len(results)}，通过={passed_count}，"
+        f"失败={failed_count}"
     )
-    print(f"Full results: {output_path}")
+    print(f"[完整结果] {output_path}")
 
     if failed_count:
         raise SystemExit(1)

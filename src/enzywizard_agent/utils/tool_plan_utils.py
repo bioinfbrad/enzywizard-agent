@@ -1,17 +1,20 @@
 from __future__ import annotations
 
+import json
 import math
 import re
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+from ..data_models.artifact import Artifact
 from ..data_models.planning import (
     ParameterExtractionOutput,
     ReportStagingRule,
     ToolCall,
     ToolCallSide,
     ToolOutputArtifact,
+    ToolOutputPathSelector,
     ToolOutputReference,
     ToolPlan,
     PlanningResult,
@@ -286,6 +289,7 @@ def sort_selected_tool_names(selected_tool_names: list[str]) -> list[str]:
 def add_required_tool_dependencies(
     selected_tool_names: list[str],
     substrate_available: bool,
+    prepared_substrate_available: bool = False,
 ) -> tuple[list[str], list[str]]:
     """补齐 docking 和底物相互作用所需的确定性上游工具。"""
 
@@ -299,7 +303,10 @@ def add_required_tool_dependencies(
             raise ValueError(
                 "enzywizard-dock requires a current substrate_name or SMILES input."
             )
-        if "enzywizard-substrate" not in completed_tool_names:
+        if (
+            "enzywizard-substrate" not in completed_tool_names
+            and not prepared_substrate_available
+        ):
             completed_tool_names.append("enzywizard-substrate")
             added_tool_names.append("enzywizard-substrate")
 
@@ -314,6 +321,321 @@ def add_required_tool_dependencies(
         added_tool_names.append("enzywizard-dock")
 
     return sort_selected_tool_names(completed_tool_names), added_tool_names
+
+
+def get_historical_reuse_policy(state: AgentState) -> str:
+    """从 Router 结构化结果读取复用策略，不解析用户自然语言。"""
+
+    routing = state.get("current_request_routing")
+    if routing is None or routing.output is None:
+        return "none"
+    return routing.output.reuse_policy
+
+
+def get_selected_history_artifacts(state: AgentState) -> list[Artifact]:
+    """返回 History Query Planner 已验证的本轮历史产物选择。"""
+
+    history = state.get("current_history_query")
+    if history is None or history.query_status != "succeeded":
+        return []
+    return list(history.selected_artifacts)
+
+
+def _selected_historical_path(
+    state: AgentState,
+    artifact_types: tuple[str, ...],
+    side: ToolCallSide,
+) -> str | None:
+    """按类型优先级选择最新轮次中存在的历史文件。"""
+
+    artifacts = [
+        artifact
+        for artifact in get_selected_history_artifacts(state)
+        if artifact.side == side
+        and artifact.artifact_type in artifact_types
+        and Path(artifact.path).is_file()
+    ]
+    if not artifacts:
+        return None
+    latest_turn = max(artifact.turn_id for artifact in artifacts)
+    latest = [artifact for artifact in artifacts if artifact.turn_id == latest_turn]
+    for artifact_type in artifact_types:
+        matches = [
+            artifact.path
+            for artifact in latest
+            if artifact.artifact_type == artifact_type
+        ]
+        if len(matches) == 1:
+            return matches[0]
+    return None
+
+
+def _selected_historical_reports(
+    state: AgentState,
+    allowed_sides: set[ToolCallSide],
+) -> list[Artifact]:
+    """提取用户明确选择且可供 integrate staging 的正式 JSON 报告。"""
+
+    selected = [
+        artifact
+        for artifact in get_selected_history_artifacts(state)
+        if artifact.side in allowed_sides
+        and artifact.artifact_type.endswith("_report_json")
+        and Path(artifact.path).is_file()
+    ]
+    grouped_paths: dict[tuple[ToolCallSide, str], set[str]] = {}
+    for artifact in selected:
+        grouped_paths.setdefault(
+            (artifact.side, artifact.artifact_type),
+            set(),
+        ).add(artifact.path)
+    ambiguous = [
+        f"{side}:{artifact_type}"
+        for (side, artifact_type), paths in grouped_paths.items()
+        if len(paths) > 1
+    ]
+    if ambiguous:
+        raise ValueError(
+            "Historical report reuse requires one report per type and side; "
+            "ambiguous selections: " + ", ".join(sorted(ambiguous))
+        )
+    return selected
+
+
+def _artifact_path(
+    artifacts: list[Artifact],
+    artifact_types: tuple[str, ...],
+    side: ToolCallSide,
+) -> str | None:
+    """按类型优先级从已验证产物集合选择唯一文件。"""
+
+    for artifact_type in artifact_types:
+        paths = sorted({
+            artifact.path
+            for artifact in artifacts
+            if artifact.side == side
+            and artifact.artifact_type == artifact_type
+            and Path(artifact.path).is_file()
+        })
+        if len(paths) == 1:
+            return paths[0]
+    return None
+
+
+def _same_resolved_path(left: Any, right: str) -> bool:
+    if not isinstance(left, str):
+        return False
+    return Path(left).expanduser().resolve() == Path(right).expanduser().resolve()
+
+
+def find_reusable_docking_output(
+    state: AgentState,
+    side: ToolCallSide,
+    cleaned_structure_path: str,
+) -> dict[str, Any] | None:
+    """查找与当前蛋白侧和底物完全兼容的历史 Dock 输出。
+
+    只有成功调用、相同清理结构、相同原始底物且唯一最佳姿态 SDF 仍存在时才
+    允许复用。该保守策略避免把另一侧、另一底物或残缺计划的文件接入 Interaction。
+    """
+
+    substrate_name = state["agent_inputs"].substrate_name
+    if not substrate_name:
+        return None
+
+    current_turn_id = state.get("current_turn_id", 1)
+    history = state.get("current_history_query")
+    allowed_turn_ids = (
+        set(history.resolved_turn_ids)
+        if history is not None and history.query_status == "succeeded"
+        else None
+    )
+    selected_paths = {
+        artifact.path for artifact in get_selected_history_artifacts(state)
+    }
+    selected_clean_paths = {
+        str(Path(artifact.path).expanduser().resolve())
+        for artifact in get_selected_history_artifacts(state)
+        if artifact.artifact_type
+        in {
+            "cleaned_structure_cif",
+            "cleaned_structure_pdb",
+            "wt_cleaned_structure_cif",
+            "wt_cleaned_structure_pdb",
+            "mut_cleaned_structure_cif",
+            "mut_cleaned_structure_pdb",
+        }
+    }
+    for execution in reversed(state.get("tool_executions", [])):
+        if execution.turn_id >= current_turn_id:
+            continue
+        if allowed_turn_ids is not None and execution.turn_id not in allowed_turn_ids:
+            continue
+        dock_calls = [
+            call
+            for call in execution.call_executions
+            if call.tool_name == "enzywizard-dock"
+            and call.side == side
+            and call.execution_status == "succeeded"
+        ]
+        if len(dock_calls) != 1:
+            continue
+
+        substrate_calls = [
+            call
+            for call in execution.call_executions
+            if call.tool_name == "enzywizard-substrate"
+            and call.execution_status == "succeeded"
+            and call.resolved_arguments.get("substrate_names") == substrate_name
+        ]
+        if len(substrate_calls) != 1:
+            continue
+
+        dock_call = dock_calls[0]
+        docked_sdf = [
+            artifact
+            for artifact in dock_call.artifacts
+            if artifact.artifact_type == "docked_substrate_sdf"
+            and Path(artifact.path).is_file()
+        ]
+        if len(docked_sdf) != 1:
+            continue
+        if selected_paths and docked_sdf[0].path not in selected_paths:
+            continue
+
+        dock_structure = dock_call.resolved_arguments.get("input_path")
+        if not isinstance(dock_structure, str) or not Path(dock_structure).is_file():
+            continue
+        # 显式选择历史 Dock 时，该调用实际使用的 cleaned structure 才是后续
+        # Interaction 的可信配套输入；未提供结构化选择时维持严格路径比较。
+        if selected_clean_paths and str(
+            Path(dock_structure).expanduser().resolve()
+        ) not in selected_clean_paths:
+            continue
+        if not selected_paths and not _same_resolved_path(
+            dock_structure,
+            cleaned_structure_path,
+        ):
+            continue
+
+        clean_source = next(
+            (
+                artifact
+                for artifact in state.get("artifacts", [])
+                if artifact.path == dock_structure
+                and artifact.artifact_type
+                in {
+                    "cleaned_structure_cif",
+                    "cleaned_structure_pdb",
+                    "wt_cleaned_structure_cif",
+                    "wt_cleaned_structure_pdb",
+                    "mut_cleaned_structure_cif",
+                    "mut_cleaned_structure_pdb",
+                }
+            ),
+            None,
+        )
+        supporting_clean_artifacts = (
+            [
+                artifact
+                for artifact in state.get("artifacts", [])
+                if clean_source is not None
+                and artifact.turn_id == clean_source.turn_id
+                and artifact.plan_id == clean_source.plan_id
+                and artifact.source_tool == clean_source.source_tool
+                and Path(artifact.path).is_file()
+            ]
+            if clean_source is not None
+            else []
+        )
+
+        report_artifacts: list[Artifact] = [
+            artifact
+            for call in (substrate_calls[0], dock_call)
+            for artifact in call.artifacts
+            if artifact.artifact_type in {
+                "substrate_report_json",
+                "dock_report_json",
+            }
+            and Path(artifact.path).is_file()
+        ]
+        return {
+            "docked_sdf": docked_sdf[0],
+            "report_artifacts": report_artifacts,
+            "source_turn_id": execution.turn_id,
+            "source_plan_id": execution.plan_id,
+            "cleaned_structure_path": dock_structure,
+            "supporting_clean_artifacts": supporting_clean_artifacts,
+        }
+    return None
+
+
+def find_reusable_substrate_output(state: AgentState) -> dict[str, Any] | None:
+    """查找与当前底物输入匹配且文件完整的历史 Substrate 输出。"""
+
+    substrate_name = state["agent_inputs"].substrate_name
+    if not substrate_name:
+        return None
+    history = state.get("current_history_query")
+    allowed_turn_ids = (
+        set(history.resolved_turn_ids)
+        if history is not None and history.query_status == "succeeded"
+        else None
+    )
+    selected_paths = {
+        artifact.path for artifact in get_selected_history_artifacts(state)
+    }
+    for execution in reversed(state.get("tool_executions", [])):
+        if execution.turn_id >= state.get("current_turn_id", 1):
+            continue
+        if allowed_turn_ids is not None and execution.turn_id not in allowed_turn_ids:
+            continue
+        calls = [
+            call
+            for call in execution.call_executions
+            if call.tool_name == "enzywizard-substrate"
+            and call.execution_status == "succeeded"
+            and call.resolved_arguments.get("substrate_names") == substrate_name
+        ]
+        if len(calls) != 1:
+            continue
+        call = calls[0]
+        sdf_artifacts = [
+            artifact
+            for artifact in call.artifacts
+            if artifact.artifact_type == "substrate_sdf"
+            and Path(artifact.path).is_file()
+        ]
+        reports = [
+            artifact
+            for artifact in call.artifacts
+            if artifact.artifact_type == "substrate_report_json"
+            and Path(artifact.path).is_file()
+        ]
+        if not sdf_artifacts or len(reports) != 1:
+            continue
+        if selected_paths and not any(
+            artifact.path in selected_paths for artifact in sdf_artifacts
+        ):
+            continue
+        try:
+            payload = json.loads(Path(reports[0].path).read_text(encoding="utf-8"))
+            resolved_name = payload["substrates"][0]["substrate_name"]
+        except (OSError, UnicodeError, json.JSONDecodeError, KeyError, IndexError, TypeError):
+            continue
+        if not isinstance(resolved_name, str) or not resolved_name.strip():
+            continue
+        directories = {str(Path(artifact.path).parent) for artifact in sdf_artifacts}
+        if len(directories) != 1:
+            continue
+        return {
+            "substrate_name": resolved_name,
+            "substrate_dir": directories.pop(),
+            "report_artifact": reports[0],
+            "source_turn_id": execution.turn_id,
+            "source_plan_id": execution.plan_id,
+        }
+    return None
 
 
 def get_default_optional_arguments(tool_spec: dict[str, Any]) -> dict[str, Any]:
@@ -381,6 +703,8 @@ def create_tool_output_reference(
     source_call: ToolCall,
     artifact_type: str,
     json_field: str | None = None,
+    json_path: list[str | int] | None = None,
+    path_selector: ToolOutputPathSelector = "path",
 ) -> ToolOutputReference:
     """从上游调用的预期产物中创建可延迟解析的参数引用。"""
 
@@ -399,6 +723,8 @@ def create_tool_output_reference(
         artifact_type=artifact_type,
         expected_path_pattern=matching_artifacts[0].path_pattern,
         json_field=json_field,
+        json_path=json_path,
+        path_selector=path_selector,
     )
 
 
@@ -487,9 +813,72 @@ def build_single_protein_tool_plan(
     agent_inputs = state["agent_inputs"]
     cleaned_files = state["cleaned_files"]
     tool_specs = load_enzywizard_tool_specs()
+    reuse_policy = get_historical_reuse_policy(state)
+    historical_reports = (
+        _selected_historical_reports(state, {"single", "shared"})
+        if reuse_policy != "none"
+        else []
+    )
+    reused_historical_input = False
+    reusable_docking: dict[str, Any] | None = None
+    reusable_substrate: dict[str, Any] | None = None
+    if (
+        "enzywizard-interaction" in selected_tool_names
+        and "enzywizard-clean" not in selected_tool_names
+        and reuse_policy != "none"
+    ):
+        historical_structure = _selected_historical_path(
+            state,
+            ("cleaned_structure_cif", "cleaned_structure_pdb"),
+            "single",
+        ) or get_preferred_cleaned_structure_path(
+            cleaned_files.single_cleaned_cif_file,
+            cleaned_files.single_cleaned_structure_file,
+            cleaned_files.single_cleaned_pdb_file,
+        )
+        reusable_docking = find_reusable_docking_output(
+            state,
+            "single",
+            historical_structure,
+        )
+        if reusable_docking is not None:
+            # 结构化复用策略生效时不重复准备底物和 Dock；Interaction 直接接入
+            # 已通过结构、底物、侧别和执行状态验证的历史最佳姿态。
+            selected_tool_names = [
+                tool_name
+                for tool_name in selected_tool_names
+                if tool_name not in {"enzywizard-substrate", "enzywizard-dock"}
+            ]
+            reused_historical_input = True
+        elif reuse_policy == "required" and any(
+            artifact.artifact_type == "docked_substrate_sdf"
+            for artifact in get_selected_history_artifacts(state)
+        ):
+            raise ValueError(
+                "The selected historical docking output is not compatible with "
+                "the current structure, substrate, side, or execution record."
+            )
+    if "enzywizard-dock" in selected_tool_names and reuse_policy != "none":
+        reusable_substrate = find_reusable_substrate_output(state)
+        if reusable_substrate is not None:
+            selected_tool_names = [
+                tool_name
+                for tool_name in selected_tool_names
+                if tool_name != "enzywizard-substrate"
+            ]
+            reused_historical_input = True
+        elif reuse_policy == "required" and any(
+            artifact.artifact_type == "substrate_sdf"
+            for artifact in get_selected_history_artifacts(state)
+        ):
+            raise ValueError(
+                "The selected historical substrate output is incomplete or does "
+                "not match the current substrate input."
+            )
     selected_tool_names, added_dependencies = add_required_tool_dependencies(
         selected_tool_names,
         bool(agent_inputs.substrate_name),
+        prepared_substrate_available=reusable_substrate is not None,
     )
     calls: list[ToolCall] = []
 
@@ -561,20 +950,77 @@ def build_single_protein_tool_plan(
             "clean_report_json",
         )
     else:
-        cleaned_structure = get_preferred_cleaned_structure_path(
+        reusable_clean_artifacts = (
+            reusable_docking["supporting_clean_artifacts"]
+            if reusable_docking is not None
+            else []
+        )
+        selected_structure = (
+            (
+                reusable_docking["cleaned_structure_path"]
+                if reusable_docking is not None
+                else None
+            )
+            or _selected_historical_path(
+                state,
+                ("cleaned_structure_cif", "cleaned_structure_pdb"),
+                "single",
+            )
+            if reuse_policy != "none"
+            else None
+        )
+        cleaned_structure = selected_structure or get_preferred_cleaned_structure_path(
             cleaned_files.single_cleaned_cif_file,
             cleaned_files.single_cleaned_structure_file,
             cleaned_files.single_cleaned_pdb_file,
         )
-        if not cleaned_files.single_cleaned_fasta_file:
+        selected_fasta = (
+            _artifact_path(
+                reusable_clean_artifacts,
+                ("cleaned_sequence_fasta",),
+                "single",
+            )
+            or _selected_historical_path(
+                state,
+                ("cleaned_sequence_fasta",),
+                "single",
+            )
+            if reuse_policy != "none"
+            else None
+        )
+        selected_clean_report = (
+            _artifact_path(
+                reusable_clean_artifacts,
+                ("clean_report_json",),
+                "single",
+            )
+            or _selected_historical_path(
+                state,
+                ("clean_report_json",),
+                "single",
+            )
+            if reuse_policy != "none"
+            else None
+        )
+        if not (selected_fasta or cleaned_files.single_cleaned_fasta_file):
             raise ValueError("Trusted single-protein cleaned FASTA is missing.")
-        if not cleaned_files.single_clean_report_file:
+        if not (selected_clean_report or cleaned_files.single_clean_report_file):
             raise ValueError("Trusted single-protein clean report is missing.")
-        cleaned_fasta = cleaned_files.single_cleaned_fasta_file
-        clean_report_path = cleaned_files.single_clean_report_file
+        cleaned_fasta = selected_fasta or cleaned_files.single_cleaned_fasta_file
+        clean_report_path = (
+            selected_clean_report or cleaned_files.single_clean_report_file
+        )
+        reused_historical_input = reused_historical_input or bool(
+            selected_structure or selected_fasta or selected_clean_report
+        )
 
     # batch 是单次完整工作流，不再展开单项工具或独立 integrate。
     if "enzywizard-batch" in selected_tool_names:
+        if reuse_policy == "required" and not reused_historical_input:
+            raise ValueError(
+                "Historical output reuse was required, but no compatible selected "
+                "historical input can be consumed by enzywizard-batch."
+            )
         step_index = len(calls) + 1
         execution_dir = build_tool_execution_dir(
             build_plan_root_dir(state, turn_id, plan_id),
@@ -664,16 +1110,35 @@ def build_single_protein_tool_plan(
                 }
             )
         elif tool_name == "enzywizard-dock":
-            substrate_call = get_call_by_tool_and_side(
-                calls,
-                "enzywizard-substrate",
-                "single",
-            )
+            substrate_calls = [
+                call for call in calls if call.tool_name == "enzywizard-substrate"
+            ]
+            if substrate_calls:
+                substrate_call = get_call_by_tool_and_side(
+                    calls,
+                    "enzywizard-substrate",
+                    "single",
+                )
+                # Substrate 可能把直接输入的 SMILES 重命名为 smiles1。Dock 使用
+                # 报告中的基础名称，自行匹配 name_1.sdf 等全部构象。
+                resolved_substrate_name: Any = create_tool_output_reference(
+                    substrate_call,
+                    "substrate_report_json",
+                    json_path=["substrates", 0, "substrate_name"],
+                )
+                substrate_dir = substrate_call.tool_execution_dir
+            elif reusable_substrate is not None:
+                resolved_substrate_name = reusable_substrate["substrate_name"]
+                substrate_dir = reusable_substrate["substrate_dir"]
+            else:
+                raise ValueError(
+                    "enzywizard-dock requires a current or reusable substrate output."
+                )
             arguments.update(
                 {
                     "input_path": cleaned_structure,
-                    "substrate_names": agent_inputs.substrate_name,
-                    "substrate_dir": substrate_call.tool_execution_dir,
+                    "substrate_names": resolved_substrate_name,
+                    "substrate_dir": substrate_dir,
                     "output_dir": str(execution_dir),
                 }
             )
@@ -687,8 +1152,18 @@ def build_single_protein_tool_plan(
                     "enzywizard-dock",
                     "single",
                 )
-                arguments["substrate_names"] = agent_inputs.substrate_name
+                # Interaction 按参数值查找同名 SDF，因此直接使用 Dock 实际
+                # 输出文件的 stem，例如 docked_glucose 或 docked_smiles1。
+                arguments["substrate_names"] = create_tool_output_reference(
+                    dock_call,
+                    "docked_substrate_sdf",
+                    path_selector="stem",
+                )
                 arguments["substrate_dir"] = dock_call.tool_execution_dir
+            elif reusable_docking is not None:
+                docked_sdf = reusable_docking["docked_sdf"]
+                arguments["substrate_names"] = Path(docked_sdf.path).stem
+                arguments["substrate_dir"] = str(Path(docked_sdf.path).parent)
         else:
             raise ValueError(f"Unsupported single-protein tool in plan: {tool_name}.")
 
@@ -737,6 +1212,53 @@ def build_single_protein_tool_plan(
                     side="single",
                 )
             )
+        if reusable_docking is not None:
+            for artifact in reusable_docking["report_artifacts"]:
+                staging_rules.append(
+                    ReportStagingRule(
+                        source_step_index=None,
+                        source_path_pattern=artifact.path,
+                        destination_dir=str(staging_dir),
+                        side="single",
+                    )
+                )
+        if reusable_substrate is not None:
+            artifact = reusable_substrate["report_artifact"]
+            staging_rules.append(
+                ReportStagingRule(
+                    source_step_index=None,
+                    source_path_pattern=artifact.path,
+                    destination_dir=str(staging_dir),
+                    side="single",
+                )
+            )
+        staged_paths = {
+            rule.source_path_pattern
+            for rule in staging_rules
+            if rule.source_step_index is None
+        }
+        current_report_types = {
+            output.artifact_type
+            for call in calls
+            for output in call.output_artifacts
+            if output.artifact_type.endswith("_report_json")
+        }
+        for artifact in historical_reports:
+            if (
+                artifact.path in staged_paths
+                or artifact.artifact_type in current_report_types
+            ):
+                continue
+            staging_rules.append(
+                ReportStagingRule(
+                    source_step_index=None,
+                    source_path_pattern=artifact.path,
+                    destination_dir=str(staging_dir),
+                    side="single",
+                )
+            )
+            staged_paths.add(artifact.path)
+            reused_historical_input = True
 
         arguments = get_default_optional_arguments(tool_specs["enzywizard-integrate"])
         arguments.update(
@@ -756,9 +1278,20 @@ def build_single_protein_tool_plan(
             )
         )
 
+    if reuse_policy == "required" and not reused_historical_input:
+        raise ValueError(
+            "Historical output reuse was required, but the selected artifacts are "
+            "not compatible inputs for the generated workflow."
+        )
+
     dependency_note = (
         " Program added required dependencies: " + ", ".join(added_dependencies) + "."
         if added_dependencies
+        else ""
+    )
+    reuse_note = (
+        " Program reused a compatible historical docking output for interaction analysis."
+        if reusable_docking is not None
         else ""
     )
     return ToolPlan(
@@ -766,7 +1299,7 @@ def build_single_protein_tool_plan(
         plan_id=plan_id,
         purpose_type="single_protein_analysis",
         summary=f"Ordered single-protein plan with {len(calls)} tool calls.",
-        plan_reason=plan_reason + dependency_note,
+        plan_reason=plan_reason + dependency_note + reuse_note,
         calls=calls,
     )
 
@@ -783,9 +1316,87 @@ def build_wildtype_mutant_tool_plan(
     agent_inputs = state["agent_inputs"]
     cleaned_files = state["cleaned_files"]
     tool_specs = load_enzywizard_tool_specs()
+    reuse_policy = get_historical_reuse_policy(state)
+    historical_reports = (
+        _selected_historical_reports(state, {"wt", "mut", "shared"})
+        if reuse_policy != "none"
+        else []
+    )
+    reused_historical_input = False
+    reusable_docking_by_side: dict[str, dict[str, Any]] = {}
+    reusable_substrate: dict[str, Any] | None = None
+    if (
+        "enzywizard-interaction" in selected_tool_names
+        and "enzywizard-mut-clean" not in selected_tool_names
+        and reuse_policy != "none"
+    ):
+        historical_structures = {
+            "wt": _selected_historical_path(
+                state,
+                ("wt_cleaned_structure_cif", "wt_cleaned_structure_pdb"),
+                "wt",
+            ) or get_preferred_cleaned_structure_path(
+                cleaned_files.wt_cleaned_cif_file,
+                cleaned_files.wt_cleaned_structure_file,
+                cleaned_files.wt_cleaned_pdb_file,
+            ),
+            "mut": _selected_historical_path(
+                state,
+                ("mut_cleaned_structure_cif", "mut_cleaned_structure_pdb"),
+                "mut",
+            ) or get_preferred_cleaned_structure_path(
+                cleaned_files.mut_cleaned_cif_file,
+                cleaned_files.mut_cleaned_structure_file,
+                cleaned_files.mut_cleaned_pdb_file,
+            ),
+        }
+        for side, structure_path in historical_structures.items():
+            reusable = find_reusable_docking_output(
+                state,
+                side,
+                structure_path,
+            )
+            if reusable is not None:
+                reusable_docking_by_side[side] = reusable
+        # 配对工作流必须两侧同时兼容，否则两侧都重新运行，避免比较来源不一致。
+        if set(reusable_docking_by_side) == {"wt", "mut"}:
+            selected_tool_names = [
+                tool_name
+                for tool_name in selected_tool_names
+                if tool_name not in {"enzywizard-substrate", "enzywizard-dock"}
+            ]
+            reused_historical_input = True
+        else:
+            reusable_docking_by_side = {}
+            if reuse_policy == "required" and any(
+                artifact.artifact_type == "docked_substrate_sdf"
+                for artifact in get_selected_history_artifacts(state)
+            ):
+                raise ValueError(
+                    "Historical docking reuse for a paired workflow requires "
+                    "compatible successful WT and MUT docking outputs."
+                )
+    if "enzywizard-dock" in selected_tool_names and reuse_policy != "none":
+        reusable_substrate = find_reusable_substrate_output(state)
+        if reusable_substrate is not None:
+            selected_tool_names = [
+                tool_name
+                for tool_name in selected_tool_names
+                if tool_name != "enzywizard-substrate"
+            ]
+            reused_historical_input = True
+        elif reuse_policy == "required" and any(
+            artifact.artifact_type == "substrate_sdf"
+            for artifact in get_selected_history_artifacts(state)
+        ):
+            raise ValueError(
+                "The selected historical substrate output is incomplete or does "
+                "not match the current substrate input."
+            )
     selected_tool_names, added_dependencies = add_required_tool_dependencies(
         selected_tool_names,
         bool(agent_inputs.substrate_name),
+        prepared_substrate_available=reusable_substrate is not None,
     )
     calls: list[ToolCall] = []
 
@@ -884,30 +1495,124 @@ def build_wildtype_mutant_tool_plan(
             json_field="cleaned_amino_acid_substitution",
         )
     else:
-        wt_structure = get_preferred_cleaned_structure_path(
+        reusable_wt_clean_artifacts = (
+            reusable_docking_by_side["wt"]["supporting_clean_artifacts"]
+            if "wt" in reusable_docking_by_side
+            else []
+        )
+        reusable_mut_clean_artifacts = (
+            reusable_docking_by_side["mut"]["supporting_clean_artifacts"]
+            if "mut" in reusable_docking_by_side
+            else []
+        )
+        selected_wt_structure = (
+            (
+                reusable_docking_by_side["wt"]["cleaned_structure_path"]
+                if "wt" in reusable_docking_by_side
+                else None
+            )
+            or _selected_historical_path(
+                state,
+                ("wt_cleaned_structure_cif", "wt_cleaned_structure_pdb"),
+                "wt",
+            )
+            if reuse_policy != "none"
+            else None
+        )
+        selected_mut_structure = (
+            (
+                reusable_docking_by_side["mut"]["cleaned_structure_path"]
+                if "mut" in reusable_docking_by_side
+                else None
+            )
+            or _selected_historical_path(
+                state,
+                ("mut_cleaned_structure_cif", "mut_cleaned_structure_pdb"),
+                "mut",
+            )
+            if reuse_policy != "none"
+            else None
+        )
+        wt_structure = selected_wt_structure or get_preferred_cleaned_structure_path(
             cleaned_files.wt_cleaned_cif_file,
             cleaned_files.wt_cleaned_structure_file,
             cleaned_files.wt_cleaned_pdb_file,
         )
-        mut_structure = get_preferred_cleaned_structure_path(
+        mut_structure = selected_mut_structure or get_preferred_cleaned_structure_path(
             cleaned_files.mut_cleaned_cif_file,
             cleaned_files.mut_cleaned_structure_file,
             cleaned_files.mut_cleaned_pdb_file,
         )
-        if not cleaned_files.wt_cleaned_fasta_file:
+        selected_wt_fasta = (
+            _artifact_path(
+                reusable_wt_clean_artifacts,
+                ("wt_cleaned_sequence_fasta",),
+                "wt",
+            )
+            or _selected_historical_path(
+                state,
+                ("wt_cleaned_sequence_fasta",),
+                "wt",
+            )
+            if reuse_policy != "none"
+            else None
+        )
+        selected_mut_fasta = (
+            _artifact_path(
+                reusable_mut_clean_artifacts,
+                ("mut_cleaned_sequence_fasta",),
+                "mut",
+            )
+            or _selected_historical_path(
+                state,
+                ("mut_cleaned_sequence_fasta",),
+                "mut",
+            )
+            if reuse_policy != "none"
+            else None
+        )
+        selected_mut_clean_report = (
+            _artifact_path(
+                reusable_wt_clean_artifacts + reusable_mut_clean_artifacts,
+                ("mut_clean_report_json",),
+                "shared",
+            )
+            or _selected_historical_path(
+                state,
+                ("mut_clean_report_json",),
+                "shared",
+            )
+            if reuse_policy != "none"
+            else None
+        )
+        if not (selected_wt_fasta or cleaned_files.wt_cleaned_fasta_file):
             raise ValueError("Trusted WT cleaned FASTA is missing.")
-        if not cleaned_files.mut_cleaned_fasta_file:
+        if not (selected_mut_fasta or cleaned_files.mut_cleaned_fasta_file):
             raise ValueError("Trusted MUT cleaned FASTA is missing.")
-        if not cleaned_files.mut_clean_report_file:
+        if not (selected_mut_clean_report or cleaned_files.mut_clean_report_file):
             raise ValueError("Trusted mut-clean report is missing.")
         if not cleaned_files.cleaned_amino_acid_substitution:
             raise ValueError("Trusted cleaned amino acid substitution is missing.")
-        wt_fasta = cleaned_files.wt_cleaned_fasta_file
-        mut_fasta = cleaned_files.mut_cleaned_fasta_file
-        mut_clean_report = cleaned_files.mut_clean_report_file
+        wt_fasta = selected_wt_fasta or cleaned_files.wt_cleaned_fasta_file
+        mut_fasta = selected_mut_fasta or cleaned_files.mut_cleaned_fasta_file
+        mut_clean_report = (
+            selected_mut_clean_report or cleaned_files.mut_clean_report_file
+        )
         cleaned_mutation = cleaned_files.cleaned_amino_acid_substitution
+        reused_historical_input = reused_historical_input or bool(
+            selected_wt_structure
+            or selected_mut_structure
+            or selected_wt_fasta
+            or selected_mut_fasta
+            or selected_mut_clean_report
+        )
 
     if "enzywizard-mut-batch" in selected_tool_names:
+        if reuse_policy == "required" and not reused_historical_input:
+            raise ValueError(
+                "Historical output reuse was required, but no compatible selected "
+                "historical input can be consumed by enzywizard-mut-batch."
+            )
         step_index = len(calls) + 1
         execution_dir = build_tool_execution_dir(
             build_plan_root_dir(state, turn_id, plan_id),
@@ -1030,16 +1735,37 @@ def build_wildtype_mutant_tool_plan(
                     {"input_fasta": fasta_path, "output_dir": str(execution_dir)}
                 )
             elif tool_name == "enzywizard-dock":
-                substrate_call = get_call_by_tool_and_side(
-                    calls,
-                    "enzywizard-substrate",
-                    "shared",
-                )
+                substrate_calls = [
+                    call
+                    for call in calls
+                    if call.tool_name == "enzywizard-substrate"
+                ]
+                if substrate_calls:
+                    substrate_call = get_call_by_tool_and_side(
+                        calls,
+                        "enzywizard-substrate",
+                        "shared",
+                    )
+                    # WT 和 MUT 共享 Substrate 输出。解析后的基础名称既支持普通
+                    # 名称，也支持被工具规范化为 smiles1 的直接 SMILES 输入。
+                    resolved_substrate_name: Any = create_tool_output_reference(
+                        substrate_call,
+                        "substrate_report_json",
+                        json_path=["substrates", 0, "substrate_name"],
+                    )
+                    substrate_dir = substrate_call.tool_execution_dir
+                elif reusable_substrate is not None:
+                    resolved_substrate_name = reusable_substrate["substrate_name"]
+                    substrate_dir = reusable_substrate["substrate_dir"]
+                else:
+                    raise ValueError(
+                        "enzywizard-dock requires a current or reusable substrate output."
+                    )
                 arguments.update(
                     {
                         "input_path": structure_path,
-                        "substrate_names": agent_inputs.substrate_name,
-                        "substrate_dir": substrate_call.tool_execution_dir,
+                        "substrate_names": resolved_substrate_name,
+                        "substrate_dir": substrate_dir,
                         "output_dir": str(execution_dir),
                     }
                 )
@@ -1053,8 +1779,19 @@ def build_wildtype_mutant_tool_plan(
                     if call.tool_name == "enzywizard-dock" and call.side == side
                 ]
                 if matching_dock_calls:
-                    arguments["substrate_names"] = agent_inputs.substrate_name
-                    arguments["substrate_dir"] = matching_dock_calls[0].tool_execution_dir
+                    dock_call = matching_dock_calls[0]
+                    # 每一侧只引用本侧 Dock 的最佳姿态 SDF，避免 WT/MUT 输出
+                    # 目录交叉，并把实际 stem 直接交给 Interaction。
+                    arguments["substrate_names"] = create_tool_output_reference(
+                        dock_call,
+                        "docked_substrate_sdf",
+                        path_selector="stem",
+                    )
+                    arguments["substrate_dir"] = dock_call.tool_execution_dir
+                elif side in reusable_docking_by_side:
+                    docked_sdf = reusable_docking_by_side[side]["docked_sdf"]
+                    arguments["substrate_names"] = Path(docked_sdf.path).stem
+                    arguments["substrate_dir"] = str(Path(docked_sdf.path).parent)
             else:
                 raise ValueError(f"Unsupported WT/MUT side tool in plan: {tool_name}.")
 
@@ -1109,6 +1846,87 @@ def build_wildtype_mutant_tool_plan(
                     )
                 )
 
+        # 历史 substrate/dock 报告与本轮 interaction 报告一起进入配对整合；
+        # source_step_index=None 表示来源已经在旧轮次成功完成。
+        for side, reusable in reusable_docking_by_side.items():
+            destination_dir = wt_staging_dir if side == "wt" else mut_staging_dir
+            for artifact in reusable["report_artifacts"]:
+                staging_rules.append(
+                    ReportStagingRule(
+                        source_step_index=None,
+                        source_path_pattern=artifact.path,
+                        destination_dir=str(destination_dir),
+                        side=side,
+                    )
+                )
+
+        if reusable_substrate is not None:
+            artifact = reusable_substrate["report_artifact"]
+            for destination_side, destination_dir in (
+                ("wt", wt_staging_dir),
+                ("mut", mut_staging_dir),
+            ):
+                staging_rules.append(
+                    ReportStagingRule(
+                        source_step_index=None,
+                        source_path_pattern=artifact.path,
+                        destination_dir=str(destination_dir),
+                        side=destination_side,
+                    )
+                )
+
+        staged_paths = {
+            (rule.source_path_pattern, rule.destination_dir)
+            for rule in staging_rules
+            if rule.source_step_index is None
+        }
+        current_report_types_by_side: dict[ToolCallSide, set[str]] = {
+            "wt": set(),
+            "mut": set(),
+        }
+        for call in calls:
+            if call.tool_name == "enzywizard-mut-clean":
+                continue
+            destination_sides = (
+                ("wt", "mut") if call.side == "shared" else (call.side,)
+            )
+            for destination_side in destination_sides:
+                current_report_types_by_side[destination_side].update(
+                    output.artifact_type
+                    for output in call.output_artifacts
+                    if output.artifact_type.endswith("_report_json")
+                )
+        for artifact in historical_reports:
+            if artifact.artifact_type == "mut_clean_report_json":
+                continue
+            destination_sides: tuple[ToolCallSide, ...]
+            if artifact.side == "shared":
+                destination_sides = ("wt", "mut")
+            else:
+                destination_sides = (artifact.side,)
+            for destination_side in destination_sides:
+                if (
+                    artifact.artifact_type
+                    in current_report_types_by_side[destination_side]
+                ):
+                    continue
+                destination_dir = (
+                    wt_staging_dir if destination_side == "wt" else mut_staging_dir
+                )
+                key = (artifact.path, str(destination_dir))
+                if key in staged_paths:
+                    continue
+                staging_rules.append(
+                    ReportStagingRule(
+                        source_step_index=None,
+                        source_path_pattern=artifact.path,
+                        destination_dir=str(destination_dir),
+                        side=destination_side,
+                    )
+                )
+                staged_paths.add(key)
+                reused_historical_input = True
+
         arguments = get_default_optional_arguments(
             tool_specs["enzywizard-mut-integrate"]
         )
@@ -1135,9 +1953,21 @@ def build_wildtype_mutant_tool_plan(
             )
         )
 
+    if reuse_policy == "required" and not reused_historical_input:
+        raise ValueError(
+            "Historical output reuse was required, but the selected artifacts are "
+            "not compatible inputs for the generated paired workflow."
+        )
+
     dependency_note = (
         " Program added required dependencies: " + ", ".join(added_dependencies) + "."
         if added_dependencies
+        else ""
+    )
+    reuse_note = (
+        " Program reused compatible historical WT and MUT docking outputs for "
+        "interaction analysis."
+        if reusable_docking_by_side
         else ""
     )
     return ToolPlan(
@@ -1145,7 +1975,7 @@ def build_wildtype_mutant_tool_plan(
         plan_id=plan_id,
         purpose_type="wildtype_mutant_comparison",
         summary=f"Ordered WT/MUT plan with {len(calls)} tool calls.",
-        plan_reason=plan_reason + dependency_note,
+        plan_reason=plan_reason + dependency_note + reuse_note,
         calls=calls,
     )
 
@@ -1157,7 +1987,10 @@ def build_default_tool_plan(
     """根据已验证的工具选择生成完整默认 ToolPlan。"""
 
     tool_selection = planning_result.tool_selection
-    if tool_selection is None or tool_selection.tool_selection_status != "tool_selection_succeeded":
+    if (
+        tool_selection is None
+        or tool_selection.tool_selection_status != "tool_selection_succeeded"
+    ):
         raise ValueError("A successful tool selection is required to build ToolPlan.")
     if planning_result.purpose_type == "single_protein_analysis":
         return build_single_protein_tool_plan(

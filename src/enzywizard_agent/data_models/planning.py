@@ -43,6 +43,31 @@ PlanningPurposeType = Literal[
     "other",
 ]
 
+WorkflowScopeMode = Literal[
+    "preparation_only",
+    "specific_analyses",
+    "complete_analysis",
+]
+
+WorkflowRequirementStatus = Literal[
+    "workflow_requirements_succeeded",
+    "workflow_requirements_failed",
+]
+
+AnalysisType = Literal[
+    "aaprops",
+    "hydrocluster",
+    "energy",
+    "flexibility",
+    "disorder",
+    "conservation",
+    "embedding",
+    "pocket",
+    "substrate",
+    "docking",
+    "interaction",
+]
+
 ToolSelectionStatus = Literal[
     # 工具选择阶段的结构化成功或失败状态。
     "tool_selection_succeeded",
@@ -77,6 +102,12 @@ ToolCallSide = Literal[
     "mut",
     # shared 用于 mut-clean、共享底物、mut-batch 和 mut-integrate 等调用。
     "shared",
+]
+
+ToolOutputPathSelector = Literal[
+    # path 返回完整产物路径；stem 返回不含扩展名的实际文件名。
+    "path",
+    "stem",
 ]
 
 
@@ -143,6 +174,75 @@ class ToolSelectionOutput(BaseModel):
                 for item in value
             ]
         return value
+
+
+class WorkflowRequirementsOutput(BaseModel):
+    """LLM 提取的科学工作流范围；工具名称由程序随后确定性映射。"""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    workflow_requirements_status: WorkflowRequirementStatus
+    scope_mode: WorkflowScopeMode
+    requested_analysis_types: list[AnalysisType]
+    excluded_analysis_types: list[AnalysisType]
+    requirements_reason: str
+    error_message: str
+
+    @field_validator("requested_analysis_types", "excluded_analysis_types")
+    @classmethod
+    def reject_duplicate_analysis_types(cls, value: list[str]) -> list[str]:
+        if len(value) != len(set(value)):
+            raise ValueError("analysis type lists cannot contain duplicates")
+        return value
+
+    @model_validator(mode="after")
+    def validate_requirement_fields(self) -> "WorkflowRequirementsOutput":
+        overlap = set(self.requested_analysis_types) & set(
+            self.excluded_analysis_types
+        )
+        if overlap:
+            raise ValueError(
+                "requested and excluded analysis types must not overlap: "
+                f"{sorted(overlap)}"
+            )
+        if self.workflow_requirements_status == "workflow_requirements_failed":
+            if self.requested_analysis_types or self.excluded_analysis_types:
+                raise ValueError("failed requirements must use empty analysis lists")
+            if self.requirements_reason or not self.error_message:
+                raise ValueError(
+                    "failed requirements need only a non-empty error_message"
+                )
+            return self
+        if not self.requirements_reason or self.error_message:
+            raise ValueError(
+                "successful requirements need a reason and no error_message"
+            )
+        if self.scope_mode == "preparation_only" and self.requested_analysis_types:
+            raise ValueError("preparation_only cannot request analysis types")
+        if self.scope_mode == "complete_analysis" and self.requested_analysis_types:
+            raise ValueError(
+                "complete_analysis uses the batch scope, not individual analysis types"
+            )
+        if self.scope_mode == "specific_analyses" and not self.requested_analysis_types:
+            raise ValueError("specific_analyses requires at least one analysis type")
+        return self
+
+
+class WorkflowRequirementsDraft(BaseModel):
+    """允许 LLM 返回可由程序纠正的工作流需求草稿。
+
+    草稿只约束字段类型和枚举，不执行跨字段业务校验。诸如 complete_analysis
+    同时列出具体分析项等常见结构化偏差，会在审核后由确定性编译器规范化。
+    """
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    workflow_requirements_status: WorkflowRequirementStatus
+    scope_mode: WorkflowScopeMode
+    requested_analysis_types: list[AnalysisType]
+    excluded_analysis_types: list[AnalysisType]
+    requirements_reason: str
+    error_message: str
 
 
 class ParameterAdjustment(BaseModel):
@@ -267,7 +367,30 @@ class ToolOutputReference(BaseModel):
     source_step_index: int
     artifact_type: str
     expected_path_pattern: str
-    json_field: str | None
+    # json_field 保留现有顶层字段引用；json_path 用于有列表或嵌套对象的
+    # 报告。两者均未设置时，从真实路径取值，并可提取文件 stem。
+    json_field: str | None = None
+    json_path: list[str | int] | None = None
+    path_selector: ToolOutputPathSelector = "path"
+
+    @model_validator(mode="after")
+    def validate_value_selector(self) -> "ToolOutputReference":
+        """保证每个引用只采用一种明确的产物取值方式。"""
+
+        if self.source_step_index < 1:
+            raise ValueError("source_step_index must be greater than or equal to 1")
+        if self.json_field is not None and self.json_path is not None:
+            raise ValueError("json_field and json_path cannot be used together")
+        if self.json_path is not None and not self.json_path:
+            raise ValueError("json_path cannot be empty")
+        if (
+            self.path_selector != "path"
+            and (self.json_field is not None or self.json_path is not None)
+        ):
+            raise ValueError(
+                "path_selector can only transform an artifact path reference"
+            )
+        return self
 
 
 class ToolOutputArtifact(BaseModel):
@@ -372,6 +495,7 @@ class PlanningResult(BaseModel):
     purpose_reason: str
 
     # 工具选择和完整 ToolPlan 按 Planning 进度逐步写入。
+    workflow_requirements: WorkflowRequirementsOutput | None = None
     tool_selection: ToolSelectionOutput | None
     parameter_extraction: ParameterExtractionOutput | None
     tool_plan: ToolPlan | None

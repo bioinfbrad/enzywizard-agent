@@ -1,0 +1,853 @@
+{
+  "cases": [
+    {
+      "case_id": "single_multi_property_workflow",
+      "description": "Single-protein workflow with five individual analyses and integration.",
+      "tags": ["single", "individual", "properties", "smoke"],
+      "message": "Analyze residue properties, hydrophobic clusters, energy, flexibility, and binding pockets for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-aaprops",
+              "enzywizard-hydrocluster",
+              "enzywizard-energy",
+              "enzywizard-flexibility",
+              "enzywizard-pocket",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-batch"
+            ],
+            "minimum_call_count": 7
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_substrate_docking_workflow",
+      "description": "Single-protein substrate preparation, docking, interaction, and integration workflow.",
+      "tags": ["single", "docking", "interaction", "named-substrate", "smoke"],
+      "message": "Process glucose, dock it to this enzyme, analyze the protein-substrate interactions, and integrate the reports.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "substrate_name": "glucose"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-substrate",
+              "enzywizard-dock",
+              "enzywizard-interaction",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-batch"
+            ],
+            "minimum_call_count": 5
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded",
+      "expected_resolved_parameters": [
+        {
+          "tool_name": "enzywizard-dock",
+          "side": "single",
+          "parameter_name": "substrate_names",
+          "value": "glucose"
+        },
+        {
+          "tool_name": "enzywizard-interaction",
+          "side": "single",
+          "parameter_name": "substrate_names",
+          "value": "docked_glucose"
+        }
+      ]
+    },
+    {
+      "case_id": "mutant_multi_property_workflow",
+      "description": "Paired WT/MUT energy, flexibility, pocket, and integration workflow.",
+      "tags": ["mutant", "individual", "properties", "smoke"],
+      "message": "Compare energy, flexibility, and binding pockets between the wild-type enzyme and the S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-energy",
+              "enzywizard-flexibility",
+              "enzywizard-pocket",
+              "enzywizard-mut-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-mut-batch"
+            ],
+            "minimum_call_count": 8
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "mutant_conservation_energy_workflow",
+      "description": "Paired WT/MUT conservation and energy workflow with two supplied MSAs.",
+      "tags": ["mutant", "individual", "conservation", "msa"],
+      "message": "Compare residue conservation and energy between the wild type and the S70G mutant using both supplied alignments.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "msa_file": "test_inputs/jhmm_1ZG4_WT.sto",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "mut_msa_file": "test_inputs/jhmm_1ZG6_S70G.sto",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-conservation",
+              "enzywizard-energy",
+              "enzywizard-mut-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-mut-batch"
+            ],
+            "minimum_call_count": 6
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_complete_batch_workflow",
+      "description": "Complete single-protein batch workflow.",
+      "tags": ["single", "batch", "named-substrate"],
+      "message": "Run the complete EnzyWizard analysis workflow for this enzyme and generate the full integrated graph.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "msa_file": "test_inputs/jhmm_3GP6.sto",
+        "substrate_name": "glucose"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "exact_tools": [
+              "enzywizard-clean",
+              "enzywizard-batch"
+            ],
+            "minimum_call_count": 2
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "mutant_complete_batch_workflow",
+      "description": "Complete paired WT/MUT batch workflow.",
+      "tags": ["mutant", "batch", "named-substrate"],
+      "message": "Run the complete paired analysis for the wild-type enzyme and the S70G mutant and generate the full comparative graph.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "msa_file": "test_inputs/jhmm_1ZG4_WT.sto",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "mut_msa_file": "test_inputs/jhmm_1ZG6_S70G.sto",
+        "substrate_name": "glucose",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "exact_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-mut-batch"
+            ],
+            "minimum_call_count": 2
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_repeated_plan_revision_workflow",
+      "description": "Two consecutive revision interrupts followed by approval and real multi-tool execution.",
+      "tags": ["single", "revision", "parameters", "smoke"],
+      "message": "Analyze energy and binding pockets for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "revision_requested",
+          "revision_request": "Replace the requested analyses with energy and flexibility only. Do not run binding-pocket analysis.",
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-energy",
+              "enzywizard-pocket",
+              "enzywizard-integrate"
+            ],
+            "minimum_call_count": 4
+          }
+        },
+        {
+          "decision": "revision_requested",
+          "revision_request": "The final analysis set must contain energy, flexibility, and disorder only. Do not run binding-pocket analysis. Use fast settings where supported.",
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-energy",
+              "enzywizard-flexibility",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-pocket"
+            ],
+            "minimum_call_count": 4
+          }
+        },
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-energy",
+              "enzywizard-flexibility",
+              "enzywizard-disorder",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-pocket",
+              "enzywizard-batch"
+            ],
+            "minimum_call_count": 5,
+            "parameter_values": [
+              {
+                "tool_name": "enzywizard-energy",
+                "side": "single",
+                "parameter_name": "minimization_iteration",
+                "value": 25
+              },
+              {
+                "tool_name": "enzywizard-flexibility",
+                "side": "single",
+                "parameter_name": "n_modes",
+                "value": 10
+              }
+            ]
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_clean_custom_workflow",
+      "description": "Single-structure cleaning with explicit pH and hydrogen settings.",
+      "tags": ["single", "clean", "parameters", "smoke"],
+      "message": "Clean this enzyme structure only at pH 6.5 and do not add hydrogens. Do not run downstream analyses.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "exact_tools": ["enzywizard-clean"],
+            "minimum_call_count": 1,
+            "parameter_values": [
+              {
+                "tool_name": "enzywizard-clean",
+                "side": "single",
+                "parameter_name": "pH",
+                "value": 6.5
+              },
+              {
+                "tool_name": "enzywizard-clean",
+                "side": "single",
+                "parameter_name": "add_H",
+                "value": false
+              }
+            ]
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "mutant_clean_only_workflow",
+      "description": "WT/MUT cleaning, alignment, and mutation mapping without analyses.",
+      "tags": ["mutant", "clean", "smoke"],
+      "message": "Clean and align the wild-type and mutant structures and map S70G only. Do not run downstream analyses.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "exact_tools": ["enzywizard-mut-clean"],
+            "minimum_call_count": 1
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_conservation_embedding_workflow",
+      "description": "Single-protein sequence conservation and residue embedding workflow.",
+      "tags": ["single", "individual", "conservation", "embedding", "msa"],
+      "message": "Analyze sequence conservation using the supplied alignment and generate residue-level embeddings for this enzyme, then integrate both reports.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "msa_file": "test_inputs/jhmm_3GP6.sto"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-conservation",
+              "enzywizard-embedding",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": ["enzywizard-batch"],
+            "minimum_call_count": 4
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_disorder_internal_interaction_workflow",
+      "description": "Single-protein disorder and internal noncovalent interaction workflow.",
+      "tags": ["single", "individual", "interaction", "properties"],
+      "message": "Analyze disorder and internal noncovalent protein interactions for this enzyme without any substrate, then integrate the reports.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-disorder",
+              "enzywizard-interaction",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-substrate",
+              "enzywizard-dock",
+              "enzywizard-batch"
+            ],
+            "minimum_call_count": 4
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_smiles_docking_workflow",
+      "description": "Direct-SMILES substrate preparation, docking, and interaction workflow.",
+      "tags": ["single", "docking", "interaction", "smiles", "smoke"],
+      "message": "Treat the supplied raw SMILES as the substrate, prepare it, dock it to this enzyme, analyze protein-substrate interactions, and integrate the reports.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "substrate_name": "CCO"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-substrate",
+              "enzywizard-dock",
+              "enzywizard-interaction",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": ["enzywizard-batch"],
+            "minimum_call_count": 5
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded",
+      "expected_resolved_parameters": [
+        {
+          "tool_name": "enzywizard-dock",
+          "side": "single",
+          "parameter_name": "substrate_names",
+          "value": "smiles1"
+        },
+        {
+          "tool_name": "enzywizard-interaction",
+          "side": "single",
+          "parameter_name": "substrate_names",
+          "value": "docked_smiles1"
+        }
+      ]
+    },
+    {
+      "case_id": "single_docking_without_interaction_workflow",
+      "description": "Named-substrate preparation and docking without interaction analysis.",
+      "tags": ["single", "docking", "named-substrate"],
+      "message": "Prepare glucose and dock it to this enzyme, but do not run protein-substrate interaction analysis. Integrate the available reports.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "substrate_name": "glucose"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-substrate",
+              "enzywizard-dock",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-interaction",
+              "enzywizard-batch"
+            ],
+            "minimum_call_count": 4
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded",
+      "expected_resolved_parameters": [
+        {
+          "tool_name": "enzywizard-dock",
+          "side": "single",
+          "parameter_name": "substrate_names",
+          "value": "glucose"
+        }
+      ]
+    },
+    {
+      "case_id": "mutant_substrate_docking_workflow",
+      "description": "Paired WT/MUT named-substrate docking and interaction workflow.",
+      "tags": ["mutant", "docking", "interaction", "named-substrate", "smoke"],
+      "message": "Prepare glucose once, dock it to both the wild type and S70G mutant, compare protein-substrate interactions, and integrate the paired reports.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "substrate_name": "glucose",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-substrate",
+              "enzywizard-dock",
+              "enzywizard-interaction",
+              "enzywizard-mut-integrate"
+            ],
+            "forbidden_tools": ["enzywizard-mut-batch"],
+            "minimum_call_count": 7
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded",
+      "expected_resolved_parameters": [
+        {"tool_name": "enzywizard-dock", "side": "wt", "parameter_name": "substrate_names", "value": "glucose"},
+        {"tool_name": "enzywizard-dock", "side": "mut", "parameter_name": "substrate_names", "value": "glucose"},
+        {"tool_name": "enzywizard-interaction", "side": "wt", "parameter_name": "substrate_names", "value": "docked_glucose"},
+        {"tool_name": "enzywizard-interaction", "side": "mut", "parameter_name": "substrate_names", "value": "docked_glucose"}
+      ]
+    },
+    {
+      "case_id": "mutant_smiles_docking_workflow",
+      "description": "Paired WT/MUT direct-SMILES docking and interaction workflow.",
+      "tags": ["mutant", "docking", "interaction", "smiles"],
+      "message": "Treat the supplied raw SMILES as one shared substrate, prepare it, dock it to both the wild type and S70G mutant, compare interactions, and integrate the reports.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "substrate_name": "CCO",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-substrate",
+              "enzywizard-dock",
+              "enzywizard-interaction",
+              "enzywizard-mut-integrate"
+            ],
+            "forbidden_tools": ["enzywizard-mut-batch"],
+            "minimum_call_count": 7
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded",
+      "expected_resolved_parameters": [
+        {"tool_name": "enzywizard-dock", "side": "wt", "parameter_name": "substrate_names", "value": "smiles1"},
+        {"tool_name": "enzywizard-dock", "side": "mut", "parameter_name": "substrate_names", "value": "smiles1"},
+        {"tool_name": "enzywizard-interaction", "side": "wt", "parameter_name": "substrate_names", "value": "docked_smiles1"},
+        {"tool_name": "enzywizard-interaction", "side": "mut", "parameter_name": "substrate_names", "value": "docked_smiles1"}
+      ]
+    },
+    {
+      "case_id": "mutant_broad_property_workflow",
+      "description": "Paired WT/MUT workflow covering the remaining broad property tools.",
+      "tags": ["mutant", "individual", "properties", "embedding"],
+      "message": "Compare amino-acid properties, hydrophobic clusters, disorder, and residue embeddings between the wild type and S70G mutant, then integrate the paired reports.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-aaprops",
+              "enzywizard-hydrocluster",
+              "enzywizard-disorder",
+              "enzywizard-embedding",
+              "enzywizard-mut-integrate"
+            ],
+            "forbidden_tools": ["enzywizard-mut-batch"],
+            "minimum_call_count": 10
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "mutant_internal_interaction_workflow",
+      "description": "Paired internal protein interaction comparison without substrate.",
+      "tags": ["mutant", "individual", "interaction"],
+      "message": "Compare internal noncovalent protein interactions between the wild type and S70G mutant without any substrate, then integrate the paired reports.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-interaction",
+              "enzywizard-mut-integrate"
+            ],
+            "forbidden_tools": [
+              "enzywizard-substrate",
+              "enzywizard-dock",
+              "enzywizard-mut-batch"
+            ],
+            "minimum_call_count": 4
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_custom_parameters_workflow",
+      "description": "Single-protein multi-tool workflow with explicit numeric parameters.",
+      "tags": ["single", "individual", "parameters"],
+      "message": "Run energy with exactly 250 minimization iterations, flexibility with cutoff 12.0 and 12 modes, disorder with window size 15 and minimum region length 7, and pockets with minimum radius 2.0, maximum radius 5.5, and minimum volume 80. Integrate all reports.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-clean",
+              "enzywizard-energy",
+              "enzywizard-flexibility",
+              "enzywizard-disorder",
+              "enzywizard-pocket",
+              "enzywizard-integrate"
+            ],
+            "forbidden_tools": ["enzywizard-batch"],
+            "minimum_call_count": 6,
+            "parameter_values": [
+              {"tool_name": "enzywizard-energy", "side": "single", "parameter_name": "minimization_iteration", "value": 250},
+              {"tool_name": "enzywizard-flexibility", "side": "single", "parameter_name": "cutoff", "value": 12.0},
+              {"tool_name": "enzywizard-flexibility", "side": "single", "parameter_name": "n_modes", "value": 12},
+              {"tool_name": "enzywizard-disorder", "side": "single", "parameter_name": "window_size", "value": 15},
+              {"tool_name": "enzywizard-disorder", "side": "single", "parameter_name": "min_region_length", "value": 7},
+              {"tool_name": "enzywizard-pocket", "side": "single", "parameter_name": "min_rad", "value": 2.0},
+              {"tool_name": "enzywizard-pocket", "side": "single", "parameter_name": "max_rad", "value": 5.5},
+              {"tool_name": "enzywizard-pocket", "side": "single", "parameter_name": "min_volume", "value": 80.0}
+            ]
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "mutant_fast_energy_flexibility_workflow",
+      "description": "Paired fast-profile energy and flexibility workflow.",
+      "tags": ["mutant", "individual", "parameters", "fast"],
+      "message": "Run a fast energy and flexibility comparison between the wild type and S70G mutant, then integrate the paired reports.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-energy",
+              "enzywizard-flexibility",
+              "enzywizard-mut-integrate"
+            ],
+            "forbidden_tools": ["enzywizard-mut-batch"],
+            "minimum_call_count": 6,
+            "parameter_values": [
+              {"tool_name": "enzywizard-energy", "side": "wt", "parameter_name": "minimization_iteration", "value": 25},
+              {"tool_name": "enzywizard-energy", "side": "mut", "parameter_name": "minimization_iteration", "value": 25},
+              {"tool_name": "enzywizard-flexibility", "side": "wt", "parameter_name": "n_modes", "value": 10},
+              {"tool_name": "enzywizard-flexibility", "side": "mut", "parameter_name": "n_modes", "value": 10}
+            ]
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_fast_batch_workflow",
+      "description": "Complete single-protein batch workflow using the fast profile.",
+      "tags": ["single", "batch", "fast", "named-substrate"],
+      "message": "Run the complete EnzyWizard workflow using fast settings and generate the integrated graph.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb",
+        "msa_file": "test_inputs/jhmm_3GP6.sto",
+        "substrate_name": "glucose"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "exact_tools": ["enzywizard-clean", "enzywizard-batch"],
+            "minimum_call_count": 2,
+            "parameter_values": [
+              {"tool_name": "enzywizard-batch", "side": "single", "parameter_name": "energy_minimization_iteration", "value": 25},
+              {"tool_name": "enzywizard-batch", "side": "single", "parameter_name": "flexibility_n_modes", "value": 10},
+              {"tool_name": "enzywizard-batch", "side": "single", "parameter_name": "substrate_num_confs", "value": 2},
+              {"tool_name": "enzywizard-batch", "side": "single", "parameter_name": "dock_exhaustiveness", "value": 4}
+            ]
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "mutant_fast_batch_workflow",
+      "description": "Complete paired WT/MUT batch workflow using the fast profile.",
+      "tags": ["mutant", "batch", "fast", "named-substrate"],
+      "message": "Run the complete paired EnzyWizard workflow for the wild type and S70G mutant using fast settings and generate the comparative graph.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "msa_file": "test_inputs/jhmm_1ZG4_WT.sto",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "mut_msa_file": "test_inputs/jhmm_1ZG6_S70G.sto",
+        "substrate_name": "glucose",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "exact_tools": ["enzywizard-mut-clean", "enzywizard-mut-batch"],
+            "minimum_call_count": 2,
+            "parameter_values": [
+              {"tool_name": "enzywizard-mut-batch", "side": "shared", "parameter_name": "energy_minimization_iteration", "value": 25},
+              {"tool_name": "enzywizard-mut-batch", "side": "shared", "parameter_name": "flexibility_n_modes", "value": 10},
+              {"tool_name": "enzywizard-mut-batch", "side": "shared", "parameter_name": "substrate_num_confs", "value": 2},
+              {"tool_name": "enzywizard-mut-batch", "side": "shared", "parameter_name": "dock_exhaustiveness", "value": 4}
+            ]
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "mutant_repeated_plan_revision_workflow",
+      "description": "Two paired-plan revisions followed by fast-profile execution.",
+      "tags": ["mutant", "revision", "parameters", "fast"],
+      "message": "Compare energy and binding pockets between the wild type and S70G mutant.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "revision_requested",
+          "revision_request": "Replace binding-pocket comparison with flexibility. Keep energy comparison and do not run pocket analysis.",
+          "expected_plan": {
+            "required_tools": ["enzywizard-mut-clean", "enzywizard-energy", "enzywizard-pocket", "enzywizard-mut-integrate"],
+            "minimum_call_count": 6
+          }
+        },
+        {
+          "decision": "revision_requested",
+          "revision_request": "Also add disorder comparison. The final set must be energy, flexibility, and disorder only, using fast settings where supported.",
+          "expected_plan": {
+            "required_tools": ["enzywizard-mut-clean", "enzywizard-energy", "enzywizard-flexibility", "enzywizard-mut-integrate"],
+            "forbidden_tools": ["enzywizard-pocket"],
+            "minimum_call_count": 6
+          }
+        },
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": ["enzywizard-mut-clean", "enzywizard-energy", "enzywizard-flexibility", "enzywizard-disorder", "enzywizard-mut-integrate"],
+            "forbidden_tools": ["enzywizard-pocket", "enzywizard-mut-batch"],
+            "minimum_call_count": 8,
+            "parameter_values": [
+              {"tool_name": "enzywizard-energy", "side": "wt", "parameter_name": "minimization_iteration", "value": 25},
+              {"tool_name": "enzywizard-energy", "side": "mut", "parameter_name": "minimization_iteration", "value": 25},
+              {"tool_name": "enzywizard-flexibility", "side": "wt", "parameter_name": "n_modes", "value": 10},
+              {"tool_name": "enzywizard-flexibility", "side": "mut", "parameter_name": "n_modes", "value": 10}
+            ]
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_parameter_revision_workflow",
+      "description": "One plan revision that changes only numerical parameters.",
+      "tags": ["single", "revision", "parameters"],
+      "message": "Analyze energy and flexibility for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "revision_requested",
+          "revision_request": "Keep the same analyses, but use exactly 250 energy minimization iterations, flexibility cutoff 12.0, and 12 flexibility modes.",
+          "expected_plan": {
+            "required_tools": ["enzywizard-clean", "enzywizard-energy", "enzywizard-flexibility", "enzywizard-integrate"],
+            "minimum_call_count": 4
+          }
+        },
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": ["enzywizard-clean", "enzywizard-energy", "enzywizard-flexibility", "enzywizard-integrate"],
+            "minimum_call_count": 4,
+            "parameter_values": [
+              {"tool_name": "enzywizard-energy", "side": "single", "parameter_name": "minimization_iteration", "value": 250},
+              {"tool_name": "enzywizard-flexibility", "side": "single", "parameter_name": "cutoff", "value": 12.0},
+              {"tool_name": "enzywizard-flexibility", "side": "single", "parameter_name": "n_modes", "value": 12}
+            ]
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    },
+    {
+      "case_id": "single_plan_rejection_workflow",
+      "description": "Final rejection must end the graph without executing any tool.",
+      "tags": ["single", "rejection", "confirmation", "smoke"],
+      "message": "Analyze energy and binding pockets for this enzyme.",
+      "inputs": {
+        "structure_file": "test_inputs/cleaned_3GP6.pdb"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "rejected",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": ["enzywizard-clean", "enzywizard-energy", "enzywizard-pocket", "enzywizard-integrate"],
+            "minimum_call_count": 4
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "mutant_conservation_embedding_workflow",
+      "description": "Paired WT/MUT conservation and embedding workflow with both MSAs.",
+      "tags": ["mutant", "individual", "conservation", "embedding", "msa"],
+      "message": "Compare sequence conservation using both supplied alignments and compare residue embeddings between the wild type and S70G mutant, then integrate the paired reports.",
+      "inputs": {
+        "structure_file": "test_inputs/1ZG4_WT.pdb",
+        "msa_file": "test_inputs/jhmm_1ZG4_WT.sto",
+        "mut_structure_file": "test_inputs/1ZG6_S70G.pdb",
+        "mut_msa_file": "test_inputs/jhmm_1ZG6_S70G.sto",
+        "amino_acid_substitution": "S70G"
+      },
+      "confirmation_actions": [
+        {
+          "decision": "approved",
+          "revision_request": null,
+          "expected_plan": {
+            "required_tools": [
+              "enzywizard-mut-clean",
+              "enzywizard-conservation",
+              "enzywizard-embedding",
+              "enzywizard-mut-integrate"
+            ],
+            "forbidden_tools": ["enzywizard-mut-batch"],
+            "minimum_call_count": 6
+          }
+        }
+      ],
+      "expected_execution_status": "succeeded"
+    }
+  ]
+}

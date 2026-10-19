@@ -1,0 +1,50 @@
+# 该文件只保存稳定的报告契约和解释边界，不复制大型 JSON Schema。
+reports:
+  enzywizard_clean:
+    artifact_type: clean_report_json
+    focus: residue mapping and cleaning statistics
+  enzywizard_mut_clean:
+    artifact_type: mut_clean_report_json
+    focus: paired residue mapping and normalized amino-acid substitution
+  enzywizard_aaprops:
+    artifact_type: aaprops_report_json
+    focus: per-residue physicochemical and structural properties
+  enzywizard_hydrocluster:
+    artifact_type: hydrocluster_report_json
+    focus: hydrophobic cluster counts, areas, and member residues
+  enzywizard_energy:
+    artifact_type: energy_report_json
+    focus: force-field potential-energy terms
+    caution: Energy values are model-dependent estimates and are not experimental stability measurements.
+  enzywizard_flexibility:
+    artifact_type: flexibility_report_json
+    focus: per-residue root-mean-square fluctuation estimates
+  enzywizard_disorder:
+    artifact_type: disorder_report_json
+    focus: predicted disordered regions and summary lengths
+  enzywizard_conservation:
+    artifact_type: conservation_report_json
+    focus: per-residue sequence-conservation scores
+  enzywizard_embedding:
+    artifact_type: embedding_report_json
+    focus: residue embedding dimensions and coverage
+    caution: Raw vectors must not be copied into the language-model context.
+  enzywizard_pocket:
+    artifact_type: pocket_report_json
+    focus: predicted pocket counts, volumes, centers, and residues
+  enzywizard_substrate:
+    artifact_type: substrate_report_json
+    focus: substrate descriptors and generated conformers
+  enzywizard_dock:
+    artifact_type: dock_report_json
+    focus: predicted docking affinity and selected pose
+    caution: Docking scores are comparative computational estimates, not binding constants.
+  enzywizard_interaction:
+    artifact_type: interaction_report_json
+    focus: detected protein and protein-substrate interaction counts
+  enzywizard_integrate:
+    artifact_type: integrate_report_json
+    focus: consolidated single-protein statistics and graph
+  enzywizard_mut_integrate:
+    artifact_type: mut_integrate_report_json
+    focus: consolidated WT/MUT statistics, MUT-WT differences, and paired graphs

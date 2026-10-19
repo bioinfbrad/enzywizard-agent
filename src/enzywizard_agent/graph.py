@@ -1,17 +1,19 @@
 from __future__ import annotations
 
+from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.graph import END, StateGraph
 
 from .nodes.analysis import analysis_node
+from .nodes.history_query import history_query_node
 from .nodes.planning import planning_node
+from .nodes.request_routing import request_routing_node
 from .nodes.tool_calling import tool_calling_node
 from .nodes.user_confirmation_interrupt import user_confirmation_interrupt_node
 from .nodes.user_input_interrupt import user_input_interrupt_node
 from .state import AgentState
 
 
-def build_graph():
-    """按照既定模块流向创建并编译 EnzyWizard-Agent 状态图。"""
+def build_graph(checkpointer: BaseCheckpointSaver | None = None):
 
     # StateGraph 使用 AgentState 作为所有节点共享的数据结构。
     # StateGraph(AgentState)并没有真正建我们定义的图状态对象，只是让图状态机知道这个图类中有哪些状态变量，
@@ -19,14 +21,35 @@ def build_graph():
     graph = StateGraph(AgentState)
 
     # 节点名称同时也是条件边映射中的目标标识。
+    graph.add_node("request_routing", request_routing_node)
+    graph.add_node("history_query", history_query_node)
     graph.add_node("planning", planning_node)
     graph.add_node("user_confirmation_interrupt", user_confirmation_interrupt_node)
     graph.add_node("tool_calling", tool_calling_node)
     graph.add_node("analysis", analysis_node)
     graph.add_node("user_input_interrupt", user_input_interrupt_node)
 
-    # 每次新会话或下一轮用户输入都从 Planning 开始处理。
-    graph.set_entry_point("planning")
+    # 每轮先由专用 Router 解析完整请求，Planning 只接收需要执行工具的请求。
+    graph.set_entry_point("request_routing")
+
+    graph.add_conditional_edges(
+        "request_routing",
+        route_from_state,
+        {
+            "request_to_planning": "planning",
+            "request_to_history_query": "history_query",
+            "request_to_analysis": "analysis",
+        },
+    )
+
+    graph.add_conditional_edges(
+        "history_query",
+        route_from_state,
+        {
+            "history_to_planning": "planning",
+            "history_to_analysis": "analysis",
+        },
+    )
 
     # Planning 有工具计划时等待用户确认；无需工具时直接交给 Analysis。
     graph.add_conditional_edges(
@@ -38,14 +61,15 @@ def build_graph():
         },
     )
 
-    # 用户可以批准计划、要求重新规划，或者拒绝执行并进入下一轮输入。
+    # 用户可以批准计划、要求重新规划，或者拒绝执行。拒绝也进入 Analysis，
+    # 由其生成明确回答并统一处理最后一轮的 max_turns 终止逻辑。
     graph.add_conditional_edges(
         "user_confirmation_interrupt",
         route_from_state,
         {
             "tool_execution_approved": "tool_calling",
-            "tool_plan_revision_requested": "planning",
-            "tool_execution_rejected": "user_input_interrupt",
+            "tool_plan_revision_requested": "request_routing",
+            "tool_execution_rejected": "analysis",
         },
     )
 
@@ -62,11 +86,12 @@ def build_graph():
         },
     )
 
-    # 收到下一轮用户输入后重新进入 Planning，形成多轮会话循环。
-    graph.add_edge("user_input_interrupt", "planning")
+    # 收到下一轮用户输入后重新进入 Router，形成多轮会话循环。
+    graph.add_edge("user_input_interrupt", "request_routing")
 
-    # compile 返回可调用的 LangGraph 应用；当前服务尚未正式 invoke。
-    return graph.compile()
+    # compile 返回可调用的 LangGraph 应用。传入 checkpointer 后，调用方必须在
+    # invoke/config 中提供稳定 thread_id，才能在中断后恢复同一会话。
+    return graph.compile(checkpointer=checkpointer)
 
 
 def route_from_state(state: AgentState) -> str:

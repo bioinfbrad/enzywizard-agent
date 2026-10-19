@@ -1,0 +1,670 @@
+{
+  "cases": [
+    {
+      "case_id": "tool_single_clean",
+      "tags": ["tool", "single", "clean"],
+      "message": "Clean the supplied enzyme structure at pH 7.4 and add hydrogens.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_single_energy",
+      "tags": ["tool", "single", "energy"],
+      "message": "Calculate the energy of the supplied enzyme structure using 150 minimization iterations.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_single_conservation",
+      "tags": ["tool", "single", "conservation"],
+      "message": "Analyze residue conservation using the supplied structure and MSA.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_single_docking",
+      "tags": ["tool", "single", "docking"],
+      "message": "Prepare glucose, dock it to the supplied enzyme, and analyze protein-substrate interactions.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_mutant_energy",
+      "tags": ["tool", "mutant", "energy"],
+      "message": "Compare energy between the supplied wild-type enzyme and its S70G mutant.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_single_complete",
+      "tags": ["tool", "single", "batch"],
+      "message": "Run the complete single-protein EnzyWizard workflow and generate the integrated graph.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_mutant_complete",
+      "tags": ["tool", "mutant", "batch"],
+      "message": "Run the complete paired workflow for the supplied wild type and S70G mutant.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_explicit_parameters",
+      "tags": ["tool", "parameters"],
+      "message": "Calculate energy with 250 minimization iterations and flexibility with a 12 angstrom cutoff and 12 modes.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_smiles_docking",
+      "tags": ["tool", "single", "smiles"],
+      "message": "Use the supplied SMILES substrate for docking and interaction analysis against the enzyme structure.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_internal_interactions",
+      "tags": ["tool", "single", "interaction"],
+      "message": "Calculate internal residue-residue interactions for the supplied enzyme without docking a substrate.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_rerun_previous_settings",
+      "tags": ["tool", "history-context", "recompute"],
+      "message": "Rerun the previous analysis with exactly the same tools and parameter settings.",
+      "expected": {"request_type": "tool_workflow", "actions": ["reference_historical_context", "run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": true, "history_artifacts": false, "reuse_policy": "none", "recomputation": true}
+    },
+    {
+      "case_id": "tool_modify_previous_plan",
+      "tags": ["tool", "history-context", "revision"],
+      "message": "Use the previous approved analysis plan as the starting point, add disorder analysis, and run the revised workflow.",
+      "expected": {"request_type": "tool_workflow", "actions": ["reference_historical_context", "run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": true, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+
+    {
+      "case_id": "history_energy_turn1",
+      "tags": ["history", "analysis", "explicit-turn"],
+      "message": "Summarize the energy report generated in turn 1.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [1], "required_artifact_types": ["energy_report_json"], "required_sides": ["single"]}}
+    },
+    {
+      "case_id": "history_latest_pocket",
+      "tags": ["history", "analysis", "latest"],
+      "message": "Explain the most recent binding-pocket results.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["explain"], "resolved_turn_ids": [2], "required_artifact_types": ["pocket_report_json"]}}
+    },
+    {
+      "case_id": "history_compare_wt_mut_energy",
+      "tags": ["history", "analysis", "compare", "mutant"],
+      "message": "Compare the wild-type and mutant energy reports from turn 2.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["compare"], "resolved_turn_ids": [2], "required_artifact_types": ["energy_report_json"], "required_sides": ["wt", "mut"]}}
+    },
+    {
+      "case_id": "history_compare_energy_turns",
+      "tags": ["history", "analysis", "compare", "multi-turn"],
+      "message": "Compare the energy result from turn 1 with both energy results from turn 2.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["compare"], "resolved_turn_ids": [1, 2], "required_artifact_types": ["energy_report_json"]}}
+    },
+    {
+      "case_id": "history_previous_docking",
+      "tags": ["history", "analysis", "previous"],
+      "message": "Summarize the docking result from the previous turn.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [3], "required_artifact_types": ["dock_report_json"]}}
+    },
+    {
+      "case_id": "history_mutation_mapping",
+      "tags": ["history", "analysis", "mutant"],
+      "message": "Explain the mutation mapping report produced in turn 2.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["explain"], "resolved_turn_ids": [2], "required_artifact_types": ["mut_clean_report_json"], "required_sides": ["shared"]}}
+    },
+    {
+      "case_id": "history_all_integrated_reports",
+      "tags": ["history", "analysis", "all-turns"],
+      "message": "Summarize the integrated reports from all completed turns.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [1, 2, 3], "required_artifact_types": ["integrate_report_json", "mut_integrate_report_json"]}}
+    },
+
+    {
+      "case_id": "artifact_turn1_reports",
+      "tags": ["history", "artifacts", "explicit-turn"],
+      "message": "List the report files generated in turn 1 and show their paths.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [1], "required_artifact_types": ["energy_report_json", "pocket_report_json"]}}
+    },
+    {
+      "case_id": "artifact_previous_dock_files",
+      "tags": ["history", "artifacts", "docking"],
+      "message": "Where are the docking files generated in the previous turn?",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [3], "required_artifact_types": ["dock_report_json", "docked_substrate_sdf"]}}
+    },
+    {
+      "case_id": "artifact_all_logs",
+      "tags": ["history", "artifacts", "logs"],
+      "message": "List every log file from all completed turns.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [1, 2, 3], "required_artifact_types": ["log_file"]}}
+    },
+    {
+      "case_id": "artifact_turn2_structures",
+      "tags": ["history", "artifacts", "mutant", "structure"],
+      "message": "Which cleaned wild-type and mutant structure files were generated in turn 2?",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [2], "required_artifact_types": ["wt_cleaned_structure_cif", "mut_cleaned_structure_cif"], "required_sides": ["wt", "mut"]}}
+    },
+    {
+      "case_id": "artifact_latest_graph",
+      "tags": ["history", "artifacts", "graph"],
+      "message": "Show the graph node and edge files from the latest completed workflow.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [3], "required_artifact_types": ["integrate_nodes_json", "integrate_edges_json"]}}
+    },
+    {
+      "case_id": "artifact_all_outputs",
+      "tags": ["history", "artifacts", "all-turns"],
+      "message": "List all outputs retained from every earlier turn.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [1, 2, 3]}}
+    },
+
+    {
+      "case_id": "mixed_analyze_dock_and_energy",
+      "tags": ["mixed", "history", "tool"],
+      "message": "Summarize the docking report from the previous turn, then calculate energy for the supplied enzyme.",
+      "expected": {"request_type": "mixed", "actions": ["analyze_history", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [3], "required_artifact_types": ["dock_report_json"]}}
+    },
+    {
+      "case_id": "mixed_list_and_explain_energy",
+      "tags": ["mixed", "history", "artifacts"],
+      "message": "List the files from turn 1 and explain its energy report.",
+      "expected": {"request_type": "mixed", "actions": ["list_artifacts", "analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts", "explain"], "resolved_turn_ids": [1], "required_artifact_types": ["energy_report_json"]}}
+    },
+    {
+      "case_id": "mixed_reuse_dock_interaction",
+      "tags": ["mixed", "reuse", "dock"],
+      "message": "Reuse the docked glucose output from turn 3 as input and run protein-substrate interaction analysis without docking again.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "required", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [3], "required_artifact_types": ["docked_substrate_sdf"]}}
+    },
+    {
+      "case_id": "mixed_reuse_substrate_docking",
+      "tags": ["mixed", "reuse", "substrate"],
+      "message": "Reuse the prepared glucose conformers from turn 3 and perform a new docking calculation.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "required", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [3], "required_artifact_types": ["substrate_sdf"]}}
+    },
+    {
+      "case_id": "mixed_reuse_clean_disorder",
+      "tags": ["mixed", "reuse", "clean"],
+      "message": "Use the cleaned single-protein structure from turn 1 as input and calculate disorder without cleaning it again.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "required", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [1], "required_artifact_types": ["cleaned_structure_cif"]}}
+    },
+    {
+      "case_id": "mixed_optional_clean_reuse",
+      "tags": ["mixed", "reuse", "optional"],
+      "message": "Calculate flexibility, reusing the cleaned structure from turn 1 if it is compatible; otherwise clean the supplied structure again.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "allowed", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [1], "required_artifact_types": ["cleaned_structure_cif"]}}
+    },
+    {
+      "case_id": "mixed_compare_pocket_and_recompute_energy",
+      "tags": ["mixed", "history", "tool", "mutant"],
+      "message": "Compare the WT and mutant pocket reports from turn 2, and recompute WT and mutant energy using fast settings.",
+      "expected": {"request_type": "mixed", "actions": ["analyze_history", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": true,
+        "query": {"required_operations": ["compare"], "resolved_turn_ids": [2], "required_artifact_types": ["pocket_report_json"], "required_sides": ["wt", "mut"]}}
+    },
+    {
+      "case_id": "mixed_help_and_run_pocket",
+      "tags": ["mixed", "help", "tool"],
+      "message": "Tell me what pocket analysis produces, and also run pocket analysis on the supplied enzyme.",
+      "expected": {"request_type": "mixed", "actions": ["answer_software_help", "run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "mixed_logs_and_rerun_previous",
+      "tags": ["mixed", "history", "artifacts", "recompute"],
+      "message": "List the log files from the previous turn and rerun that turn's workflow with the same settings.",
+      "expected": {"request_type": "mixed", "actions": ["list_artifacts", "reference_historical_context", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": true,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [3], "required_artifact_types": ["log_file"]}}
+    },
+    {
+      "case_id": "mixed_analyze_and_list_sources",
+      "tags": ["mixed", "history", "artifacts"],
+      "message": "Summarize the energy and pocket reports from turn 1 and list the exact source files used in the answer.",
+      "expected": {"request_type": "mixed", "actions": ["analyze_history", "list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize", "list_artifacts"], "resolved_turn_ids": [1], "required_artifact_types": ["energy_report_json", "pocket_report_json"]}}
+    },
+
+    {
+      "case_id": "help_supported_tools",
+      "tags": ["help"],
+      "message": "Which EnzyWizard tools and analysis types do you support?",
+      "expected": {"request_type": "software_help", "actions": ["answer_software_help"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "help_required_inputs",
+      "tags": ["help", "inputs"],
+      "message": "What input files are required for a WT versus mutant comparison?",
+      "expected": {"request_type": "software_help", "actions": ["answer_software_help"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "help_fast_profile",
+      "tags": ["help", "parameters"],
+      "message": "What does the fast profile change in this application?",
+      "expected": {"request_type": "software_help", "actions": ["answer_software_help"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "help_confirmation",
+      "tags": ["help", "confirmation"],
+      "message": "Can I revise a generated tool plan before any command is executed?",
+      "expected": {"request_type": "software_help", "actions": ["answer_software_help"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+
+    {
+      "case_id": "science_glycine_flexibility",
+      "tags": ["science"],
+      "message": "Why can glycine increase local protein flexibility?",
+      "expected": {"request_type": "general_scientific_question", "actions": ["answer_general_question"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "science_binding_pocket",
+      "tags": ["science"],
+      "message": "What is a protein binding pocket? Do not run any analysis.",
+      "expected": {"request_type": "general_scientific_question", "actions": ["answer_general_question"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "science_anm",
+      "tags": ["science", "flexibility"],
+      "message": "Conceptually, how does an anisotropic network model describe protein motion?",
+      "expected": {"request_type": "general_scientific_question", "actions": ["answer_general_question"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "science_conservation",
+      "tags": ["science", "conservation"],
+      "message": "Why are highly conserved catalytic residues often sensitive to mutation?",
+      "expected": {"request_type": "general_scientific_question", "actions": ["answer_general_question"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+
+    {
+      "case_id": "conversation_greeting",
+      "tags": ["conversation"],
+      "message": "Hello, are you ready to help with an enzyme analysis session?",
+      "expected": {"request_type": "conversation", "actions": ["continue_conversation"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "conversation_previous_request",
+      "tags": ["conversation", "history-context"],
+      "message": "What did I ask you to do in the previous turn? Do not open any result files.",
+      "expected": {"request_type": "conversation", "actions": ["reference_historical_context", "continue_conversation"], "route": "request_to_analysis", "tools": false, "history": true, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+
+    {
+      "case_id": "out_of_scope_weather",
+      "tags": ["out-of-scope"],
+      "message": "What will the weather be in London tomorrow?",
+      "expected": {"request_type": "out_of_scope", "actions": ["decline_out_of_scope"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "out_of_scope_marketing",
+      "tags": ["out-of-scope"],
+      "message": "Write a social-media marketing campaign for a clothing store.",
+      "expected": {"request_type": "out_of_scope", "actions": ["decline_out_of_scope"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+
+    {
+      "case_id": "clarification_run_it",
+      "tags": ["clarification", "ambiguous"],
+      "message": "Run it for me.",
+      "expected": {"request_type": "clarification", "actions": ["clarify_request"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "clarification_conflicting_exit",
+      "tags": ["clarification", "conflict"],
+      "message": "Exit now, but first run a complete analysis of the supplied enzyme.",
+      "expected": {"request_type": "clarification", "actions": ["clarify_request"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+
+    {
+      "case_id": "exit_session",
+      "tags": ["exit"],
+      "message": "Exit the EnzyWizard-Agent session now.",
+      "expected": {"request_type": "exit", "actions": ["exit_session"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+
+    {
+      "case_id": "tool_holdout_provided_mutant_energy",
+      "tags": ["tool", "mutant", "energy", "holdout"],
+      "message": "Evaluate the energetic difference using the provided WT and mutant structures.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_current_mutant_flexibility",
+      "tags": ["tool", "mutant", "flexibility", "holdout"],
+      "message": "Measure and compare flexibility for the currently supplied wild type and S70G structures.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_current_single_pocket",
+      "tags": ["tool", "single", "pocket", "holdout"],
+      "message": "Detect binding pockets on the current enzyme input with the default settings.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_current_multi_properties",
+      "tags": ["tool", "single", "properties", "holdout"],
+      "message": "For the supplied enzyme, calculate amino-acid properties, hydrophobic clusters, disorder, and embeddings.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_fresh_named_docking",
+      "tags": ["tool", "single", "docking", "holdout"],
+      "message": "Start a fresh glucose docking and interaction workflow on the supplied structure.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_mutant_conservation",
+      "tags": ["tool", "mutant", "conservation", "holdout"],
+      "message": "Compute conservation profiles for both supplied WT and mutant systems using their current MSAs.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_extend_previous_plan",
+      "tags": ["tool", "history-context", "revision", "holdout"],
+      "message": "Take the last approved plan, append conservation analysis, and execute the updated plan.",
+      "expected": {"request_type": "tool_workflow", "actions": ["reference_historical_context", "run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": true, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_repeat_previous_plan",
+      "tags": ["tool", "history-context", "recompute", "holdout"],
+      "message": "Execute the last approved workflow again without changing its tool set or parameters.",
+      "expected": {"request_type": "tool_workflow", "actions": ["reference_historical_context", "run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": true, "history_artifacts": false, "reuse_policy": "none", "recomputation": true}
+    },
+    {
+      "case_id": "tool_holdout_complete_single",
+      "tags": ["tool", "single", "batch", "holdout"],
+      "message": "Perform every available single-enzyme analysis on the current inputs and build the final graph.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_complete_mutant",
+      "tags": ["tool", "mutant", "batch", "holdout"],
+      "message": "Run the full comparative pipeline for the provided WT and S70G pair and produce integrated outputs.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_mutant_clean",
+      "tags": ["tool", "mutant", "clean", "holdout"],
+      "message": "Clean and align the supplied WT and S70G structures and report the mutation mapping only.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "tool_holdout_internal_interaction",
+      "tags": ["tool", "single", "interaction", "holdout"],
+      "message": "Inspect noncovalent contacts within the current protein itself; no ligand docking is requested.",
+      "expected": {"request_type": "tool_workflow", "actions": ["run_tool_workflow"], "route": "request_to_planning", "tools": true, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+
+    {
+      "case_id": "history_holdout_explain_turn1_pocket",
+      "tags": ["history", "analysis", "pocket", "holdout"],
+      "message": "Explain what the pocket report in turn 1 says.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["explain"], "resolved_turn_ids": [1], "required_artifact_types": ["pocket_report_json"], "required_sides": ["single"]}}
+    },
+    {
+      "case_id": "history_holdout_summarize_turn2_flexibility",
+      "tags": ["history", "analysis", "mutant", "holdout"],
+      "message": "Summarize both flexibility reports produced for the paired analysis in turn 2.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [2], "required_artifact_types": ["flexibility_report_json"], "required_sides": ["wt", "mut"]}}
+    },
+    {
+      "case_id": "history_holdout_compare_turn2_pockets",
+      "tags": ["history", "analysis", "compare", "mutant", "holdout"],
+      "message": "Using the completed reports in turn 2, compare WT and mutant binding pockets.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["compare"], "resolved_turn_ids": [2], "required_artifact_types": ["pocket_report_json"], "required_sides": ["wt", "mut"]}}
+    },
+    {
+      "case_id": "history_holdout_explain_turn3_interaction",
+      "tags": ["history", "analysis", "interaction", "holdout"],
+      "message": "Explain the protein-substrate interaction result saved in turn 3.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["explain"], "resolved_turn_ids": [3], "required_artifact_types": ["interaction_report_json"]}}
+    },
+    {
+      "case_id": "history_holdout_summarize_turn3_substrate",
+      "tags": ["history", "analysis", "substrate", "holdout"],
+      "message": "Summarize the substrate preparation report from turn 3.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [3], "required_artifact_types": ["substrate_report_json"]}}
+    },
+    {
+      "case_id": "history_holdout_explain_turn1_clean",
+      "tags": ["history", "analysis", "clean", "holdout"],
+      "message": "Explain the structure-cleaning report generated in turn 1.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["explain"], "resolved_turn_ids": [1], "required_artifact_types": ["clean_report_json"]}}
+    },
+    {
+      "case_id": "history_holdout_latest_energy",
+      "tags": ["history", "analysis", "energy", "latest", "holdout"],
+      "message": "Summarize the latest completed energy results.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [2], "required_artifact_types": ["energy_report_json"]}}
+    },
+    {
+      "case_id": "history_holdout_turn2_integrated",
+      "tags": ["history", "analysis", "integrate", "mutant", "holdout"],
+      "message": "Explain the paired integrated report from turn 2, not its component reports.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["explain"], "resolved_turn_ids": [2], "required_artifact_types": ["mut_integrate_report_json"], "required_sides": ["shared"]}}
+    },
+    {
+      "case_id": "history_holdout_compare_integrated_turns",
+      "tags": ["history", "analysis", "compare", "integrate", "holdout"],
+      "message": "Compare the single-protein integrated reports from turns 1 and 3.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["compare"], "resolved_turn_ids": [1, 3], "required_artifact_types": ["integrate_report_json"], "required_sides": ["single"]}}
+    },
+    {
+      "case_id": "history_holdout_summarize_turn3_dock",
+      "tags": ["history", "analysis", "dock", "holdout"],
+      "message": "Give me a summary of the completed docking report in turn 3.",
+      "expected": {"request_type": "history_analysis", "actions": ["analyze_history"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [3], "required_artifact_types": ["dock_report_json"]}}
+    },
+
+    {
+      "case_id": "artifact_holdout_turn3_conformers",
+      "tags": ["history", "artifacts", "substrate", "holdout"],
+      "message": "Show the prepared substrate conformer files from turn 3.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [3], "required_artifact_types": ["substrate_sdf"]}}
+    },
+    {
+      "case_id": "artifact_holdout_turn3_complex",
+      "tags": ["history", "artifacts", "dock", "structure", "holdout"],
+      "message": "Where is the docked complex structure produced in turn 3?",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [3], "required_artifact_types": ["docked_complex_structure"]}}
+    },
+    {
+      "case_id": "artifact_holdout_turn2_graph",
+      "tags": ["history", "artifacts", "graph", "mutant", "holdout"],
+      "message": "List all WT and mutant graph node and edge files from turn 2.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [2], "required_artifact_types": ["wt_integrate_nodes_json", "wt_integrate_edges_json", "mut_integrate_nodes_json", "mut_integrate_edges_json"], "required_sides": ["wt", "mut"]}}
+    },
+    {
+      "case_id": "artifact_holdout_turn1_clean_structure",
+      "tags": ["history", "artifacts", "clean", "structure", "holdout"],
+      "message": "Give me the path of the cleaned structure retained from turn 1.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [1], "required_artifact_types": ["cleaned_structure_cif"]}}
+    },
+    {
+      "case_id": "artifact_holdout_turn2_mapping_file",
+      "tags": ["history", "artifacts", "mutant", "holdout"],
+      "message": "Show the mutation-mapping report file generated in turn 2.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [2], "required_artifact_types": ["mut_clean_report_json"], "required_sides": ["shared"]}}
+    },
+    {
+      "case_id": "artifact_holdout_latest_interaction_report",
+      "tags": ["history", "artifacts", "interaction", "latest", "holdout"],
+      "message": "Locate the most recent interaction report file.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [3], "required_artifact_types": ["interaction_report_json"]}}
+    },
+    {
+      "case_id": "artifact_holdout_energy_turns1_2",
+      "tags": ["history", "artifacts", "energy", "multi-turn", "holdout"],
+      "message": "List every energy report file from turns 1 and 2.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [1, 2], "required_artifact_types": ["energy_report_json"]}}
+    },
+    {
+      "case_id": "artifact_holdout_previous_structures",
+      "tags": ["history", "artifacts", "structure", "previous", "holdout"],
+      "message": "List the protein structure files retained by the previous turn.",
+      "expected": {"request_type": "artifact_query", "actions": ["list_artifacts"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [3], "required_artifact_types": ["cleaned_structure_cif", "docked_complex_structure"]}}
+    },
+
+    {
+      "case_id": "mixed_holdout_optional_clean_reuse",
+      "tags": ["mixed", "reuse", "optional", "clean", "holdout"],
+      "message": "Use the turn 1 cleaned model for flexibility if suitable; if not, regenerate a clean model from the current input.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "allowed", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [1], "required_artifact_types": ["cleaned_structure_cif"]}}
+    },
+    {
+      "case_id": "mixed_holdout_required_clean_reuse",
+      "tags": ["mixed", "reuse", "required", "clean", "holdout"],
+      "message": "Calculate disorder directly from the cleaned CIF in turn 1 and do not run cleaning again.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "required", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [1], "required_artifact_types": ["cleaned_structure_cif"]}}
+    },
+    {
+      "case_id": "mixed_holdout_optional_dock_reuse",
+      "tags": ["mixed", "reuse", "optional", "dock", "holdout"],
+      "message": "Analyze ligand contacts using the docked glucose from turn 3 when valid; otherwise perform docking again first.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "allowed", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [3], "required_artifact_types": ["docked_substrate_sdf"]}}
+    },
+    {
+      "case_id": "mixed_holdout_required_substrate_reuse",
+      "tags": ["mixed", "reuse", "required", "substrate", "holdout"],
+      "message": "Take the prepared glucose conformers from turn 3 as the ligand input for a new docking run.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "required", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [3], "required_artifact_types": ["substrate_sdf"]}}
+    },
+    {
+      "case_id": "mixed_holdout_mutant_structure_reuse",
+      "tags": ["mixed", "reuse", "required", "mutant", "holdout"],
+      "message": "Use the cleaned mutant structure from turn 2 as input and calculate its disorder score.",
+      "expected": {"request_type": "mixed", "actions": ["reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "required", "recomputation": false,
+        "query": {"required_operations": ["reuse_as_input"], "resolved_turn_ids": [2], "required_artifact_types": ["mut_cleaned_structure_cif"], "required_sides": ["mut"]}}
+    },
+    {
+      "case_id": "mixed_holdout_compare_energy_run_pocket",
+      "tags": ["mixed", "history", "tool", "holdout"],
+      "message": "Compare the completed WT and mutant energy reports from turn 2, then run pocket analysis on the supplied enzyme.",
+      "expected": {"request_type": "mixed", "actions": ["analyze_history", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["compare"], "resolved_turn_ids": [2], "required_artifact_types": ["energy_report_json"], "required_sides": ["wt", "mut"]}}
+    },
+    {
+      "case_id": "mixed_holdout_explain_and_rerun_turn3",
+      "tags": ["mixed", "history", "recompute", "holdout"],
+      "message": "Summarize the interaction report from turn 3 and rerun that turn's approved workflow with identical settings.",
+      "expected": {"request_type": "mixed", "actions": ["analyze_history", "reference_historical_context", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": true,
+        "query": {"required_operations": ["summarize"], "resolved_turn_ids": [3], "required_artifact_types": ["interaction_report_json"]}}
+    },
+    {
+      "case_id": "mixed_holdout_list_graph_run_disorder",
+      "tags": ["mixed", "artifacts", "tool", "holdout"],
+      "message": "List the graph files from turn 3, and calculate disorder for the current enzyme input.",
+      "expected": {"request_type": "mixed", "actions": ["list_artifacts", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [3], "required_artifact_types": ["integrate_nodes_json", "integrate_edges_json"]}}
+    },
+    {
+      "case_id": "mixed_holdout_mapping_run_flexibility",
+      "tags": ["mixed", "history", "tool", "mutant", "holdout"],
+      "message": "Explain the mutation mapping from turn 2, then compute flexibility for the supplied WT and mutant structures.",
+      "expected": {"request_type": "mixed", "actions": ["analyze_history", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["explain"], "resolved_turn_ids": [2], "required_artifact_types": ["mut_clean_report_json"], "required_sides": ["shared"]}}
+    },
+    {
+      "case_id": "mixed_holdout_logs_and_help",
+      "tags": ["mixed", "artifacts", "help", "holdout"],
+      "message": "List all previous log files and explain what information an EnzyWizard log contains.",
+      "expected": {"request_type": "mixed", "actions": ["list_artifacts", "answer_software_help"], "route": "request_to_history_query", "tools": false, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts"], "resolved_turn_ids": [1, 2, 3], "required_artifact_types": ["log_file"]}}
+    },
+    {
+      "case_id": "mixed_holdout_reuse_list_and_run",
+      "tags": ["mixed", "reuse", "artifacts", "tool", "holdout"],
+      "message": "Show the path of the turn 1 cleaned structure, reuse that exact file, and run flexibility analysis.",
+      "expected": {"request_type": "mixed", "actions": ["list_artifacts", "reuse_historical_output", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "required", "recomputation": false,
+        "query": {"required_operations": ["list_artifacts", "reuse_as_input"], "resolved_turn_ids": [1], "required_artifact_types": ["cleaned_structure_cif"]}}
+    },
+    {
+      "case_id": "mixed_holdout_compare_pocket_rerun_energy",
+      "tags": ["mixed", "history", "tool", "recompute", "holdout"],
+      "message": "Compare the paired WT and mutant pocket reports in turn 2, then freshly recompute energy for the supplied WT and mutant pair.",
+      "expected": {"request_type": "mixed", "actions": ["analyze_history", "run_tool_workflow"], "route": "request_to_history_query", "tools": true, "history": true, "history_artifacts": true, "reuse_policy": "none", "recomputation": true,
+        "query": {"required_operations": ["compare"], "resolved_turn_ids": [2], "required_artifact_types": ["pocket_report_json"], "required_sides": ["wt", "mut"]}}
+    },
+
+    {
+      "case_id": "help_holdout_reuse_policy",
+      "tags": ["help", "reuse", "holdout"],
+      "message": "How does this application decide whether an earlier artifact may or must be reused?",
+      "expected": {"request_type": "software_help", "actions": ["answer_software_help"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "help_holdout_report_outputs",
+      "tags": ["help", "reports", "holdout"],
+      "message": "Which report and graph files does the integration stage produce?",
+      "expected": {"request_type": "software_help", "actions": ["answer_software_help"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "science_holdout_energy_minimization",
+      "tags": ["science", "energy", "holdout"],
+      "message": "Why can energy minimization improve a protein structure before analysis? Do not run tools.",
+      "expected": {"request_type": "general_scientific_question", "actions": ["answer_general_question"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "science_holdout_disorder",
+      "tags": ["science", "disorder", "holdout"],
+      "message": "Conceptually, what does intrinsic protein disorder mean?",
+      "expected": {"request_type": "general_scientific_question", "actions": ["answer_general_question"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "conversation_holdout_thanks",
+      "tags": ["conversation", "holdout"],
+      "message": "Thanks, that explanation was clear.",
+      "expected": {"request_type": "conversation", "actions": ["continue_conversation"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "out_of_scope_holdout_web_scraper",
+      "tags": ["out-of-scope", "holdout"],
+      "message": "Build a web scraper for online real-estate listings.",
+      "expected": {"request_type": "out_of_scope", "actions": ["decline_out_of_scope"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "clarification_holdout_compare_them",
+      "tags": ["clarification", "ambiguous", "holdout"],
+      "message": "I want to compare two earlier results, but I have not specified which results. Ask me which two results to use.",
+      "expected": {"request_type": "clarification", "actions": ["clarify_request"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    },
+    {
+      "case_id": "exit_holdout_end_session",
+      "tags": ["exit", "holdout"],
+      "message": "End this session without running anything else.",
+      "expected": {"request_type": "exit", "actions": ["exit_session"], "route": "request_to_analysis", "tools": false, "history": false, "history_artifacts": false, "reuse_policy": "none", "recomputation": false}
+    }
+  ]
+}

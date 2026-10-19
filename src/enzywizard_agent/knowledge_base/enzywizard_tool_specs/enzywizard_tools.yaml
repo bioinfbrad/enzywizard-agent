@@ -66,6 +66,7 @@ tools:
       - If add_H is false, downstream energy, docking, and interaction behavior may be less reliable.
     output_files:
       - artifact_type: cleaned_structure_cif
+        historical_workflow_input: true
         filename_pattern: cleaned_{name}.cif
         pattern_description: "{name} is derived from the input file stem after filename normalization."
         description: Cleaned protein structure in CIF format.
@@ -102,11 +103,14 @@ tools:
       - wildtype_mutant_comparison
     description: >
       Cleans a matched wild-type and mutant protein structure pair, remaps the
-      user-provided mutation into cleaned residue numbering, and produces
-      cleaned structure/sequence files plus a mut-clean report. The report is
-      the anchor for downstream paired mutation workflows.
+      user-provided mutation into cleaned residue numbering, aligns the cleaned
+      mutant coordinates to the cleaned wild-type structure by CA-atom
+      superposition, and produces cleaned structure/sequence files plus a
+      mut-clean report. The report is the anchor for downstream paired mutation
+      workflows.
     capabilities:
       - Clean WT and MUT structures consistently.
+      - Align cleaned MUT coordinates to the cleaned WT coordinate frame using CA atoms.
       - Generate cleaned WT and MUT CIF/PDB/FASTA files.
       - Convert the raw amino acid substitution into cleaned residue numbering.
       - Generate a mut-clean report containing paired residue mappings.
@@ -172,9 +176,11 @@ tools:
       - The numeric position in mutation is an actual residue identifier from the original PDB or CIF structures, not a one-based sequence ordinal.
       - The mutation residue identifier must exist in both the WT and MUT protein structures.
       - The tool does not verify that the residue letters in mutation match the WT and MUT structures; their biological correctness remains the user's responsibility.
+      - Every retained protein residue must contain a CA atom, and the cleaned WT and MUT structures must have equal CA-atom counts of at least three for coordinate alignment.
       - The cleaned_amino_acid_substitution needed by mut-batch must be read from the mut-clean report, not copied from the raw user input.
     output_files:
       - artifact_type: wt_cleaned_structure_cif
+        historical_workflow_input: true
         filename_pattern: cleaned_{wt_name}.cif
         pattern_description: "{wt_name} is derived from the wild-type input file stem."
         description: Cleaned wild-type CIF structure.
@@ -187,13 +193,14 @@ tools:
         pattern_description: "{wt_name} is derived from the wild-type input file stem."
         description: Cleaned wild-type FASTA sequence.
       - artifact_type: mut_cleaned_structure_cif
+        historical_workflow_input: true
         filename_pattern: cleaned_{mut_name}.cif
         pattern_description: "{mut_name} is derived from the mutant input file stem."
-        description: Cleaned mutant CIF structure.
+        description: Cleaned mutant CIF structure aligned to the cleaned WT coordinate frame.
       - artifact_type: mut_cleaned_structure_pdb
         filename_pattern: cleaned_{mut_name}.pdb
         pattern_description: "{mut_name} is derived from the mutant input file stem."
-        description: Cleaned mutant PDB structure.
+        description: Cleaned mutant PDB structure aligned to the cleaned WT coordinate frame.
       - artifact_type: mut_cleaned_sequence_fasta
         filename_pattern: cleaned_{mut_name}.fasta
         pattern_description: "{mut_name} is derived from the mutant input file stem."
@@ -217,6 +224,7 @@ tools:
       - For a wild-type/mutant workflow, schedule this before mut-batch unless all paired cleaned files and cleaned_amino_acid_substitution are already known.
       - Prefer cleaned CIF structures as downstream WT/MUT structure inputs.
     additional_notes:
+      - The cleaned WT structure remains the coordinate reference; alignment transforms only the cleaned MUT coordinates.
       - The agent currently supports a single user-specified amino acid substitution even though the underlying tool can handle multiple semicolon-separated mutations.
 
   enzywizard-aaprops:
@@ -845,6 +853,7 @@ tools:
         pattern_description: "{substrate_name} is the resolved name or generated internal name; multiple inputs are joined in order."
         description: JSON report containing substrate descriptors, fingerprints, and generated structure metadata.
       - artifact_type: substrate_sdf
+        historical_workflow_input: true
         filename_pattern: "{substrate_name}_{index}.sdf"
         pattern_description: "{substrate_name} is the resolved substrate name or smilesN; {index} is the conformer index."
         description: Generated 3D substrate conformer files for docking.
@@ -855,9 +864,11 @@ tools:
     output_metadata:
       - name: resolved_substrate_names
         source_file: substrate_report_json
+        json_path: [substrates, 0, substrate_name]
         description: Names used to match generated SDF files in downstream docking.
     planning_rules:
       - When using standalone tools, schedule substrate before dock.
+      - Read the resolved substrate name from substrate_report_json for downstream docking; direct SMILES inputs are represented by generated names such as smiles1.
       - When using batch or mut-batch, prefer passing substrate_names directly to those tools instead of scheduling standalone substrate.
     additional_notes:
       - Substrate name resolution uses external ChEBI/PubChem services, so direct SMILES can be more deterministic.
@@ -978,6 +989,7 @@ tools:
         pattern_description: "{protein_name} is derived from the cleaned structure stem; {substrate_names} summarizes requested substrate names."
         description: JSON report containing docking attempts and selected docking results.
       - artifact_type: docked_substrate_sdf
+        historical_workflow_input: true
         filename_pattern: docked_{substrate_name}.sdf
         pattern_description: "{substrate_name} is the resolved substrate name from substrate_names."
         description: Docked substrate pose for downstream interaction analysis.
@@ -995,6 +1007,8 @@ tools:
         description: Docking pose information and docking scores.
     planning_rules:
       - When using standalone tools, schedule substrate before dock and interaction after dock.
+      - Pass the resolved substrate name from the substrate report so all matching {substrate_name}_{index}.sdf conformers are available to docking.
+      - For downstream interaction, derive substrate_names from the actual docked_substrate_sdf file stem, such as docked_glucose or docked_smiles1.
       - When batch or mut-batch is selected, prefer passing substrate_names directly and let the batch tool manage docking.
     additional_notes:
       - Docking can fall back across pocket boxes and conformers until a successful pose is found or attempts are exhausted.
@@ -1046,7 +1060,7 @@ tools:
         cli_flags: ["-s", "--substrate_names"]
         python_type: str
         default: null
-        description: Substrate names matching docked SDF files; optional for protein-only interaction analysis.
+        description: Docked SDF file stems, such as docked_glucose or docked_smiles1; optional for protein-only interaction analysis.
       - name: substrate_dir
         cli_flags: ["-d", "--substrate_dir"]
         python_type: str
@@ -1094,6 +1108,7 @@ tools:
         description: Sulfur-sulfur distance cutoff for disulfide bond detection.
     argument_rules:
       - substrate_names and substrate_dir must be provided together for substrate interaction mode.
+      - Each substrate_names value must exactly match one docked SDF file stem in substrate_dir.
       - Without substrate inputs, the tool calculates intra-protein interactions only.
     output_files:
       - artifact_type: interaction_report_json

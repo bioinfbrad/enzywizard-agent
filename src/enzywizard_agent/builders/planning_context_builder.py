@@ -11,6 +11,44 @@ from ..utils.tool_plan_utils import (
     PARAMETER_VALUE_CONSTRAINTS,
     PROGRAM_MANAGED_OPTIONAL_PARAMETERS,
 )
+from .request_routing_context_builder import build_prior_plan_catalog
+
+
+def _append_routing_context(sections: list[str], state: AgentState) -> None:
+    """向 Planning 提供上游语义结论，避免其重新解释历史动作。"""
+
+    routing = state.get("current_request_routing")
+    if routing is not None and routing.output is not None:
+        sections.append(
+            "Request Router output:\n"
+            + json.dumps(
+                routing.output.model_dump(mode="json"),
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+    prior_plans = build_prior_plan_catalog(state)
+    if prior_plans:
+        sections.append(
+            "Prior approved plan catalog:\n"
+            + json.dumps(prior_plans, ensure_ascii=False, indent=2)
+        )
+    history = state.get("current_history_query")
+    if history is not None and history.query is not None:
+        sections.append(
+            "Resolved history request:\n"
+            + json.dumps(
+                {
+                    "query": history.query.model_dump(mode="json"),
+                    "resolved_turn_ids": history.resolved_turn_ids,
+                    "selected_artifact_types": sorted(
+                        {item.artifact_type for item in history.selected_artifacts}
+                    ),
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
 
 
 def build_planning_context(state: AgentState) -> str:
@@ -28,6 +66,8 @@ def build_planning_context(state: AgentState) -> str:
     if current_user_message:
         sections.append(f"Current user request:\n{current_user_message.strip()}")
 
+    _append_routing_context(sections, state)
+
     # 用户在确认中提出的修改意见代表最新要求，Prompt 会赋予它更高优先级。
     user_confirmation = state.get("current_user_confirmation")
     if user_confirmation is not None and user_confirmation.revision_request:
@@ -39,6 +79,12 @@ def build_planning_context(state: AgentState) -> str:
     user_message_summary = state.get("user_message_summary")
     if user_message_summary:
         sections.append(f"Previous user request summary:\n{user_message_summary.strip()}")
+
+    # 上轮回答摘要让“继续解释/再比较一下”等省略主语的请求仍有语义背景；它只
+    # 是背景，当前消息和当前计划修改意见始终具有更高优先级。
+    analysis_summary = state.get("analysis_summary")
+    if analysis_summary:
+        sections.append(f"Previous analysis summary:\n{analysis_summary.strip()}")
 
     # 只列出实际提供的输入字段；None 字段不会占用 Prompt 长度。
     agent_inputs = state.get("agent_inputs")
@@ -55,192 +101,74 @@ def build_planning_context(state: AgentState) -> str:
     return "\n\n".join(sections)
 
 
-def build_tool_selection_context(
+def build_workflow_requirements_context(
     state: AgentState,
     planning_result: PlanningResult,
-    tool_specs: dict[str, dict[str, Any]],
     preparation_tools: list[str],
 ) -> str:
-    """构造工具选择步骤的结构化文本上下文。
-
-    preparation_tools 已由程序确定；tool_specs 已排除准备工具和整合工具，只
-    包含允许 LLM 选择的单项分析工具与 batch。该函数负责把程序结论、用户
-    要求和候选工具组织成模型容易读取的分区文本。
-    """
-
-    sections: list[str] = []
+    """构造科学需求提取上下文，不向模型暴露工具名选择任务。"""
 
     agent_inputs = state.get("agent_inputs")
-    cleaned_files = state.get("cleaned_files")
-
-    # 根据 purpose 只生成当前工作流相关的输入可用性，避免单蛋白和突变字段混杂。
-    if planning_result.purpose_type == "single_protein_analysis":
-        input_availability = {
-            # LLM 只能看到该结论，不能自行增删准备工具。
-            "program_selected_preparation_tools": preparation_tools,
-            # provided_inputs 描述用户实际提供且准备步骤不能代替的外部输入。
-            "provided_inputs": {
-                "structure": bool(
-                    agent_inputs is not None and agent_inputs.structure_file
-                ),
-                "msa": bool(agent_inputs is not None and agent_inputs.msa_file),
-                "substrate": bool(
-                    agent_inputs is not None and agent_inputs.substrate_name
-                ),
-            },
-            # 这里描述准备工具完成后，下游分析实际可以依赖的基础文件。
-            "available_analysis_inputs": {
-                "cleaned_structure": bool(
-                    # 当前计划包含 clean，或状态中已有可信 cleaned structure，均视为可用。
-                    "enzywizard-clean" in preparation_tools
-                    or (
-                        cleaned_files is not None
-                        and (
-                            cleaned_files.single_cleaned_structure_file
-                            or cleaned_files.single_cleaned_cif_file
-                            or cleaned_files.single_cleaned_pdb_file
-                        )
-                    )
-                ),
-                "clean_report": bool(
-                    # clean report 与结构分别检查，因为 integrate 需要该报告。
-                    "enzywizard-clean" in preparation_tools
-                    or (
-                        cleaned_files is not None
-                        and cleaned_files.single_clean_report_file
-                    )
-                ),
-            },
-        }
-    else:
-        # WT/MUT 工作流需要同时描述两侧输入以及标准化突变信息。
-        input_availability = {
-            "program_selected_preparation_tools": preparation_tools,
-            "provided_inputs": {
-                "structure": bool(
-                    agent_inputs is not None and agent_inputs.structure_file
-                ),
-                "msa": bool(agent_inputs is not None and agent_inputs.msa_file),
-                "mut_structure": bool(
-                    agent_inputs is not None and agent_inputs.mut_structure_file
-                ),
-                "mut_msa": bool(
-                    agent_inputs is not None and agent_inputs.mut_msa_file
-                ),
-                "substrate": bool(
-                    agent_inputs is not None and agent_inputs.substrate_name
-                ),
-                "amino_acid_substitution": bool(
-                    agent_inputs is not None
-                    and agent_inputs.amino_acid_substitution
-                ),
-            },
-            "available_analysis_inputs": {
-                # mut-clean 被计划后，两侧 cleaned structure 均会在执行时产生。
-                "wt_cleaned_structure": bool(
-                    "enzywizard-mut-clean" in preparation_tools
-                    or (
-                        cleaned_files is not None
-                        and (
-                            cleaned_files.wt_cleaned_structure_file
-                            or cleaned_files.wt_cleaned_cif_file
-                            or cleaned_files.wt_cleaned_pdb_file
-                        )
-                    )
-                ),
-                "mut_cleaned_structure": bool(
-                    "enzywizard-mut-clean" in preparation_tools
-                    or (
-                        cleaned_files is not None
-                        and (
-                            cleaned_files.mut_cleaned_structure_file
-                            or cleaned_files.mut_cleaned_cif_file
-                            or cleaned_files.mut_cleaned_pdb_file
-                        )
-                    )
-                ),
-                "mut_clean_report": bool(
-                    # mut-integrate 使用配对清理报告，而不是两个独立 clean report。
-                    "enzywizard-mut-clean" in preparation_tools
-                    or (
-                        cleaned_files is not None
-                        and cleaned_files.mut_clean_report_file
-                    )
-                ),
-                "cleaned_amino_acid_substitution": bool(
-                    # 下游突变工具使用 mut-clean 标准化后的替换信息。
-                    "enzywizard-mut-clean" in preparation_tools
-                    or (
-                        cleaned_files is not None
-                        and cleaned_files.cleaned_amino_acid_substitution
-                    )
-                ),
-            },
-        }
-
-    # 先解释三个自定义字段，再提供程序计算结果，避免模型猜测字段含义。
-    sections.append(
-        "Program-resolved input state:\n"
-        "- program_selected_preparation_tools: Preparation tools already added to "
-        "the current plan by the program. They may not have run yet. Do not return "
-        "these tools.\n"
-        "- provided_inputs: External inputs supplied by the user. Preparation cannot "
-        "create a missing MSA or substrate.\n"
-        "- available_analysis_inputs: Inputs that will exist when the selected analysis "
-        "tools start. A true value means the input will be available.\n"
-        + json.dumps(input_availability, ensure_ascii=False, indent=2)
+    previous_requirements = next(
+        (
+            result.workflow_requirements
+            for result in reversed(state.get("planning_results", []))
+            if result.turn_id == planning_result.turn_id
+            and result.workflow_requirements is not None
+        ),
+        None,
     )
-
-    # 当前请求决定分析目标和所需分析工具。
-    current_user_message = state.get("current_user_message")
-    if current_user_message:
-        sections.append(f"Current user request:\n{current_user_message.strip()}")
-
-    # 若用户要求修改上一版计划，将修改意见作为最新约束传给工具选择模型。
-    user_confirmation = state.get("current_user_confirmation")
-    if user_confirmation is not None and user_confirmation.revision_request:
-        sections.append(
-            f"User revision request:\n{user_confirmation.revision_request.strip()}"
-        )
-
-    # 历史用户需求只通过摘要传入，普通历史 artifacts 不参与跨轮工具规划。
-    user_message_summary = state.get("user_message_summary")
-    if user_message_summary:
-        sections.append(f"Previous user request summary:\n{user_message_summary.strip()}")
-
-    # 保留输入的实际非空值，使模型能判断 MSA、底物等外部输入是否存在。
-    if agent_inputs is not None:
-        input_context = json.dumps(
-            agent_inputs.model_dump(exclude_none=True),
-            ensure_ascii=False,
-            indent=2,
-        )
-        sections.append(f"Agent inputs:\n{input_context}")
-
-    # 重申上一步意图识别结果，工具选择模型不再重新判断 purpose。
-    planning_context = {
+    confirmation = state.get("current_user_confirmation")
+    routing = state.get("current_request_routing")
+    payload = {
         "purpose_type": planning_result.purpose_type,
-        "purpose_reason": planning_result.purpose_reason,
-        "needs_tool": planning_result.needs_tool,
+        "current_user_request": state.get("current_user_message", ""),
+        "latest_revision_request": (
+            confirmation.revision_request
+            if confirmation is not None and confirmation.revision_request
+            else None
+        ),
+        "previous_proposed_requirements": (
+            previous_requirements.model_dump(mode="json")
+            if previous_requirements is not None
+            else None
+        ),
+        "request_router_output": (
+            routing.output.model_dump(mode="json")
+            if routing is not None and routing.output is not None
+            else None
+        ),
+        "prior_approved_plans": build_prior_plan_catalog(state),
+        "program_selected_preparation_tools": preparation_tools,
+        "provided_inputs": (
+            {
+                "structure": bool(agent_inputs.structure_file),
+                "msa": bool(agent_inputs.msa_file),
+                "mut_structure": bool(agent_inputs.mut_structure_file),
+                "mut_msa": bool(agent_inputs.mut_msa_file),
+                "substrate": bool(agent_inputs.substrate_name),
+                "amino_acid_substitution": bool(
+                    agent_inputs.amino_acid_substitution
+                ),
+            }
+            if agent_inputs is not None
+            else {}
+        ),
+        "allowed_analysis_types": [
+            "aaprops",
+            "hydrocluster",
+            "energy",
+            "flexibility",
+            "disorder",
+            "conservation",
+            "embedding",
+            "pocket",
+            "substrate",
+            "docking",
+            "interaction",
+        ],
     }
-    sections.append(
-        "Current planning intent:\n"
-        + json.dumps(planning_context, ensure_ascii=False, indent=2)
-    )
-
-    # 单独列出 selected_tools 的动态允许值，便于模型直接核对准确名称。
-    allowed_tool_names = sorted(tool_specs)
-    sections.append(
-        "Allowed selected_tools values:\n"
-        + json.dumps(allowed_tool_names, ensure_ascii=False, indent=2)
-    )
-
-    # 候选规格已按 purpose 筛选并删除程序管理的准备、整合工具，同时只保留
-    # 当前 LLM 选择步骤需要的字段。
-    tool_spec_context = json.dumps(tool_specs, ensure_ascii=False, indent=2)
-    sections.append(f"Candidate EnzyWizard tool specifications:\n{tool_spec_context}")
-
-    return "\n\n".join(sections)
+    return json.dumps(payload, ensure_ascii=False, indent=2)
 
 
 def build_parameter_extraction_context(
@@ -266,6 +194,8 @@ def build_parameter_extraction_context(
     current_user_message = state.get("current_user_message")
     if current_user_message:
         sections.append(f"Current user request:\n{current_user_message.strip()}")
+
+    _append_routing_context(sections, state)
 
     # 历史摘要只能辅助消解“仍按之前参数”等引用，不允许它引入跨轮文件路径。
     user_message_summary = state.get("user_message_summary")

@@ -1,29 +1,32 @@
 from __future__ import annotations
 
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import ChatOpenAI
 
 from ..builders.planning_context_builder import (
     build_parameter_extraction_context,
     build_planning_context,
-    build_tool_selection_context,
+    build_workflow_requirements_context,
 )
 from ..data_models.planning import (
     IntentClassificationOutput,
+    ParameterAdjustment,
     ParameterExtractionOutput,
     PlanningResult,
     ToolSelectionOutput,
     ToolPlan,
+    WorkflowRequirementsDraft,
+    WorkflowRequirementsOutput,
 )
 from ..prompts.planning_prompt import (
     INTENT_CLASSIFICATION_SYSTEM_PROMPT,
     PARAMETER_EXTRACTION_SYSTEM_PROMPT,
-    SINGLE_PROTEIN_TOOL_SELECTION_SYSTEM_PROMPT,
-    WILDTYPE_MUTANT_TOOL_SELECTION_SYSTEM_PROMPT,
+    WORKFLOW_REQUIREMENTS_REVIEW_SYSTEM_PROMPT,
+    WORKFLOW_REQUIREMENTS_SYSTEM_PROMPT,
 )
 from ..state import AgentState
+from .llm_service import create_chat_model_for_state, invoke_structured
+from .runtime_service import is_runtime_limit_error
 from ..utils.planning_utils import (
-    create_tool_selection_output_model,
     create_tool_selection_failure,
     determine_preparation_tools,
     load_analysis_tool_specs_for_purpose,
@@ -32,35 +35,404 @@ from ..utils.planning_utils import (
 from ..utils.tool_plan_utils import (
     apply_parameter_extraction,
     build_default_tool_plan,
+    get_editable_parameter_specs,
 )
+
+
+ANALYSIS_TYPE_TO_TOOL = {
+    "aaprops": "enzywizard-aaprops",
+    "hydrocluster": "enzywizard-hydrocluster",
+    "energy": "enzywizard-energy",
+    "flexibility": "enzywizard-flexibility",
+    "disorder": "enzywizard-disorder",
+    "conservation": "enzywizard-conservation",
+    "embedding": "enzywizard-embedding",
+    "pocket": "enzywizard-pocket",
+    "substrate": "enzywizard-substrate",
+    "docking": "enzywizard-dock",
+    "interaction": "enzywizard-interaction",
+}
+def _is_historical_rerun(state: AgentState) -> bool:
+    routing = state.get("current_request_routing")
+    if routing is None or routing.output is None:
+        return False
+    action_types = {action.action_type for action in routing.output.actions}
+    return (
+        routing.output.requests_recomputation
+        and "reference_historical_context" in action_types
+        and "run_tool_workflow" in action_types
+    )
+
+
+def get_historical_rerun_source(state: AgentState) -> PlanningResult | None:
+    """Resolve a rerun to a previously approved or executed tool plan."""
+
+    if not _is_historical_rerun(state):
+        return None
+    approved_keys = {
+        (confirmation.turn_id, confirmation.plan_id)
+        for confirmation in state.get("user_confirmations", [])
+        if confirmation.decision == "approved"
+    }
+    approved_keys.update(
+        (execution.turn_id, execution.plan_id)
+        for execution in state.get("tool_executions", [])
+    )
+    candidates = [
+        result
+        for result in state.get("planning_results", [])
+        if result.tool_plan is not None
+        and (result.turn_id, result.plan_id) in approved_keys
+    ]
+    history = state.get("current_history_query")
+    resolved_turn_ids = set(
+        history.resolved_turn_ids
+        if history is not None and history.query_status == "succeeded"
+        else []
+    )
+    matching_turn_candidates = [
+        result for result in candidates if result.turn_id in resolved_turn_ids
+    ]
+    if resolved_turn_ids:
+        candidates = matching_turn_candidates
+    if not candidates:
+        return None
+    return max(candidates, key=lambda result: (result.turn_id, result.plan_id))
+
+
+def _requirements_from_historical_plan(
+    source: PlanningResult,
+) -> WorkflowRequirementsOutput:
+    if (
+        source.workflow_requirements is not None
+        and source.workflow_requirements.workflow_requirements_status
+        == "workflow_requirements_succeeded"
+    ):
+        return source.workflow_requirements.model_copy(
+            update={
+                "requirements_reason": (
+                    f"Reused approved requirements from turn {source.turn_id}, "
+                    f"plan {source.plan_id}."
+                )
+            }
+        )
+
+    assert source.tool_plan is not None
+    tool_names = {call.tool_name for call in source.tool_plan.calls}
+    if tool_names.intersection({"enzywizard-batch", "enzywizard-mut-batch"}):
+        scope_mode = "complete_analysis"
+        requested: list[str] = []
+    else:
+        requested = [
+            analysis_type
+            for analysis_type, tool_name in ANALYSIS_TYPE_TO_TOOL.items()
+            if tool_name in tool_names
+        ]
+        scope_mode = "specific_analyses" if requested else "preparation_only"
+    return WorkflowRequirementsOutput.model_validate(
+        {
+            "workflow_requirements_status": "workflow_requirements_succeeded",
+            "scope_mode": scope_mode,
+            "requested_analysis_types": requested,
+            "excluded_analysis_types": [],
+            "requirements_reason": (
+                f"Derived approved requirements from turn {source.turn_id}, "
+                f"plan {source.plan_id}."
+            ),
+            "error_message": "",
+        }
+    )
+
+
+def apply_historical_rerun_settings(
+    state: AgentState,
+    default_tool_plan: ToolPlan,
+) -> ToolPlan:
+    """Apply prior editable values to a freshly generated plan."""
+
+    source = get_historical_rerun_source(state)
+    if source is None or source.tool_plan is None:
+        if _is_historical_rerun(state):
+            raise ValueError("No approved historical tool plan is available to rerun.")
+        return default_tool_plan
+
+    source_calls: dict[tuple[str, str], list] = {}
+    for call in source.tool_plan.calls:
+        source_calls.setdefault((call.tool_name, call.side), []).append(call)
+
+    adjustments: list[ParameterAdjustment] = []
+    used_indexes: dict[tuple[str, str], int] = {}
+    for call in default_tool_plan.calls:
+        key = (call.tool_name, call.side)
+        source_index = used_indexes.get(key, 0)
+        matching_calls = source_calls.get(key, [])
+        if source_index >= len(matching_calls):
+            continue
+        source_call = matching_calls[source_index]
+        used_indexes[key] = source_index + 1
+        editable_specs = get_editable_parameter_specs(call.tool_name)
+        for parameter_name in editable_specs:
+            value = source_call.arguments.get(parameter_name)
+            if not isinstance(value, (str, int, float, bool)):
+                continue
+            adjustments.append(
+                ParameterAdjustment(
+                    step_index=call.step_index,
+                    parameter_name=parameter_name,
+                    parameter_value=value,
+                    adjustment_reason=(
+                        f"Reuse turn {source.turn_id}, plan {source.plan_id} setting."
+                    ),
+                )
+            )
+
+    inherited = ParameterExtractionOutput(
+        parameter_extraction_status="parameter_extraction_succeeded",
+        parameter_adjustments=adjustments,
+        profile_requests=[],
+        unsupported_requests=[],
+        extraction_summary=(
+            f"Inherited editable settings from turn {source.turn_id}, "
+            f"plan {source.plan_id}."
+        ),
+        error_message="",
+    )
+    return apply_parameter_extraction(
+        default_tool_plan,
+        inherited,
+        state["config"].workdir,
+    )
+
+
+def _create_planning_llm(state: AgentState):
+    """统一 Planning 模型配置，保证需求提取和审核采用相同边界。"""
+
+    return create_chat_model_for_state(state)
+
+
+def _normalize_workflow_requirements_draft(
+    draft: WorkflowRequirementsDraft | WorkflowRequirementsOutput,
+) -> WorkflowRequirementsOutput:
+    """把可修正的 LLM 草稿编译为严格工作流需求对象。"""
+
+    if draft.workflow_requirements_status == "workflow_requirements_failed":
+        return WorkflowRequirementsOutput(
+            workflow_requirements_status="workflow_requirements_failed",
+            scope_mode=draft.scope_mode,
+            requested_analysis_types=[],
+            excluded_analysis_types=[],
+            requirements_reason="",
+            error_message=(
+                draft.error_message
+                or "The scientific workflow requirements could not be determined."
+            ),
+        )
+
+    requested = list(dict.fromkeys(draft.requested_analysis_types))
+    excluded = list(dict.fromkeys(draft.excluded_analysis_types))
+    excluded_set = set(excluded)
+    requested = [item for item in requested if item not in excluded_set]
+
+    # complete 和 preparation 的具体分析列表没有独立语义；清空它们后由程序
+    # 分别映射到 batch 或纯准备流程，避免可修正草稿在审核前被拒绝。
+    if draft.scope_mode in {"complete_analysis", "preparation_only"}:
+        requested = []
+
+    if not draft.requirements_reason:
+        return WorkflowRequirementsOutput(
+            workflow_requirements_status="workflow_requirements_failed",
+            scope_mode=draft.scope_mode,
+            requested_analysis_types=[],
+            excluded_analysis_types=[],
+            requirements_reason="",
+            error_message="The workflow requirements did not include a rationale.",
+        )
+    if draft.scope_mode == "specific_analyses" and not requested:
+        return WorkflowRequirementsOutput(
+            workflow_requirements_status="workflow_requirements_failed",
+            scope_mode=draft.scope_mode,
+            requested_analysis_types=[],
+            excluded_analysis_types=[],
+            requirements_reason="",
+            error_message=(
+                "A specific-analysis workflow did not identify any supported "
+                "analysis type."
+            ),
+        )
+
+    return WorkflowRequirementsOutput(
+        workflow_requirements_status="workflow_requirements_succeeded",
+        scope_mode=draft.scope_mode,
+        requested_analysis_types=requested,
+        excluded_analysis_types=excluded,
+        requirements_reason=draft.requirements_reason,
+        error_message="",
+    )
+
+
+def _extract_workflow_requirements(
+    state: AgentState,
+    planning_result: PlanningResult,
+    preparation_tools: list[str],
+) -> WorkflowRequirementsOutput:
+    """先提取科学需求，再用独立模型审核最新修订和范围边界。"""
+
+    rerun_source = get_historical_rerun_source(state)
+    if rerun_source is not None:
+        return _requirements_from_historical_plan(rerun_source)
+    if _is_historical_rerun(state):
+        return WorkflowRequirementsOutput(
+            workflow_requirements_status="workflow_requirements_failed",
+            scope_mode="preparation_only",
+            requested_analysis_types=[],
+            excluded_analysis_types=[],
+            requirements_reason="",
+            error_message="No approved historical tool plan is available to rerun.",
+        )
+
+    context = build_workflow_requirements_context(
+        state,
+        planning_result,
+        preparation_tools,
+    )
+    draft = invoke_structured(
+        state,
+        stage="planning.workflow_requirements",
+        schema=WorkflowRequirementsDraft,
+        llm=_create_planning_llm(state),
+        messages=[
+            SystemMessage(content=WORKFLOW_REQUIREMENTS_SYSTEM_PROMPT),
+            HumanMessage(content=context),
+        ],
+    )
+    review_context = (
+        "Original workflow context:\n"
+        + context
+        + "\n\nCandidate workflow requirements:\n"
+        + draft.model_dump_json(indent=2)
+    )
+    try:
+        reviewed = invoke_structured(
+            state,
+            stage="planning.workflow_requirements_review",
+            schema=WorkflowRequirementsDraft,
+            llm=_create_planning_llm(state),
+            messages=[
+                SystemMessage(content=WORKFLOW_REQUIREMENTS_REVIEW_SYSTEM_PROMPT),
+                HumanMessage(content=review_context),
+            ],
+        )
+    except Exception as error:
+        if is_runtime_limit_error(error):
+            raise
+        # 审核服务异常不应抹掉已经满足基础类型契约的首轮草稿。
+        reviewed = draft
+
+    candidate_output = _normalize_workflow_requirements_draft(draft)
+    reviewed_output = _normalize_workflow_requirements_draft(reviewed)
+    if (
+        candidate_output.workflow_requirements_status
+        == "workflow_requirements_succeeded"
+        and reviewed_output.workflow_requirements_status
+        == "workflow_requirements_failed"
+    ):
+        # Reviewer 可以纠正科学范围，但不能把已经可编译的草稿降级为纯结构
+        # 失败。此时保留首轮结果，后续依赖闭包和参数校验仍会执行严格检查。
+        return candidate_output
+    return reviewed_output
+
+
+def _compile_workflow_requirements(
+    state: AgentState,
+    planning_result: PlanningResult,
+    requirements: WorkflowRequirementsOutput,
+    preparation_tools: list[str],
+    candidate_tool_names: set[str],
+) -> ToolSelectionOutput:
+    """把科学需求确定性编译成工具集合，并校验不可由准备步骤生成的输入。"""
+
+    planning_result.workflow_requirements = requirements
+    if requirements.workflow_requirements_status == "workflow_requirements_failed":
+        return create_tool_selection_failure(requirements.error_message)
+
+    requested = set(requirements.requested_analysis_types)
+    agent_inputs = state.get("agent_inputs")
+    if "conservation" in requested:
+        msa_available = bool(agent_inputs is not None and agent_inputs.msa_file)
+        mut_msa_available = bool(
+            agent_inputs is not None and agent_inputs.mut_msa_file
+        )
+        if not msa_available or (
+            planning_result.purpose_type == "wildtype_mutant_comparison"
+            and not mut_msa_available
+        ):
+            return create_tool_selection_failure(
+                "Conservation analysis requires the supplied MSA inputs for every "
+                "protein side in the workflow."
+            )
+    if requested.intersection({"substrate", "docking"}) and not (
+        agent_inputs is not None and agent_inputs.substrate_name
+    ):
+        return create_tool_selection_failure(
+            "Substrate preparation and docking require a supplied substrate name or "
+            "SMILES input."
+        )
+
+    if requirements.scope_mode == "complete_analysis":
+        batch_tool = (
+            "enzywizard-batch"
+            if planning_result.purpose_type == "single_protein_analysis"
+            else "enzywizard-mut-batch"
+        )
+        selected_tools = [batch_tool]
+    elif requirements.scope_mode == "preparation_only":
+        selected_tools = []
+    else:
+        selected_tools = [
+            ANALYSIS_TYPE_TO_TOOL[analysis_type]
+            for analysis_type in requirements.requested_analysis_types
+        ]
+
+    raw_selection = ToolSelectionOutput(
+        tool_selection_status="tool_selection_succeeded",
+        selected_tools=selected_tools,
+        selection_reason=requirements.requirements_reason,
+        error_message="",
+    )
+    return validate_and_update_tool_selection(
+        raw_selection,
+        candidate_tool_names | set(preparation_tools),
+        preparation_tools,
+        planning_result.purpose_type,
+    )
 
 
 def classify_intent(state: AgentState) -> IntentClassificationOutput:
     """调用一次 LLM，将当前用户请求识别为固定 Planning purpose。"""
 
+    rerun_source = get_historical_rerun_source(state)
+    if rerun_source is not None and rerun_source.tool_plan is not None:
+        return IntentClassificationOutput(
+            purpose_type=rerun_source.tool_plan.purpose_type,
+            purpose_reason=(
+                f"Reuse approved workflow purpose from turn {rerun_source.turn_id}, "
+                f"plan {rerun_source.plan_id}."
+            ),
+        )
+
     # 配置由入口创建；意图上下文由 builder 统一组织。
-    config = state["config"]
     context = build_planning_context(state)
 
-    # 温度为 0 以降低分类波动；禁用模型 thinking 以减少等待时间和无关输出。
-    llm = ChatOpenAI(
-        api_key=config.api_key,
-        base_url=config.base_url,
-        model=config.model,
-        temperature=0,
-        max_retries=0,
-        extra_body={"enable_thinking": False},
-    )
-
-    # LangChain 根据 Pydantic 模型要求模型返回固定 JSON 字段和枚举值。
-    structured_llm = llm.with_structured_output(IntentClassificationOutput)
-
     # SystemMessage 保存稳定规则，HumanMessage 只承载本轮动态上下文。
-    return structured_llm.invoke(
-        [
+    return invoke_structured(
+        state,
+        stage="planning.intent_classification",
+        schema=IntentClassificationOutput,
+        llm=_create_planning_llm(state),
+        messages=[
             SystemMessage(content=INTENT_CLASSIFICATION_SYSTEM_PROMPT),
             HumanMessage(content=context),
-        ]
+        ],
     )
 
 
@@ -72,8 +444,7 @@ def select_single_protein_tools(
 
     purpose_type = "single_protein_analysis"
 
-    # 交给 LLM 的规格已排除 enzywizard-clean 和 enzywizard-integrate，
-    # 只保留单项分析工具与 enzywizard-batch。
+    # 允许编译的规格排除 clean 和 integrate；这两类步骤由程序管理。
     analysis_tool_specs = load_analysis_tool_specs_for_purpose(purpose_type)
 
     # clean 是否需要由程序根据 AgentInputs 和 CleanedFiles 确定。
@@ -86,53 +457,23 @@ def select_single_protein_tools(
     if preparation_error is not None:
         return create_tool_selection_failure(preparation_error)
 
-    # Builder 会告诉模型准备完成后的输入状态，并只附加当前允许的候选规格。
-    context = build_tool_selection_context(
-        state,
-        planning_result,
-        analysis_tool_specs,
-        preparation_tools,
-    )
-    config = state["config"]
-
-    # 工具选择同样采用确定性采样配置。
-    llm = ChatOpenAI(
-        api_key=config.api_key,
-        base_url=config.base_url,
-        model=config.model,
-        temperature=0,
-        max_retries=0,
-        extra_body={"enable_thinking": False},
-    )
-    # 动态模型把本次候选名称写入 selected_tools 的 JSON Schema 枚举。
-    # 用于根据当前允许选择的工具，动态创建一个更严格的 Pydantic 输出模型
-    output_model = create_tool_selection_output_model(
-        set(analysis_tool_specs),
-        purpose_type,
-    )
-    structured_llm = llm.with_structured_output(output_model)
-
     try:
-        # LLM 只返回单项分析工具或 batch；准备和整合均由程序加入。
-        tool_selection = structured_llm.invoke(
-            [
-                SystemMessage(content=SINGLE_PROTEIN_TOOL_SELECTION_SYSTEM_PROMPT),
-                HumanMessage(content=context),
-            ]
-        )
-
-        # 允许集合由 LLM 候选加上程序实际选中的准备工具组成。
-        # 验证 LLM 选择，并合并准备工具、整合工具或 batch 等程序更新。
-        return validate_and_update_tool_selection(
-            tool_selection,
-            set(analysis_tool_specs) | set(preparation_tools),
+        requirements = _extract_workflow_requirements(
+            state,
+            planning_result,
             preparation_tools,
-            purpose_type,
+        )
+        return _compile_workflow_requirements(
+            state,
+            planning_result,
+            requirements,
+            preparation_tools,
+            set(analysis_tool_specs),
         )
     except Exception as e:
-        # API、结构化解析等异常统一转换成 ToolSelectionOutput 失败结果。
+        # API、结构化解析或审核异常统一转换为可审计失败。
         return create_tool_selection_failure(
-            f"Single-protein tool selection failed: {e}"
+            f"Single-protein workflow requirement extraction failed: {e}"
         )
 
 
@@ -144,8 +485,7 @@ def select_wildtype_mutant_tools(
 
     purpose_type = "wildtype_mutant_comparison"
 
-    # 交给 LLM 的规格排除 enzywizard-mut-clean 和 enzywizard-mut-integrate，
-    # 只保留配对单项分析工具与 enzywizard-mut-batch。
+    # 允许编译的规格排除 mut-clean 和 mut-integrate；这两类步骤由程序管理。
     analysis_tool_specs = load_analysis_tool_specs_for_purpose(purpose_type)
 
     # 程序检查完整 mut-clean 状态，或检查能否从当前 WT/MUT 原始输入生成。
@@ -156,52 +496,23 @@ def select_wildtype_mutant_tools(
     if preparation_error is not None:
         return create_tool_selection_failure(preparation_error)
 
-    # 动态上下文只描述突变比较相关输入和准备后的两侧可用状态。
-    context = build_tool_selection_context(
-        state,
-        planning_result,
-        analysis_tool_specs,
-        preparation_tools,
-    )
-    config = state["config"]
-
-    # 保持与单蛋白分支一致的模型参数和结构化输出方式。
-    llm = ChatOpenAI(
-        api_key=config.api_key,
-        base_url=config.base_url,
-        model=config.model,
-        temperature=0,
-        max_retries=0,
-        extra_body={"enable_thinking": False},
-    )
-    # WT/MUT 使用自己的候选枚举，避免模型返回单蛋白工具或程序管理的整合工具。
-    output_model = create_tool_selection_output_model(
-        set(analysis_tool_specs),
-        purpose_type,
-    )
-    structured_llm = llm.with_structured_output(output_model)
-
     try:
-        # LLM 返回一组逻辑分析工具；后续 ToolPlan 会把蛋白侧工具展开为 WT/MUT
-        # 两侧调用，并把共享底物准备保留为单次调用。
-        tool_selection = structured_llm.invoke(
-            [
-                SystemMessage(content=WILDTYPE_MUTANT_TOOL_SELECTION_SYSTEM_PROMPT),
-                HumanMessage(content=context),
-            ]
-        )
-
-        # 合并程序决定的 mut-clean，并拒绝 LLM 越权选择未允许的准备工具。
-        return validate_and_update_tool_selection(
-            tool_selection,
-            set(analysis_tool_specs) | set(preparation_tools),
+        requirements = _extract_workflow_requirements(
+            state,
+            planning_result,
             preparation_tools,
-            purpose_type,
+        )
+        return _compile_workflow_requirements(
+            state,
+            planning_result,
+            requirements,
+            preparation_tools,
+            set(analysis_tool_specs),
         )
     except Exception as e:
-        # 保留突变分支名称，便于日志区分是哪类工具选择调用失败。
+        # 保留突变分支名称，便于日志定位失败阶段。
         return create_tool_selection_failure(
-            f"Wild-type/mutant tool selection failed: {e}"
+            f"Wild-type/mutant workflow requirement extraction failed: {e}"
         )
 
 
@@ -241,30 +552,22 @@ def extract_tool_parameters(
 ) -> ParameterExtractionOutput:
     """调用一次 LLM，提取用户对默认 ToolPlan 的稀疏参数要求。"""
 
-    config = state["config"]
     context = build_parameter_extraction_context(
         state,
         planning_result,
         default_tool_plan,
     )
 
-    # 与前两次 Planning 调用保持一致：温度为0、禁用 thinking、不自动重试。
-    llm = ChatOpenAI(
-        api_key=config.api_key,
-        base_url=config.base_url,
-        model=config.model,
-        temperature=0,
-        max_retries=0,
-        extra_body={"enable_thinking": False},
-    )
-    structured_llm = llm.with_structured_output(ParameterExtractionOutput)
-
     # SystemMessage 只包含固定参数政策，HumanMessage 提供当前计划的动态参数表。
-    return structured_llm.invoke(
-        [
+    return invoke_structured(
+        state,
+        stage="planning.parameter_extraction",
+        schema=ParameterExtractionOutput,
+        llm=_create_planning_llm(state),
+        messages=[
             SystemMessage(content=PARAMETER_EXTRACTION_SYSTEM_PROMPT),
             HumanMessage(content=context),
-        ]
+        ],
     )
 
 

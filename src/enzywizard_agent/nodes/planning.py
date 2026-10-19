@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from ..data_models.planning import PlanningResult
 from ..services.planning_service import (
+    apply_historical_rerun_settings,
     classify_intent,
     extract_tool_parameters,
     finalize_tool_plan,
@@ -126,6 +127,10 @@ def planning_node(state: AgentState) -> AgentState:
     # 工具选择成功后，程序先根据固定依赖、路径和默认参数生成一份默认计划。
     try:
         default_tool_plan = generate_default_tool_plan(state, planning_result)
+        default_tool_plan = apply_historical_rerun_settings(
+            state,
+            default_tool_plan,
+        )
         planning_result.planning_flag = "default_tool_plan_generated"
         print(
             "[INFO] Default tool plan generated: "

@@ -1,0 +1,20 @@
+# 仅包含能够从本地错误文本直接匹配的通用故障提示，不进行联网搜索。
+rules:
+  - contains: completed without required outputs
+    cause: The command exited normally but did not satisfy the declared output contract.
+    action: Inspect the tool log and output directory for an upstream tool error or a changed filename contract.
+  - contains: staging pattern matched no files
+    cause: An integration step could not find a required upstream JSON report.
+    action: Check the first failed upstream step and the report staging path before rerunning integration.
+  - contains: no such file or directory
+    cause: A required executable or input path was not available at execution time.
+    action: Verify the Conda environment, registered command entry point, and referenced artifact path.
+  - contains: command not found
+    cause: The registered tool command is not installed or is not visible on PATH.
+    action: Reinstall the corresponding EnzyWizard package in the agent environment and verify its CLI entry point.
+  - contains: cuda out of memory
+    cause: The selected calculation exceeded available GPU memory.
+    action: Use a smaller model or fast profile, or run on a device with more available GPU memory.
+  - contains: out of memory
+    cause: The selected calculation exceeded available memory.
+    action: Use fast settings, reduce calculation size where supported, or provide more memory.

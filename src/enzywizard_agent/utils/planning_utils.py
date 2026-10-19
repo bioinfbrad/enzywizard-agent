@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import re
 from importlib.resources import files
-from typing import Any, Literal
+from typing import Any
 
 import yaml
-from pydantic import create_model
-
 from ..data_models.planning import PlanningPurposeType, ToolSelectionOutput
 from ..state import AgentState
 
@@ -65,12 +63,12 @@ def load_tool_specs_for_purpose(
 def load_analysis_tool_specs_for_purpose(
     purpose_type: PlanningPurposeType,
 ) -> dict[str, dict[str, Any]]:
-    """返回允许 LLM 选择的单项分析与 batch 工具规格。"""
+    """返回当前 purpose 允许编译的单项分析与 batch 工具规格。"""
 
     tool_specs = load_tool_specs_for_purpose(purpose_type)
 
-    # 准备和整合均由程序按确定性规则加入，不能作为 LLM 候选。batch 仍保留，
-    # 因为“完整、全面、广泛分析”属于需要模型理解的用户语义。
+    # 准备和整合均由程序按确定性规则加入。batch 保留在允许集中，
+    # 仅当结构化需求明确为 complete_analysis 时由编译器选用。
     program_managed_tool_names = (
         {"enzywizard-clean", "enzywizard-integrate"}
         if purpose_type == "single_protein_analysis"
@@ -81,33 +79,6 @@ def load_analysis_tool_specs_for_purpose(
         for tool_name, tool_spec in tool_specs.items()
         if tool_name not in program_managed_tool_names
     }
-
-
-def create_tool_selection_output_model(
-    candidate_tool_names: set[str],
-    purpose_type: PlanningPurposeType,
-) -> type[ToolSelectionOutput]:
-    """创建只允许当前候选工具名的动态结构化输出模型。"""
-
-    # 空候选集合无法产生有效的分析工具枚举，应由调用方作为规划异常处理。
-    canonical_tool_names = tuple(sorted(candidate_tool_names))
-    if not canonical_tool_names:
-        raise ValueError("Cannot create a tool selection schema without candidate tools.")
-
-    # Literal 会把候选名称写入 JSON Schema 的 items.enum。
-    allowed_tool_name = Literal.__getitem__(canonical_tool_names)
-    model_name = (
-        "SingleProteinToolSelectionOutput"
-        if purpose_type == "single_protein_analysis"
-        else "WildtypeMutantToolSelectionOutput"
-    )
-
-    # 继承通用字段与工具名规范化逻辑，只收紧 selected_tools 的元素类型。
-    return create_model(
-        model_name,
-        __base__=ToolSelectionOutput,
-        selected_tools=(list[allowed_tool_name], ...),
-    )
 
 
 def select_tool_spec_fields(tool_spec: dict[str, Any]) -> dict[str, Any]:
@@ -363,13 +334,13 @@ def validate_and_update_tool_selection(
                 f"integration tools, so it cannot be combined with: {redundant_names}."
             )
 
-    # LLM 直接选择 batch 时不改工具集合，但仍记录程序确认原因，让每个成功
-    # 输出都明确说明最终集合为什么满足固定工作流规则。
+    # 完整分析需求编译为 batch 时不再改工具集合，但仍记录
+    # 程序确认原因，便于用户审核最终计划。
     if batch_tool_name in selected_analysis_tool_names:
         system_reasons.append(
-            f"Kept {batch_tool_name} because the LLM selected a complete or broad "
-            f"workflow, and the batch workflow already includes analysis and report "
-            f"integration."
+            f"Kept {batch_tool_name} because the structured requirements specify a "
+            f"complete analysis, and the batch workflow already includes analysis "
+            f"and report integration."
         )
 
     # 任意数量的单项分析都必须生成整合图。整合工具不参与 LLM 选择，由程序

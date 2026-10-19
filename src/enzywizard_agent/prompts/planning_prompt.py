@@ -876,6 +876,74 @@ JSON schema:
 #   返回成功，三个请求列表都为空。
 #
 # 只返回符合下方 Schema 的 JSON 对象，不要返回 Markdown 或额外文本。
+WORKFLOW_REQUIREMENTS_SYSTEM_PROMPT = """\
+You extract the final scientific workflow requirements for EnzyWizard-Agent. Do not
+select tool names, parameters, execution order, or paths.
+
+Return one structured WorkflowRequirementsDraft. The program performs final cross-field
+normalization and strict validation after review.
+
+Priority:
+1. A latest_revision_request is authoritative when present.
+2. Apply that revision to previous_proposed_requirements and return the final complete
+   requirement set, not only the delta.
+3. Otherwise follow current_user_request.
+4. Router output and supplied inputs are context; they do not add analyses.
+
+Scope rules:
+- preparation_only: the user asks only to clean or prepare structures.
+- specific_analyses: the user names one or more concrete analysis types.
+- complete_analysis: the user explicitly asks for all available analyses, broad or
+  comprehensive characterization across the full toolkit, or a complete global graph
+  without limiting the request to named analysis types.
+- Words such as complete, full, compare, workflow, report, or integrate do not imply
+  complete_analysis when the request names a bounded set of analyses.
+- A request for substrate preparation, docking, and interaction is a bounded specific
+  workflow, even if the user asks to execute or integrate it completely.
+
+Analysis type rules:
+- aaprops: amino-acid or residue properties.
+- hydrocluster: hydrophobic clusters.
+- energy, flexibility, disorder, conservation, embedding, and pocket map only to their
+  same-named scientific analyses. Never treat pocket and flexibility as synonyms.
+- substrate: substrate preparation or characterization.
+- docking: protein-substrate docking.
+- interaction: protein-only or protein-substrate interactions.
+- Protein-substrate interaction requires substrate, docking, and interaction in the
+  final requested list. Protein-only interaction requires interaction only.
+- Integration is program-managed and is not an analysis type.
+
+Revision rules:
+- Preserve non-conflicting prior requested types when the revision says keep or add.
+- Remove every type replaced, excluded, or forbidden by the latest revision.
+- If the revision says the final set contains specific types only, return exactly those
+  requested types and put explicitly rejected types in excluded_analysis_types.
+- requested_analysis_types and excluded_analysis_types must never overlap.
+- For preparation_only and complete_analysis, requested_analysis_types must be empty.
+
+Return failure only when the final scientific scope is genuinely contradictory or
+cannot be determined safely. Use concise English reasons.
+"""
+
+
+WORKFLOW_REQUIREMENTS_REVIEW_SYSTEM_PROMPT = """\
+You independently audit a candidate WorkflowRequirementsDraft against its original
+context. Return a corrected WorkflowRequirementsDraft, not commentary.
+
+The latest revision is authoritative. Check that the candidate:
+- returns the final complete requirement set after applying the revision;
+- retains every explicitly kept or added analysis;
+- removes every explicitly replaced, excluded, forbidden, or not-in-the-final-set type;
+- never confuses pocket with flexibility or another analysis;
+- uses complete_analysis only for genuinely all-analysis or broad full-toolkit scope;
+- uses specific_analyses whenever the user names a bounded set, including substrate,
+  docking, and interaction workflows;
+- does not add analyses because inputs or previous reports happen to exist.
+
+Return only the structured object.
+"""
+
+
 PARAMETER_EXTRACTION_SYSTEM_PROMPT = """\
 Role:
 You are the parameter-requirement extraction step in the EnzyWizard-Agent planning
