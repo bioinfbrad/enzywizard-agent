@@ -10,6 +10,7 @@ from typing import Any
 from ..data_models.artifact import Artifact
 from ..data_models.planning import (
     ParameterExtractionOutput,
+    PlanValidationRecord,
     ReportStagingRule,
     ToolCall,
     ToolCallSide,
@@ -20,7 +21,11 @@ from ..data_models.planning import (
     PlanningResult,
 )
 from ..state import AgentState
-from .planning_utils import load_enzywizard_tool_specs
+from .planning_utils import (
+    get_reusable_history_artifacts,
+    load_enzywizard_tool_specs,
+)
+from .tool_execution_utils import is_safe_historical_artifact
 
 
 # 单项工具采用固定顺序，LLM 返回顺序不会直接控制执行顺序。substrate 必须在
@@ -335,10 +340,7 @@ def get_historical_reuse_policy(state: AgentState) -> str:
 def get_selected_history_artifacts(state: AgentState) -> list[Artifact]:
     """返回 History Query Planner 已验证的本轮历史产物选择。"""
 
-    history = state.get("current_history_query")
-    if history is None or history.query_status != "succeeded":
-        return []
-    return list(history.selected_artifacts)
+    return list(get_reusable_history_artifacts(state))
 
 
 def _selected_historical_path(
@@ -824,18 +826,26 @@ def build_single_protein_tool_plan(
     reusable_substrate: dict[str, Any] | None = None
     if (
         "enzywizard-interaction" in selected_tool_names
-        and "enzywizard-clean" not in selected_tool_names
         and reuse_policy != "none"
     ):
         historical_structure = _selected_historical_path(
             state,
             ("cleaned_structure_cif", "cleaned_structure_pdb"),
             "single",
-        ) or get_preferred_cleaned_structure_path(
-            cleaned_files.single_cleaned_cif_file,
-            cleaned_files.single_cleaned_structure_file,
-            cleaned_files.single_cleaned_pdb_file,
         )
+        if historical_structure is None:
+            historical_structure = next(
+                (
+                    path
+                    for path in (
+                        cleaned_files.single_cleaned_cif_file,
+                        cleaned_files.single_cleaned_structure_file,
+                        cleaned_files.single_cleaned_pdb_file,
+                    )
+                    if path
+                ),
+                "",
+            )
         reusable_docking = find_reusable_docking_output(
             state,
             "single",
@@ -847,7 +857,12 @@ def build_single_protein_tool_plan(
             selected_tool_names = [
                 tool_name
                 for tool_name in selected_tool_names
-                if tool_name not in {"enzywizard-substrate", "enzywizard-dock"}
+                if tool_name
+                not in {
+                    "enzywizard-clean",
+                    "enzywizard-substrate",
+                    "enzywizard-dock",
+                }
             ]
             reused_historical_input = True
         elif reuse_policy == "required" and any(
@@ -2216,6 +2231,97 @@ def validate_program_managed_paths(tool_plan: ToolPlan, workdir: Path) -> None:
                 raise ValueError(
                     f"Report staging destination escapes workdir: {destination_dir}."
                 )
+
+
+def audit_tool_plan(tool_plan: ToolPlan, workdir: Path) -> PlanValidationRecord:
+    """Validate executable dependencies and contracts after plan compilation."""
+
+    checks = [
+        "registered_tools_and_commands",
+        "required_arguments",
+        "upstream_artifact_references",
+        "report_staging_dependencies",
+        "program_managed_paths",
+    ]
+    errors: list[str] = []
+    warnings: list[str] = []
+    specs = load_enzywizard_tool_specs()
+    calls_by_step = {call.step_index: call for call in tool_plan.calls}
+
+    for call in tool_plan.calls:
+        spec = specs.get(call.tool_name)
+        if spec is None:
+            errors.append(f"Step {call.step_index} uses unknown tool {call.tool_name}.")
+            continue
+        expected_command = str(spec.get("command_name", ""))
+        if call.command_name != expected_command:
+            errors.append(
+                f"Step {call.step_index} command {call.command_name!r} does not match "
+                f"registered command {expected_command!r}."
+            )
+        required_names = {
+            str(item.get("name"))
+            for item in spec.get("required_arguments", [])
+            if isinstance(item, dict) and item.get("name")
+        }
+        missing_arguments = sorted(required_names - set(call.arguments))
+        if missing_arguments:
+            errors.append(
+                f"Step {call.step_index} is missing required arguments: "
+                + ", ".join(missing_arguments)
+                + "."
+            )
+
+        for parameter_name, value in call.arguments.items():
+            if not isinstance(value, ToolOutputReference):
+                continue
+            source = calls_by_step.get(value.source_step_index)
+            if source is None or source.step_index >= call.step_index:
+                errors.append(
+                    f"Step {call.step_index}.{parameter_name} references a missing or "
+                    f"non-upstream step {value.source_step_index}."
+                )
+                continue
+            produced_types = {
+                artifact.artifact_type for artifact in source.output_artifacts
+            }
+            if value.artifact_type not in produced_types:
+                errors.append(
+                    f"Step {call.step_index}.{parameter_name} requests artifact "
+                    f"{value.artifact_type!r}, which step {source.step_index} does not "
+                    "declare."
+                )
+
+        for rule in call.staging_rules:
+            if rule.source_step_index is None:
+                if not Path(rule.source_path_pattern).is_absolute():
+                    warnings.append(
+                        f"Step {call.step_index} reuses a non-absolute historical "
+                        "staging pattern."
+                    )
+                continue
+            if rule.source_step_index not in calls_by_step:
+                errors.append(
+                    f"Step {call.step_index} staging references unknown step "
+                    f"{rule.source_step_index}."
+                )
+            elif rule.source_step_index >= call.step_index:
+                errors.append(
+                    f"Step {call.step_index} staging references non-upstream step "
+                    f"{rule.source_step_index}."
+                )
+
+    try:
+        validate_program_managed_paths(tool_plan, workdir)
+    except ValueError as error:
+        errors.append(str(error))
+
+    return PlanValidationRecord(
+        passed=not errors,
+        checks=checks,
+        warnings=warnings,
+        error_messages=errors,
+    )
 
 
 def apply_parameter_extraction(

@@ -14,6 +14,28 @@ from ..utils.tool_plan_utils import (
 from .request_routing_context_builder import build_prior_plan_catalog
 
 
+def _new_workflow_targets(state: AgentState) -> list[str]:
+    """Return Router-validated targets that belong to the new computation only."""
+
+    routing = state.get("current_request_routing")
+    if routing is None or routing.output is None:
+        return []
+    actions = routing.output.actions
+    if not any(
+        action.action_type
+        in {"analyze_history", "list_artifacts", "reuse_historical_output"}
+        for action in actions
+    ):
+        return []
+    return list(
+        dict.fromkeys(
+            action.target
+            for action in actions
+            if action.action_type == "run_tool_workflow" and action.target
+        )
+    )
+
+
 def _append_routing_context(sections: list[str], state: AgentState) -> None:
     """向 Planning 提供上游语义结论，避免其重新解释历史动作。"""
 
@@ -63,7 +85,20 @@ def build_planning_context(state: AgentState) -> str:
 
     # 当前用户请求是意图判断的主要依据。
     current_user_message = state.get("current_user_message")
-    if current_user_message:
+    workflow_targets = _new_workflow_targets(state)
+    if workflow_targets:
+        sections.append(
+            "Current new-computation request:\n"
+            + "\n".join(f"- {target}" for target in workflow_targets)
+            + "\nClassify only this new computation; historical actions were "
+            "resolved separately."
+        )
+        if current_user_message:
+            sections.append(
+                "Original mixed request (background only):\n"
+                + current_user_message.strip()
+            )
+    elif current_user_message:
         sections.append(f"Current user request:\n{current_user_message.strip()}")
 
     _append_routing_context(sections, state)
@@ -120,9 +155,18 @@ def build_workflow_requirements_context(
     )
     confirmation = state.get("current_user_confirmation")
     routing = state.get("current_request_routing")
+    workflow_targets = _new_workflow_targets(state)
     payload = {
         "purpose_type": planning_result.purpose_type,
-        "current_user_request": state.get("current_user_message", ""),
+        "current_user_request": (
+            "\n".join(workflow_targets)
+            if workflow_targets
+            else state.get("current_user_message", "")
+        ),
+        "original_mixed_request": (
+            state.get("current_user_message", "") if workflow_targets else None
+        ),
+        "history_actions_are_outside_new_workflow": bool(workflow_targets),
         "latest_revision_request": (
             confirmation.revision_request
             if confirmation is not None and confirmation.revision_request

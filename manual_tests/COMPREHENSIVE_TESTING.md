@@ -1,5 +1,9 @@
 # Comprehensive Agent Testing
 
+> The frozen manuscript benchmark is documented in
+> `manual_tests/publication_benchmark/README.md`. The suites below remain development
+> and regression tests and must not be pooled with the publication benchmark scores.
+
 The test project is split into layers so a failure can be assigned to request
 routing, Planning, confirmation, execution, Analysis, or cross-turn state.
 
@@ -15,11 +19,17 @@ No external model or real EnzyWizard command is used.
 - confirmation approval, revision, and rejection
 - safe subprocess command construction
 - output reference resolution and required artifact validation
-- tool failure capture and log-tail preservation
+- post-compilation plan validation for registered commands, required arguments,
+  upstream references, staging dependencies, and managed paths
+- structured tool-failure diagnosis, bounded safe retry, confirmation boundaries,
+  workflow-decision traces, and log-tail preservation
 - real subprocess timeout termination and partial-artifact preservation
 - centralized OpenAI-compatible model factory and strict JSON Schema capability contract
 - LLM call, token, session-time, and tool-timeout budgets
-- privacy-safe session manifests with versions, parameters, and file checksums
+- privacy-safe session manifests with versions, parameters, file checksums,
+  history reuse, plan validation, execution recovery, and claim-evidence links
+- deterministic FAIR-term retrieval, failure-hint matching, provenance, and
+  disabled-by-default prompt enrichment
 - report parsing, evidence generation, WT/MUT comparisons, cross-report consistency,
   and state reset
 - historical clean, substrate, Dock, and report reuse compatibility
@@ -133,6 +143,50 @@ second command or manually supplied run directory is required.
 
 For model stability measurement, add `--repeat_semantic 3`. This repeats the
 100 routing cases and 50 Planning cases but does not repeat real tool execution.
+
+## FAIR terminology experiment
+
+FAIR terminology enrichment uses local retrieval by default. Build-time collection reads
+only the explicit term links in the 17 canonical EnzyWizard README files. It combines
+automatically accepted descriptions with the reviewed records in
+`manual_tests/fixtures/fair_terms_descriptions_reviewed.txt`, applies reviewed URI
+replacements, removes
+duplicate effective term-link pairs, and writes 151 entries to the local YAML
+knowledge base. Agent runtime never opens those URLs and performs no extra LLM call
+for retrieval.
+
+Rebuild the versioned knowledge base when the source documents change:
+
+```bash
+PYTHONPATH=src conda run --no-capture-output -n enzywizard-agent \
+  python -u manual_tests/build_fair_terms.py
+```
+
+An ordinary rebuild reuses accepted descriptions already present in the YAML and is
+offline when every source term is covered. Add `--refresh` only to refetch unreviewed
+descriptions. Reviewed records always take precedence and must map to a term-link pair
+from the 17 source documents; their effective URI may be an explicitly reviewed
+replacement.
+
+For a FAIR ablation, keep the model, reasoning effort, case set, and repetition
+count fixed and compare three modes: `off`, `retrieve` (the runtime default), and `control`. Control mode
+injects a deterministic same-count set of unrelated local terms when related terms
+would have been retrieved. The result JSON records every retrieval event, mode,
+matched term, source URI, knowledge-base checksum, stage, score, and estimated
+injected token count.
+
+```bash
+PYTHONPATH=src conda run --no-capture-output -n enzywizard-agent \
+  python -u manual_tests/run_comprehensive_agent_tests.py \
+  --model qwen3.7-plus \
+  --ontology_mode retrieve
+```
+
+Tool recovery defaults to `safe`: only deterministically classified transient or
+missing-output failures may repeat the identical call, once. Recovery never changes
+scientific inputs or parameters. Such changes are recorded as requiring confirmation.
+Use `--tool_recovery_mode off` for a no-recovery baseline, or change the bounded
+limit with `--max_tool_recovery_attempts`.
 
 Every runner writes results incrementally. A failed case or suite is recorded and
 the remaining work continues unless an explicit stop-on-failure option is used.

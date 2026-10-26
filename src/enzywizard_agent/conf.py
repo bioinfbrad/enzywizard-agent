@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 
 @dataclass(frozen=True)
@@ -43,6 +43,17 @@ class AgentConfig:
     # 严格 JSON Schema 请求验证模型契约；不支持原生协议时拒绝启动。
     check_model_capabilities: bool = True
 
+    # FAIR terminology enrichment is enabled by default. Retrieval uses only the
+    # versioned local YAML knowledge base and never accesses the network.
+    ontology_mode: Literal["off", "retrieve", "control"] = "retrieve"
+
+    # Tool recovery remains bounded by deterministic policy. Hybrid diagnosis may
+    # explain an unknown failure and propose an identical retry, but it cannot run
+    # arbitrary commands or change scientific inputs without user confirmation.
+    tool_recovery_mode: Literal["off", "safe"] = "safe"
+    max_tool_recovery_attempts: int = 1
+    failure_diagnosis_mode: Literal["deterministic", "hybrid"] = "hybrid"
+
     # 会话资源预算。None 表示该维度不设上限；默认值足以覆盖正常三轮会话，
     # 同时防止失控循环或长期挂起。
     max_llm_calls: int | None = 64
@@ -73,5 +84,15 @@ class AgentConfig:
                 raise ValueError(f"{name} must be greater than zero when provided")
         if self.temperature is not None and not 0 <= self.temperature <= 2:
             raise ValueError("temperature must be between 0 and 2")
+        if self.ontology_mode not in {"off", "retrieve", "control"}:
+            raise ValueError("ontology_mode must be 'off', 'retrieve', or 'control'")
+        if self.tool_recovery_mode not in {"off", "safe"}:
+            raise ValueError("tool_recovery_mode must be 'off' or 'safe'")
+        if self.max_tool_recovery_attempts < 0:
+            raise ValueError("max_tool_recovery_attempts must not be negative")
+        if self.failure_diagnosis_mode not in {"deterministic", "hybrid"}:
+            raise ValueError(
+                "failure_diagnosis_mode must be 'deterministic' or 'hybrid'"
+            )
         if self.llm_extra_body is not None:
             object.__setattr__(self, "llm_extra_body", dict(self.llm_extra_body))

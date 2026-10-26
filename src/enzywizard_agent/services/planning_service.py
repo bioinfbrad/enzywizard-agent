@@ -28,12 +28,14 @@ from .llm_service import create_chat_model_for_state, invoke_structured
 from .runtime_service import is_runtime_limit_error
 from ..utils.planning_utils import (
     create_tool_selection_failure,
+    create_tool_selection_input_required,
     determine_preparation_tools,
     load_analysis_tool_specs_for_purpose,
     validate_and_update_tool_selection,
 )
 from ..utils.tool_plan_utils import (
     apply_parameter_extraction,
+    audit_tool_plan,
     build_default_tool_plan,
     get_editable_parameter_specs,
 )
@@ -52,6 +54,70 @@ ANALYSIS_TYPE_TO_TOOL = {
     "docking": "enzywizard-dock",
     "interaction": "enzywizard-interaction",
 }
+
+HISTORICAL_ARTIFACT_TO_ANALYSIS_TYPE = {
+    "aaprops_report_json": "aaprops",
+    "hydrocluster_report_json": "hydrocluster",
+    "energy_report_json": "energy",
+    "flexibility_report_json": "flexibility",
+    "disorder_report_json": "disorder",
+    "conservation_report_json": "conservation",
+    "embedding_report_json": "embedding",
+    "pocket_report_json": "pocket",
+    "substrate_report_json": "substrate",
+    "dock_report_json": "docking",
+    "interaction_report_json": "interaction",
+}
+
+
+def _remove_history_only_analyses(
+    state: AgentState,
+    requirements: WorkflowRequirementsOutput,
+) -> WorkflowRequirementsOutput:
+    """Keep historical analysis actions outside the newly compiled workflow."""
+
+    routing = state.get("current_request_routing")
+    history = state.get("current_history_query")
+    if (
+        routing is None
+        or routing.output is None
+        or routing.output.requests_recomputation
+        or history is None
+        or history.query_status != "succeeded"
+        or not any(
+            action.action_type == "analyze_history"
+            for action in routing.output.actions
+        )
+    ):
+        return requirements
+    history_only = {
+        analysis_type
+        for artifact in history.selected_artifacts
+        if (
+            analysis_type := HISTORICAL_ARTIFACT_TO_ANALYSIS_TYPE.get(
+                artifact.artifact_type
+            )
+        )
+        is not None
+    }
+    requested = [
+        item
+        for item in requirements.requested_analysis_types
+        if item not in history_only
+    ]
+    if requested == requirements.requested_analysis_types or not requested:
+        return requirements
+    return requirements.model_copy(
+        update={
+            "requested_analysis_types": requested,
+            "requirements_reason": (
+                requirements.requirements_reason
+                + " Historical report analysis was kept outside the new workflow."
+            ),
+        }
+    )
+
+
 def _is_historical_rerun(state: AgentState) -> bool:
     routing = state.get("current_request_routing")
     if routing is None or routing.output is None:
@@ -338,8 +404,8 @@ def _extract_workflow_requirements(
     ):
         # Reviewer 可以纠正科学范围，但不能把已经可编译的草稿降级为纯结构
         # 失败。此时保留首轮结果，后续依赖闭包和参数校验仍会执行严格检查。
-        return candidate_output
-    return reviewed_output
+        return _remove_history_only_analyses(state, candidate_output)
+    return _remove_history_only_analyses(state, reviewed_output)
 
 
 def _compile_workflow_requirements(
@@ -357,26 +423,29 @@ def _compile_workflow_requirements(
 
     requested = set(requirements.requested_analysis_types)
     agent_inputs = state.get("agent_inputs")
+    missing_inputs: list[str] = []
     if "conservation" in requested:
         msa_available = bool(agent_inputs is not None and agent_inputs.msa_file)
         mut_msa_available = bool(
             agent_inputs is not None and agent_inputs.mut_msa_file
         )
-        if not msa_available or (
+        if not msa_available:
+            missing_inputs.append(
+                "a wild-type multiple sequence alignment"
+                if planning_result.purpose_type == "wildtype_mutant_comparison"
+                else "a multiple sequence alignment"
+            )
+        if (
             planning_result.purpose_type == "wildtype_mutant_comparison"
             and not mut_msa_available
         ):
-            return create_tool_selection_failure(
-                "Conservation analysis requires the supplied MSA inputs for every "
-                "protein side in the workflow."
-            )
+            missing_inputs.append("a mutant multiple sequence alignment")
     if requested.intersection({"substrate", "docking"}) and not (
         agent_inputs is not None and agent_inputs.substrate_name
     ):
-        return create_tool_selection_failure(
-            "Substrate preparation and docking require a supplied substrate name or "
-            "SMILES input."
-        )
+        missing_inputs.append("a substrate name or SMILES")
+    if missing_inputs:
+        return create_tool_selection_input_required(missing_inputs)
 
     if requirements.scope_mode == "complete_analysis":
         batch_tool = (
@@ -455,7 +524,7 @@ def select_single_protein_tools(
 
     # 没有可信清理结果且没有原始结构时，LLM 无法补救，直接返回规范失败结果。
     if preparation_error is not None:
-        return create_tool_selection_failure(preparation_error)
+        return create_tool_selection_input_required(["a protein structure"])
 
     try:
         requirements = _extract_workflow_requirements(
@@ -494,7 +563,15 @@ def select_wildtype_mutant_tools(
         purpose_type,
     )
     if preparation_error is not None:
-        return create_tool_selection_failure(preparation_error)
+        agent_inputs = state.get("agent_inputs")
+        missing_inputs: list[str] = []
+        if agent_inputs is None or not agent_inputs.structure_file:
+            missing_inputs.append("a wild-type protein structure")
+        if agent_inputs is None or not agent_inputs.mut_structure_file:
+            missing_inputs.append("a mutant protein structure")
+        if agent_inputs is None or not agent_inputs.amino_acid_substitution:
+            missing_inputs.append("an amino-acid substitution")
+        return create_tool_selection_input_required(missing_inputs)
 
     try:
         requirements = _extract_workflow_requirements(
@@ -559,7 +636,7 @@ def extract_tool_parameters(
     )
 
     # SystemMessage 只包含固定参数政策，HumanMessage 提供当前计划的动态参数表。
-    return invoke_structured(
+    extraction = invoke_structured(
         state,
         stage="planning.parameter_extraction",
         schema=ParameterExtractionOutput,
@@ -568,6 +645,53 @@ def extract_tool_parameters(
             SystemMessage(content=PARAMETER_EXTRACTION_SYSTEM_PROMPT),
             HumanMessage(content=context),
         ],
+    )
+    return _normalize_resolved_history_input_requests(state, extraction)
+
+
+def _normalize_resolved_history_input_requests(
+    state: AgentState,
+    extraction: ParameterExtractionOutput,
+) -> ParameterExtractionOutput:
+    """Discard false path overrides that only restate resolved history reuse."""
+
+    history = state.get("current_history_query")
+    if (
+        extraction.parameter_extraction_status != "parameter_extraction_succeeded"
+        or history is None
+        or history.query_status != "succeeded"
+        or history.query is None
+        or "reuse_as_input" not in history.query.operations
+        or not history.selected_artifacts
+    ):
+        return extraction
+
+    path_markers = ("/", "\\", "~", ".pdb", ".cif", ".sdf", ".fasta", ".fa")
+    retained = []
+    removed = 0
+    for request in extraction.unsupported_requests:
+        value = request.requested_value.lower()
+        is_resolved_history_reference = (
+            request.request_type == "input_path_override"
+            and not any(marker in value for marker in path_markers)
+            and any(token in value for token in ("turn", "history", "historical", "previous"))
+        )
+        if is_resolved_history_reference:
+            removed += 1
+        else:
+            retained.append(request)
+
+    if not removed:
+        return extraction
+    summary = extraction.extraction_summary.rstrip(".")
+    return extraction.model_copy(
+        update={
+            "unsupported_requests": retained,
+            "extraction_summary": (
+                f"{summary}. Ignored {removed} already-resolved historical input "
+                "reference(s)."
+            ),
+        }
     )
 
 
@@ -580,8 +704,12 @@ def finalize_tool_plan(
 
     # apply_parameter_extraction 会拒绝路径覆盖、未知参数、非法类型、范围错误和
     # 参数依赖冲突；任何异常由 Planning 节点统一转换为 planning_failed。
-    return apply_parameter_extraction(
+    final_plan = apply_parameter_extraction(
         default_tool_plan,
         parameter_extraction,
         state["config"].workdir,
     )
+    validation = audit_tool_plan(final_plan, state["config"].workdir)
+    if not validation.passed:
+        raise ValueError("; ".join(validation.error_messages))
+    return final_plan

@@ -2,11 +2,60 @@ from __future__ import annotations
 
 import re
 from importlib.resources import files
+from pathlib import Path
 from typing import Any
 
 import yaml
+from ..data_models.artifact import Artifact
 from ..data_models.planning import PlanningPurposeType, ToolSelectionOutput
 from ..state import AgentState
+from .tool_execution_utils import is_safe_historical_artifact
+
+
+SINGLE_CLEAN_SUPPORT_TYPES = {
+    "cleaned_structure_cif",
+    "cleaned_structure_pdb",
+    "cleaned_sequence_fasta",
+    "clean_report_json",
+}
+
+
+def get_reusable_history_artifacts(state: AgentState) -> list[Artifact]:
+    """Expand a selected reusable output with safe sibling outputs from its call."""
+
+    history = state.get("current_history_query")
+    if history is None or history.query_status != "succeeded":
+        return []
+    executions = state.get("tool_executions", [])
+    selected = [
+        artifact
+        for artifact in history.selected_artifacts
+        if is_safe_historical_artifact(artifact, executions)
+        and Path(artifact.path).is_file()
+    ]
+    support_keys = {
+        (artifact.turn_id, artifact.plan_id, artifact.source_tool, artifact.side)
+        for artifact in selected
+        if artifact.artifact_type
+        in {"cleaned_structure_cif", "cleaned_structure_pdb"}
+    }
+    expanded = list(selected)
+    for artifact in state.get("artifacts", []):
+        key = (
+            artifact.turn_id,
+            artifact.plan_id,
+            artifact.source_tool,
+            artifact.side,
+        )
+        if (
+            key in support_keys
+            and artifact.artifact_type in SINGLE_CLEAN_SUPPORT_TYPES
+            and Path(artifact.path).is_file()
+            and is_safe_historical_artifact(artifact, executions)
+        ):
+            expanded.append(artifact)
+    by_path = {artifact.path: artifact for artifact in expanded}
+    return list(by_path.values())
 
 
 TOOL_SPEC_FIELD_NAMES = [
@@ -106,6 +155,18 @@ def determine_preparation_tools(
     cleaned_files = state.get("cleaned_files")
 
     if purpose_type == "single_protein_analysis":
+        historical_types = {
+            artifact.artifact_type
+            for artifact in get_reusable_history_artifacts(state)
+            if artifact.side in {"single", "shared"}
+        }
+        complete_historical_clean = bool(
+            historical_types.intersection(
+                {"cleaned_structure_cif", "cleaned_structure_pdb"}
+            )
+            and "cleaned_sequence_fasta" in historical_types
+            and "clean_report_json" in historical_types
+        )
         # 完整单蛋白清理状态必须同时包含结构、FASTA 和 clean report，确保后续
         # embedding、conservation 和 integrate 都能直接复用。
         cleaned_structure_available = bool(
@@ -128,7 +189,7 @@ def determine_preparation_tools(
             cleaned_structure_available
             and cleaned_fasta_available
             and clean_report_available
-        ):
+        ) or complete_historical_clean:
             return [], None
 
         # 清理结果不完整但当前有原始结构时，由程序强制加入 clean。
@@ -206,6 +267,8 @@ def validate_and_update_tool_selection(
     if tool_selection.tool_selection_status == "tool_selection_failed":
         error_message = tool_selection.error_message or tool_selection.selection_reason
         return create_tool_selection_failure(error_message)
+    if tool_selection.tool_selection_status == "input_required":
+        return create_tool_selection_input_required(tool_selection.missing_inputs)
 
     # 成功且 LLM 工具列表为空时，程序将其解释为“仅执行准备工具”。如果程序
     # 没有选出准备工具，同样的空列表就是无效成功结果。
@@ -386,4 +449,25 @@ def create_tool_selection_failure(error_message: str) -> ToolSelectionOutput:
         selected_tools=[],
         selection_reason="",
         error_message=message,
+    )
+
+
+def create_tool_selection_input_required(
+    missing_inputs: list[str],
+) -> ToolSelectionOutput:
+    """Return a typed, non-error stop when selected analyses lack external input."""
+
+    normalized = list(
+        dict.fromkeys(str(item).strip() for item in missing_inputs if str(item).strip())
+    )
+    if not normalized:
+        return create_tool_selection_failure(
+            "Input-required tool selection did not identify a missing input."
+        )
+    return ToolSelectionOutput(
+        tool_selection_status="input_required",
+        selected_tools=[],
+        selection_reason="",
+        error_message="",
+        missing_inputs=normalized,
     )

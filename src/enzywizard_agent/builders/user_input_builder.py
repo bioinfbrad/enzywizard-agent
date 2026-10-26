@@ -18,11 +18,21 @@ def build_user_input_interrupt_payload(state: AgentState) -> dict[str, Any]:
         final_answer = analysis.final_answer
         response_mode = analysis.response_mode
         analysis_status = analysis.analysis_status
+        analysis_route = analysis.analysis_route
+        termination_reason = analysis.termination_reason
+        error_guidance = (
+            analysis.error_guidance.model_dump(mode="json")
+            if analysis.error_guidance is not None
+            else None
+        )
     else:
         # 计划被用户拒绝时不会经过 Analysis，但仍应给出明确的轮次结束信息。
         final_answer = "The current plan was rejected. No tools were executed."
         response_mode = "plan_rejected"
         analysis_status = "not_run"
+        analysis_route = "answer_generated"
+        termination_reason = None
+        error_guidance = None
 
     return {
         "interrupt_type": "user_input",
@@ -32,6 +42,9 @@ def build_user_input_interrupt_payload(state: AgentState) -> dict[str, Any]:
         "final_answer": final_answer,
         "response_mode": response_mode,
         "analysis_status": analysis_status,
+        "analysis_route": analysis_route,
+        "termination_reason": termination_reason,
+        "error_guidance": error_guidance,
         "available_artifact_turns": sorted(
             {artifact.turn_id for artifact in state.get("artifacts", [])}
         ),

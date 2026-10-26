@@ -18,3 +18,9 @@ env/
 build/
 dist/
 *.egg-info/
+
+# Local FAIR terminology collection worksheets. The reviewed fixture used by
+# tests is versioned under manual_tests/fixtures/.
+/fair_terms_descriptions_completed.txt
+/fair_terms_descriptions_reviewed.txt
+/fair_terms_missing_descriptions.txt

@@ -21,10 +21,12 @@ from .runtime_service import (
     classify_exception,
     ensure_runtime_session,
     enforce_llm_budget,
+    is_runtime_limit_error,
     record_runtime_error,
     remaining_session_seconds,
     utc_now,
 )
+from .knowledge_retrieval_service import enrich_messages_with_fair_terms
 from ..utils.security_utils import redact_text
 
 
@@ -405,9 +407,16 @@ def invoke_structured(
     llm: Any | None = None,
     normalizer: StructuredNormalizer | None = None,
     allow_repair: bool = True,
+    retrieval_context: str | None = None,
 ) -> StructuredOutputT:
     """Invoke native strict JSON Schema, normalize, and repair at most once."""
 
+    messages = enrich_messages_with_fair_terms(
+        state,
+        stage=stage,
+        messages=messages,
+        retrieval_context=retrieval_context,
+    )
     model = llm or create_chat_model_for_state(state)
     contract_failure: _StructuredContractFailure | None = None
     try:
@@ -464,9 +473,16 @@ def invoke_text(
     stage: str,
     messages: list[BaseMessage],
     llm: Any | None = None,
+    retrieval_context: str | None = None,
 ) -> str:
     """Invoke a normal text response while preserving budgets and usage records."""
 
+    messages = enrich_messages_with_fair_terms(
+        state,
+        stage=stage,
+        messages=messages,
+        retrieval_context=retrieval_context,
+    )
     estimated_input = _estimate_message_tokens(messages)
     enforce_llm_budget(state, stage, estimated_input)
     model = llm or create_chat_model_for_state(state)
@@ -621,6 +637,8 @@ def check_model_capabilities(state: AgentState) -> ModelCapabilityResult:
         runtime.model_capability = result
         return result
     except Exception as error:
+        if is_runtime_limit_error(error):
+            raise
         basic_contract_passed = "routing" in completed_probes
         structured_response_received = isinstance(error, _StructuredContractFailure)
         failure_kind = (

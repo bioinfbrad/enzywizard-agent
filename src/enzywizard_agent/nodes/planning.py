@@ -12,6 +12,35 @@ from ..services.planning_service import (
 )
 from ..state import AgentState
 from ..utils.planning_utils import purpose_needs_tool
+from ..utils.tool_plan_utils import audit_tool_plan
+
+
+def _missing_input_question(missing_inputs: list[str]) -> str:
+    """Build one stable clarification question from program-identified inputs."""
+
+    if len(missing_inputs) == 1:
+        requirement = missing_inputs[0]
+    else:
+        requirement = ", ".join(missing_inputs[:-1]) + f", and {missing_inputs[-1]}"
+    return f"Please provide {requirement} before I build this workflow."
+
+
+def _finish_input_clarification(
+    state: AgentState,
+    planning_result: PlanningResult,
+) -> AgentState:
+    """Stop planning safely and route a typed missing-input question to Analysis."""
+
+    assert planning_result.tool_selection is not None
+    planning_result.planning_flag = "clarification_required"
+    planning_result.clarification_question = _missing_input_question(
+        planning_result.tool_selection.missing_inputs
+    )
+    planning_result.summary = "Additional workflow input is required."
+    state["current_planning_result"] = planning_result
+    state.setdefault("planning_results", []).append(planning_result)
+    state["route"] = planning_result.planning_route
+    return state
 
 
 def planning_node(state: AgentState) -> AgentState:
@@ -72,7 +101,6 @@ def planning_node(state: AgentState) -> AgentState:
     if planning_result.purpose_type == "single_protein_analysis":
         tool_selection = select_single_protein_tools(state, planning_result)
         planning_result.tool_selection = tool_selection
-        planning_result.planning_flag = tool_selection.tool_selection_status
 
         # 日志同时展示最终合并后的工具列表和选择原因。
         print(
@@ -87,6 +115,11 @@ def planning_node(state: AgentState) -> AgentState:
             planning_result.error_messages.append(tool_selection.error_message)
             print(f"[INFO] Tool selection error: {tool_selection.error_message}")
 
+        if tool_selection.tool_selection_status == "input_required":
+            return _finish_input_clarification(state, planning_result)
+
+        planning_result.planning_flag = tool_selection.tool_selection_status
+
         # 工具选择失败表示本次 Planning 已终止；保存结果后立即交给 Analysis。
         if planning_result.planning_flag == "tool_selection_failed":
             state["current_planning_result"] = planning_result
@@ -97,7 +130,6 @@ def planning_node(state: AgentState) -> AgentState:
     elif planning_result.purpose_type == "wildtype_mutant_comparison":
         tool_selection = select_wildtype_mutant_tools(state, planning_result)
         planning_result.tool_selection = tool_selection
-        planning_result.planning_flag = tool_selection.tool_selection_status
         print(
             "[INFO] Tool selection result: "
             f"status={tool_selection.tool_selection_status}, "
@@ -108,6 +140,11 @@ def planning_node(state: AgentState) -> AgentState:
         if tool_selection.error_message:
             planning_result.error_messages.append(tool_selection.error_message)
             print(f"[INFO] Tool selection error: {tool_selection.error_message}")
+
+        if tool_selection.tool_selection_status == "input_required":
+            return _finish_input_clarification(state, planning_result)
+
+        planning_result.planning_flag = tool_selection.tool_selection_status
 
         # WT/MUT 工具选择失败同样结束本次 Planning，不能继续生成 ToolPlan。
         if planning_result.planning_flag == "tool_selection_failed":
@@ -205,6 +242,10 @@ def planning_node(state: AgentState) -> AgentState:
     # 完整计划成功后才写入状态并切换到用户确认路由。Planning 阶段只保存路径，
     # 不创建 ToolCall 目录，也不复制 integrate 输入报告。
     planning_result.tool_plan = final_tool_plan
+    planning_result.plan_validation = audit_tool_plan(
+        final_tool_plan,
+        state["config"].workdir,
+    )
     planning_result.summary = final_tool_plan.summary
     planning_result.planning_flag = "tool_plan_generated"
     planning_result.planning_route = "tool_plan_generated"

@@ -35,7 +35,12 @@ from enzywizard_agent.utils.CLI_utils import get_single_interrupt_payload
 from enzywizard_agent.utils.checkpoint_utils import create_in_memory_checkpointer
 from enzywizard_agent.utils.IO_utils import create_session_id, normalize_path
 
-from evaluation_utils import aggregate_usage, runtime_usage_payload
+from evaluation_utils import (
+    agent_trace_payload,
+    aggregate_agent_traces,
+    aggregate_usage,
+    runtime_usage_payload,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -65,6 +70,18 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Optional OpenAI-compatible reasoning effort, such as 'none'.",
     )
+    parser.add_argument(
+        "--ontology_mode",
+        choices=("off", "retrieve", "control"),
+        default="retrieve",
+        help="Local FAIR terminology enrichment mode (default: retrieve).",
+    )
+    parser.add_argument(
+        "--tool_recovery_mode",
+        choices=("off", "safe"),
+        default="safe",
+    )
+    parser.add_argument("--max_tool_recovery_attempts", type=int, default=1)
     parser.add_argument(
         "--workdir",
         default="~/enzywizard-agent-full-workflow-tests",
@@ -277,6 +294,9 @@ def build_initial_state(
     base_url: str,
     model: str,
     reasoning_effort: str | None,
+    ontology_mode: str,
+    tool_recovery_mode: str,
+    max_tool_recovery_attempts: int,
     case_workdir: Path,
 ) -> AgentState:
     """构造与正式 Agent 首轮一致的状态，但不启动正式未完成图。"""
@@ -289,6 +309,9 @@ def build_initial_state(
             base_url=base_url,
             model=model,
             reasoning_effort=reasoning_effort,
+            ontology_mode=ontology_mode,
+            tool_recovery_mode=tool_recovery_mode,
+            max_tool_recovery_attempts=max_tool_recovery_attempts,
             workdir=case_workdir,
             max_turns=max(3, len(actions)),
         ),
@@ -448,6 +471,21 @@ def evaluate_plan_payload(
         failures.append(
             f"The plan contains forbidden tools: {present_forbidden_tools}."
         )
+
+    allowed_tools = set(expected_plan.get("allowed_tools", []))
+    if allowed_tools:
+        unexpected_tools = sorted(set(selected_tools) - allowed_tools)
+        if unexpected_tools:
+            failures.append(
+                f"The plan contains tools outside the allowed set: {unexpected_tools}."
+            )
+
+    positions = {tool_name: index for index, tool_name in enumerate(selected_tools)}
+    for before, after in expected_plan.get("order_constraints", []):
+        if before in positions and after in positions and positions[before] >= positions[after]:
+            failures.append(
+                f"The plan must place {before} before {after}, got {selected_tools!r}."
+            )
 
     if "exact_tools" in expected_plan:
         exact_tools = expected_plan["exact_tools"]
@@ -684,6 +722,9 @@ def build_results_payload(
         "mode": "execute" if args.execute else "plan_only",
         "model": args.model,
         "reasoning_effort": args.reasoning_effort,
+        "ontology_mode": args.ontology_mode,
+        "tool_recovery_mode": args.tool_recovery_mode,
+        "max_tool_recovery_attempts": args.max_tool_recovery_attempts,
         "base_url": args.base_url,
         "run_dir": str(run_dir),
         "updated_at": datetime.now(timezone.utc).isoformat(),
@@ -696,6 +737,7 @@ def build_results_payload(
             "remaining": selected_count - len(results),
         },
         "usage": aggregate_usage(result.get("usage") for result in results),
+        "trace": aggregate_agent_traces(result.get("trace") for result in results),
         "results": results,
     }
 
@@ -838,6 +880,9 @@ def run_case(
     base_url: str,
     model: str,
     reasoning_effort: str | None,
+    ontology_mode: str,
+    tool_recovery_mode: str,
+    max_tool_recovery_attempts: int,
     run_dir: Path,
     execute_tools: bool,
     show_plans: bool,
@@ -856,6 +901,9 @@ def run_case(
         base_url,
         model,
         reasoning_effort,
+        ontology_mode,
+        tool_recovery_mode,
+        max_tool_recovery_attempts,
         case_workdir,
     )
     session_id = state["session_id"]
@@ -996,6 +1044,7 @@ def run_case(
         ),
         "terminal_diagnostics": diagnostics,
         "usage": diagnostics["runtime"],
+        "trace": agent_trace_payload(result),
         "cleaned_files": (
             result["cleaned_files"].model_dump(mode="json")
             if result and result.get("cleaned_files") is not None
@@ -1009,7 +1058,10 @@ def run_case(
 def main() -> int:
     """批量运行案例；未显式 --execute 时绝不调用 EnzyWizard 工具。"""
 
-    args = build_parser().parse_args()
+    parser = build_parser()
+    args = parser.parse_args()
+    if args.max_tool_recovery_attempts < 0:
+        parser.error("--max_tool_recovery_attempts must not be negative")
     if not args.api_key or not str(args.api_key).strip():
         print(
             "[错误] 请传入 --api_key 或设置 ENZYWIZARD_API_KEY。",
@@ -1034,6 +1086,12 @@ def main() -> int:
     print(f"[运行模式] {mode}", flush=True)
     print(f"[模型] {args.model}", flush=True)
     print(f"[推理强度] {args.reasoning_effort or '模型默认值'}", flush=True)
+    print(f"[FAIR 术语] {args.ontology_mode}", flush=True)
+    print(
+        "[工具恢复] "
+        f"{args.tool_recovery_mode}, max_attempts={args.max_tool_recovery_attempts}",
+        flush=True,
+    )
     if args.tags:
         print(f"[标签] {', '.join(args.tags)}", flush=True)
     print(f"[案例数量] {len(selected_cases)}", flush=True)
@@ -1061,6 +1119,9 @@ def main() -> int:
                 str(args.base_url).strip(),
                 str(args.model).strip(),
                 args.reasoning_effort,
+                args.ontology_mode,
+                args.tool_recovery_mode,
+                args.max_tool_recovery_attempts,
                 run_dir,
                 args.execute,
                 args.show_plans,
@@ -1089,6 +1150,7 @@ def main() -> int:
                     "runtime": runtime_usage_payload(None),
                 },
                 "usage": runtime_usage_payload(None),
+                "trace": agent_trace_payload(None),
                 "cleaned_files": None,
                 "artifact_count": 0,
                 "duration_seconds": round(time.monotonic() - case_started_at, 3),

@@ -33,7 +33,12 @@ from enzywizard_agent.services.llm_service import check_model_capabilities
 from enzywizard_agent.state import AgentState
 from enzywizard_agent.utils.IO_utils import create_session_id
 
-from evaluation_utils import aggregate_usage, runtime_usage_payload
+from evaluation_utils import (
+    agent_trace_payload,
+    aggregate_agent_traces,
+    aggregate_usage,
+    runtime_usage_payload,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -61,6 +66,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--reasoning_effort",
         default=None,
         help="Optional OpenAI-compatible reasoning effort, such as 'none'.",
+    )
+    parser.add_argument(
+        "--ontology_mode",
+        choices=("off", "retrieve", "control"),
+        default="retrieve",
+        help="Local FAIR terminology enrichment mode (default: retrieve).",
     )
     parser.add_argument(
         "--workdir",
@@ -224,6 +235,7 @@ def seed_history(root: Path) -> list[Artifact]:
     specs: list[dict[str, Any]] = [
         # Turn 1: single-protein property workflow.
         {"turn_id": 1, "artifact_type": "cleaned_structure_cif", "source_tool": "enzywizard-clean", "side": "single", "suffix": ".cif"},
+        {"turn_id": 1, "artifact_type": "cleaned_sequence_fasta", "source_tool": "enzywizard-clean", "side": "single", "suffix": ".fasta"},
         {"turn_id": 1, "artifact_type": "clean_report_json", "source_tool": "enzywizard-clean", "side": "single", "report_type": "enzywizard_clean", "suffix": ".json"},
         {"turn_id": 1, "artifact_type": "energy_report_json", "source_tool": "enzywizard-energy", "side": "single", "report_type": "enzywizard_energy", "suffix": ".json"},
         {"turn_id": 1, "artifact_type": "pocket_report_json", "source_tool": "enzywizard-pocket", "side": "single", "report_type": "enzywizard_pocket", "suffix": ".json"},
@@ -249,6 +261,8 @@ def seed_history(root: Path) -> list[Artifact]:
         {"turn_id": 2, "artifact_type": "log_file", "source_tool": "enzywizard-mut-integrate", "side": "shared", "suffix": ".txt"},
         # Turn 3: substrate, docking, interaction, and integrated graph.
         {"turn_id": 3, "artifact_type": "cleaned_structure_cif", "source_tool": "enzywizard-clean", "side": "single", "suffix": ".cif"},
+        {"turn_id": 3, "artifact_type": "cleaned_sequence_fasta", "source_tool": "enzywizard-clean", "side": "single", "suffix": ".fasta"},
+        {"turn_id": 3, "artifact_type": "clean_report_json", "source_tool": "enzywizard-clean", "side": "single", "report_type": "enzywizard_clean", "suffix": ".json"},
         {"turn_id": 3, "artifact_type": "substrate_report_json", "source_tool": "enzywizard-substrate", "side": "single", "report_type": "enzywizard_substrate", "suffix": ".json"},
         {"turn_id": 3, "artifact_type": "substrate_sdf", "source_tool": "enzywizard-substrate", "side": "single", "suffix": ".sdf", "serial": 1},
         {"turn_id": 3, "artifact_type": "substrate_sdf", "source_tool": "enzywizard-substrate", "side": "single", "suffix": ".sdf", "serial": 2},
@@ -327,6 +341,7 @@ def build_state(
     base_url: str,
     model: str,
     reasoning_effort: str | None,
+    ontology_mode: str,
     case_dir: Path,
 ) -> AgentState:
     history_root = case_dir / "synthetic_history"
@@ -338,6 +353,7 @@ def build_state(
             base_url=base_url,
             model=model,
             reasoning_effort=reasoning_effort,
+            ontology_mode=ontology_mode,
             workdir=case_dir,
             max_turns=6,
         ),
@@ -535,6 +551,7 @@ def run_case(
         str(args.base_url).strip(),
         str(args.model).strip(),
         args.reasoning_effort,
+        args.ontology_mode,
         case_dir,
     )
     failures: list[str] = []
@@ -584,6 +601,16 @@ def run_case(
             analysis.model_dump(mode="json") if analysis is not None else None
         ),
         "usage": runtime_usage_payload(state.get("runtime_session")),
+        "trace": agent_trace_payload(
+            {
+                **state,
+                **(
+                    {"current_analysis_result": analysis}
+                    if analysis is not None
+                    else {}
+                ),
+            }
+        ),
     }
 
 
@@ -603,6 +630,7 @@ def result_payload(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "model": args.model,
         "reasoning_effort": args.reasoning_effort,
+        "ontology_mode": args.ontology_mode,
         "base_url": args.base_url,
         "cases_file": str(cases_path),
         "run_dir": str(run_dir),
@@ -615,6 +643,9 @@ def result_payload(
             "failed": len(results) - passed,
         },
         "usage": usage,
+        "trace": aggregate_agent_traces(
+            result.get("trace") for result in results
+        ),
         "results": results,
     }
 
@@ -660,6 +691,7 @@ def main() -> int:
     print("[运行模式] 请求路由、历史查询与分析语义测试", flush=True)
     print(f"[模型] {args.model}", flush=True)
     print(f"[推理强度] {args.reasoning_effort or '模型默认值'}", flush=True)
+    print(f"[FAIR 术语] {args.ontology_mode}", flush=True)
     print(f"[案例数量] {len(cases)} x {args.repeat}", flush=True)
     print(f"[运行目录] {run_dir}", flush=True)
     print(f"[结果文件] {output_path}", flush=True)
@@ -674,6 +706,7 @@ def main() -> int:
             str(args.base_url).strip(),
             str(args.model).strip(),
             args.reasoning_effort,
+            args.ontology_mode,
             capability_dir,
         )
         capability = check_model_capabilities(capability_state)

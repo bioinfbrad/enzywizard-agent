@@ -52,6 +52,12 @@ Rules:
   explain_history and list_history_files.
 - Generic questions about files a tool normally produces are software_help;
   list_history_files is only for a completed run, result, or turn.
+- Route a scientifically clear execution request as run_workflow even when a
+  conditionally required input such as an MSA, mutant, or substrate may be absent.
+  Planning determines the exact workflow first and asks for only the inputs that the
+  selected analyses actually require.
+- Pocket or cavity characterization does not itself request ligand docking, and
+  internal or residue-residue interactions do not themselves request a substrate.
 - A bare "run it" or "compare them" is clarify unless an active pending plan uniquely
   resolves both target and scope.
 - Exit combined with another action is clarify.
@@ -85,6 +91,11 @@ not commentary. Each action must contain exactly kind and target.
   fresh recomputation from current inputs uses recompute_workflow.
 - Generic application behavior is software_help; conceptual protein/enzyme science is
   science_question.
+- Do not replace a clear run_workflow action with clarify merely because a conditional
+  scientific input may be missing; Planning performs the input check after resolving
+  the requested analyses.
+- Pocket or cavity characterization is distinct from docking, and internal or
+  residue-residue interactions are distinct from protein-substrate interactions.
 - Do not infer history from the artifact catalog alone.
 - Preserve explicit file listing as a separate list_history_files action.
 - Bare unresolved pronouns use clarify unless an active pending plan uniquely resolves

@@ -83,6 +83,7 @@ def build_graph(checkpointer: BaseCheckpointSaver | None = None):
         {
             "answer_generated": "user_input_interrupt",
             "exit_requested": END,
+            "restart_required": END,
         },
     )
 

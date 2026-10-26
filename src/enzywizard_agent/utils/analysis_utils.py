@@ -283,9 +283,11 @@ def build_report_evidence(
     evidence: list[AnalysisEvidence] = []
     findings: list[AnalysisFinding] = []
     summaries = list(summaries)
+    report_evidence_ids: dict[int, str] = {}
 
     for index, summary in enumerate(summaries, start=1):
         evidence_id = f"report-{index}"
+        report_evidence_ids[id(summary)] = evidence_id
         value_summary = "; ".join(summary.highlights) or "No scalar metrics extracted"
         evidence.append(
             AnalysisEvidence(
@@ -298,7 +300,10 @@ def build_report_evidence(
                 source_tool=summary.source_tool,
                 side=summary.side,
                 path=summary.path,
-                field_path=None,
+                # This evidence summarizes the report as a whole. ``$`` is the
+                # stable JSON-root location; calculated comparisons below retain
+                # their exact scalar field path.
+                field_path="$",
                 value_summary=value_summary,
             )
         )
@@ -379,6 +384,10 @@ def build_report_evidence(
                             path=integrated_summary.path,
                             field_path=key,
                             value_summary=statement,
+                            source_evidence_ids=[
+                                report_evidence_ids[id(individual_summary)],
+                                report_evidence_ids[id(integrated_summary)],
+                            ],
                         )
                     )
                     findings.append(
@@ -444,6 +453,10 @@ def build_report_evidence(
                     path=None,
                     field_path=key,
                     value_summary=statement,
+                    source_evidence_ids=[
+                        report_evidence_ids[id(pair["wt"])],
+                        report_evidence_ids[id(pair["mut"])],
+                    ],
                 )
             )
             findings.append(

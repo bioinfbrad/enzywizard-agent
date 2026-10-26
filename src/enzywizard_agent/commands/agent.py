@@ -61,6 +61,33 @@ def add_agent_parser(parser: ArgumentParser) -> None:
     parser.add_argument("--llm_timeout_seconds", type=float, default=60.0, help="Timeout for one model request (default: 60).")
     parser.add_argument("--llm_max_retries", type=int, default=2, help="Maximum transport retries per model request (default: 2).")
     parser.add_argument("--skip_model_check", action="store_true", help="Skip the startup OpenAI-compatible structured-output capability check.")
+    parser.add_argument(
+        "--ontology_mode",
+        choices=("off", "retrieve", "control"),
+        default="retrieve",
+        help="Local FAIR terminology enrichment mode (default: retrieve).",
+    )
+    parser.add_argument(
+        "--tool_recovery_mode",
+        choices=("off", "safe"),
+        default="safe",
+        help="Bounded deterministic tool recovery mode (default: safe).",
+    )
+    parser.add_argument(
+        "--max_tool_recovery_attempts",
+        type=int,
+        default=1,
+        help="Maximum safe retries for one failed tool call (default: 1).",
+    )
+    parser.add_argument(
+        "--failure_diagnosis_mode",
+        choices=("deterministic", "hybrid"),
+        default="hybrid",
+        help=(
+            "Failure diagnosis mode: deterministic rules only, or hybrid rules "
+            "plus policy-reviewed LLM diagnosis (default: hybrid)."
+        ),
+    )
 
     # 这些上限约束整个会话；传入 0 表示禁用对应预算上限。
     parser.add_argument("--max_llm_calls", type=int, default=64, help="Maximum LLM calls per session; 0 disables the limit (default: 64).")
@@ -103,6 +130,10 @@ def run_agent(args: Namespace) -> None:
             reasoning_effort=args.reasoning_effort,
             llm_extra_body=extra_body,
             check_model_capabilities=not args.skip_model_check,
+            ontology_mode=args.ontology_mode,
+            tool_recovery_mode=args.tool_recovery_mode,
+            max_tool_recovery_attempts=args.max_tool_recovery_attempts,
+            failure_diagnosis_mode=args.failure_diagnosis_mode,
             max_llm_calls=args.max_llm_calls or None,
             max_input_tokens=args.max_input_tokens or None,
             max_output_tokens=args.max_output_tokens or None,
@@ -113,24 +144,39 @@ def run_agent(args: Namespace) -> None:
         print("\n[ERROR] Agent execution was cancelled by the user.")
         sys.exit(130)
     except json.JSONDecodeError as error:
-        print(f"[ERROR] Invalid --llm_extra_body_json: {error}")
+        print(
+            f"[ERROR:configuration_error] Invalid --llm_extra_body_json: {error}\n"
+            "Required action: correct the JSON value and restart EnzyWizard-Agent."
+        )
         sys.exit(2)
     except ValueError as error:
-        print(f"[ERROR] Agent configuration failed: {redact_text(error, api_key=args.api_key)}")
+        print(
+            "[ERROR:configuration_error] Agent configuration failed: "
+            f"{redact_text(error, api_key=args.api_key)}\n"
+            "Required action: correct the command-line configuration and restart "
+            "EnzyWizard-Agent."
+        )
         sys.exit(2)
     except AgentRuntimeError as error:
         print(
             f"[ERROR:{error.category}] Agent execution failed: "
-            f"{redact_text(error, api_key=args.api_key)}"
+            f"{redact_text(error, api_key=args.api_key)}\n"
+            "Current session: cannot continue. Required action: address the "
+            "reported cause and restart EnzyWizard-Agent."
         )
         sys.exit(_runtime_error_exit_code(error))
     except Exception as e:
-        print(f"[ERROR] Agent graph execution failed: {redact_text(e, api_key=args.api_key)}")
+        print(
+            "[ERROR:internal] Agent graph execution failed: "
+            f"{redact_text(e, api_key=args.api_key)}\n"
+            "Current session: cannot continue. Inspect the session manifest and "
+            "restart EnzyWizard-Agent."
+        )
         sys.exit(1)
 
     # None 表示服务层已经输出具体的入口参数错误。
     if execution is None:
-        sys.exit(1)
+        sys.exit(2)
 
     graph, result = execution
     session_id = str(result.get("session_id", "")).strip()
@@ -162,14 +208,29 @@ def run_agent(args: Namespace) -> None:
         except AgentRuntimeError as error:
             print(
                 f"[ERROR:{error.category}] Agent graph resume failed: "
-                f"{redact_text(error, api_key=args.api_key)}"
+                f"{redact_text(error, api_key=args.api_key)}\n"
+                "Current session: cannot continue. Address the reported cause and "
+                "restart EnzyWizard-Agent."
             )
             sys.exit(_runtime_error_exit_code(error))
         except Exception as e:
-            print(f"[ERROR] Agent graph resume failed: {redact_text(e, api_key=args.api_key)}")
+            print(
+                "[ERROR:internal] Agent graph resume failed: "
+                f"{redact_text(e, api_key=args.api_key)}\n"
+                "Current session: cannot continue. Inspect the session manifest and "
+                "restart EnzyWizard-Agent."
+            )
             sys.exit(1)
 
     display_final_analysis_result(result)
+    analysis = result.get("current_analysis_result")
+    guidance = getattr(analysis, "error_guidance", None)
+    if guidance is not None and guidance.restart_required:
+        print(
+            f"[ERROR:{guidance.error_type}] The current session ended because "
+            "the required correction cannot be applied through a later chat message."
+        )
+        sys.exit(2 if guidance.error_type == "input_error" else 1)
     runtime = result.get("runtime_session")
     if runtime is not None and runtime.status == "budget_exceeded":
         print(f"[WARNING] Agent session stopped at the configured budget: {runtime.stop_reason}")

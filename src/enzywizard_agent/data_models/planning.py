@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 # =============================================================================
 # Enum types
@@ -28,6 +28,7 @@ PlanningFlag = Literal[
     "intent_recognized",
     "tool_selection_succeeded",
     "tool_selection_failed",
+    "clarification_required",
     "default_tool_plan_generated",
     "parameter_extraction_succeeded",
     "parameter_extraction_failed",
@@ -72,6 +73,7 @@ ToolSelectionStatus = Literal[
     # 工具选择阶段的结构化成功或失败状态。
     "tool_selection_succeeded",
     "tool_selection_failed",
+    "input_required",
 ]
 
 ParameterExtractionStatus = Literal[
@@ -160,6 +162,8 @@ class ToolSelectionOutput(BaseModel):
     # 成功原因与失败原因分开保存，最终只能有一个字段非空。
     selection_reason: str
     error_message: str
+    # 仅 input_required 使用稳定的用户可读输入名称；普通成功或失败时为空。
+    missing_inputs: list[str] = Field(default_factory=list)
 
     @field_validator("selected_tools", mode="before")
     @classmethod
@@ -477,6 +481,27 @@ class ToolPlan(BaseModel):
         return self
 
 
+class PlanValidationRecord(BaseModel):
+    """Deterministic audit performed after all model-proposed values are compiled."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    passed: bool
+    checks: list[str]
+    warnings: list[str]
+    error_messages: list[str]
+
+    @model_validator(mode="after")
+    def validate_record(self) -> "PlanValidationRecord":
+        if not self.checks:
+            raise ValueError("plan validation must report the checks it performed")
+        if self.passed and self.error_messages:
+            raise ValueError("a passed plan validation cannot contain errors")
+        if not self.passed and not self.error_messages:
+            raise ValueError("a failed plan validation requires errors")
+        return self
+
+
 class PlanningResult(BaseModel):
     """汇总一次 Planning 节点从意图到完整工具计划的全部结果。"""
 
@@ -499,6 +524,9 @@ class PlanningResult(BaseModel):
     tool_selection: ToolSelectionOutput | None
     parameter_extraction: ParameterExtractionOutput | None
     tool_plan: ToolPlan | None
+    plan_validation: PlanValidationRecord | None = None
 
     # 保存本次 Planning 过程中产生的所有错误。
     error_messages: list[str]
+    # 条件输入只能在科学需求明确后判断；缺失时由 Analysis 统一向用户提问。
+    clarification_question: str | None = None

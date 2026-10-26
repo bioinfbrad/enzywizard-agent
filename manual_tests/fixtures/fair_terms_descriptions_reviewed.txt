@@ -1,0 +1,567 @@
+# FAIR term descriptions (source-checked, 2026-10-21)
+# term and uri preserved verbatim; updated_uri: same = original URI, URL = replacement source, blank = no verified suitable definition.
+# description is a concise source-based paraphrase unless explicitly identical to a short definition.
+
+[001]
+term: 3-10 helix
+uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+updated_uri: same
+description: A 3-10 helix is a protein secondary-structure class assigned the DSSP code G.
+
+[002]
+term: aliphatic
+uri: https://goldbook.iupac.org/terms/view/A00217
+updated_uri: same
+description: Aliphatic compounds are acyclic or cyclic, saturated or unsaturated carbon compounds, excluding aromatic compounds.
+
+[003]
+term: alpha carbon
+uri: https://www.rcsb.org/docs/general-help/glossary
+updated_uri: same
+description: The alpha carbon is the backbone carbon atom adjacent to the carbonyl group in an alpha amino acid, to which the amino-acid side chain is attached.
+
+[004]
+term: alpha helix
+uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+updated_uri: same
+description: An alpha-helix is a protein secondary-structure class assigned the DSSP code H.
+
+[005]
+term: amino acid residue
+uri: http://purl.obolibrary.org/obo/GENO_0000782
+updated_uri: https://goldbook.iupac.org/terms/view/A00279
+description: An amino-acid residue is the portion of an amino acid remaining after loss of the elements of water when amino acids combine to form a peptide.
+
+[006]
+term: aromatic
+uri: https://goldbook.iupac.org/terms/view/A00441
+updated_uri: same
+description: Aromatic describes chemistry typified by benzene; in a broader sense, aromaticity is associated with the enhanced stability of cyclically conjugated electron systems through delocalization.
+
+[007]
+term: asphericity
+uri: https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html
+updated_uri: https://www.rdkit.org/docs/source/rdkit.Chem.Descriptors3D.html
+description: Asphericity is a three-dimensional molecular-shape descriptor calculated from the differences among a molecule's three principal moments of inertia, optionally using atomic-mass weighting.
+
+[008]
+term: atom
+uri: http://purl.obolibrary.org/obo/CHMO_0001075
+updated_uri: https://goldbook.iupac.org/terms/view/A00493
+description: An atom is the smallest particle still characterizing a chemical element.
+
+[009]
+term: atom
+uri: https://goldbook.iupac.org/terms/view/A00493
+updated_uri: same
+description: An atom is the smallest particle still characterizing a chemical element.
+
+[010]
+term: AutoDock Vina
+uri: https://bio.tools/autodock_vina
+updated_uri: https://autodock-vina.readthedocs.io/en/latest/
+description: AutoDock Vina is an open-source molecular docking engine used to predict ligand binding poses and evaluate them with a scoring function.
+
+[011]
+term: bend
+uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+updated_uri: same
+description: A bend is a protein secondary-structure class assigned the DSSP code S.
+
+[012]
+term: binding affinity
+uri: https://vina.scripps.edu/manual/#output
+updated_uri: same
+description: In AutoDock Vina output, binding affinity is a predicted receptor-ligand binding score reported in kcal/mol for a docking pose.
+
+[013]
+term: binding pocket
+uri: https://schlessinger-lab.github.io/pyvol/index.html
+updated_uri: same
+description: In PyVOL, a protein binding pocket is a cavity identified from the protein's solvent-excluded geometry; PyVOL can calculate its volume and partition it into sub-pockets.
+
+[014]
+term: binding pocket
+uri: https://schlessinger-lab.github.io/pyvol/pocket_specification.html
+updated_uri: same
+description: PyVOL can localize a binding pocket of interest using a bound ligand, an adjacent residue, or a spatial coordinate within the pocket.
+
+[015]
+term: bond
+uri: https://goldbook.iupac.org/terms/view/B00701
+updated_uri: https://goldbook.iupac.org/terms/view/B00697
+description: A chemical bond is an interaction between atoms or groups of atoms that leads to the formation of an aggregate sufficiently stable to be considered an independent molecular species.
+
+[016]
+term: box
+uri: https://www.pbr-book.org/3ed-2018/Geometry_and_Transformations/Bounding_Boxes
+updated_uri: same
+description: An axis-aligned bounding box is a rectangular region in two dimensions or a rectangular volume in three dimensions used to enclose geometric objects, with bounds specified by minimum and maximum coordinates.
+
+[017]
+term: cation-pi interaction
+uri: https://goldbook.iupac.org/terms/view/08154
+updated_uri: same
+description: A cation-pi interaction is a noncovalent attractive force between a positive ion and a pi-electron system.
+
+[018]
+term: centroid
+uri: https://xlinux.nist.gov/dads/HTML/centroid.html
+updated_uri: same
+description: The centroid is the center of gravity or center of mass of an object.
+
+[019]
+term: chemical classification
+uri: http://purl.obolibrary.org/obo/NCIT_C25161
+updated_uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
+description: In the IMGT amino-acid classification scheme, residues are grouped by side-chain chemistry into aliphatic, aromatic, sulfur-containing, hydroxyl, basic, acidic, and amide classes.
+
+[020]
+term: CMAP torsion force term
+uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#cmaptorsionforce
+updated_uri: same
+description: A CMAP torsion force assigns an energy to a pair of coupled dihedral angles using a two-dimensional tabulated energy function interpolated by a cubic spline.
+
+[021]
+term: complex
+uri: https://goldbook.iupac.org/terms/view/C01203
+updated_uri: same
+description: A complex is a molecular entity formed by the association of two or more constituent molecular entities, typically through interactions between a central atom or group and ligands.
+
+[022]
+term: coordinate
+uri: https://mathworld.wolfram.com/Coordinates.html
+updated_uri: same
+description: Coordinates are numbers that specify the position of a point relative to a reference system, such as Cartesian axes.
+
+[023]
+term: custom bond force term
+uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#custombondforce
+updated_uri: same
+description: A custom bond force represents an interaction between a specified pair of particles using a user-defined energy expression that depends on their separation.
+
+[024]
+term: custom nonbonded force term
+uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#customnonbondedforce
+updated_uri: same
+description: A custom nonbonded force evaluates user-defined pairwise interaction energies between particles according to a specified algebraic expression.
+
+[025]
+term: custom torsion force term
+uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#customtorsionforce
+updated_uri: same
+description: A custom torsion force assigns an interaction energy to sets of four particles using a user-defined expression of their dihedral angle.
+
+[026]
+term: disulfide bond
+uri: https://www.uniprot.org/help/disulfid
+updated_uri: same
+description: A disulfide bond is a covalent linkage between the sulfur atoms of two cysteine residues in a protein.
+
+[027]
+term: docking
+uri: https://goldbook.iupac.org/terms/view/11437
+updated_uri: same
+description: Docking comprises computational methods that optimize the placement of a ligand in a macromolecular binding site of known or proposed three-dimensional structure and score the quality of the fit.
+
+[028]
+term: DSSP
+uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+updated_uri: same
+description: DSSP assigns protein secondary structure by recognizing characteristic hydrogen-bonding patterns and geometric features; gmx dssp calculates such assignments from a structure.
+
+[029]
+term: electric charge
+uri: https://goldbook.iupac.org/terms/view/E01923
+updated_uri: same
+description: Electric charge is the time integral of electric current; the elementary charge is the magnitude of the charge carried by a proton.
+
+[030]
+term: embedding
+uri: https://developers.google.com/machine-learning/crash-course/embeddings
+updated_uri: same
+description: An embedding is a dense numerical vector representation of an item in which learned relationships can be represented by distances or directions in vector space.
+
+[031]
+term: emission probability
+uri: https://pyhmmer.readthedocs.io/en/stable/api/plan7/hmms.html
+updated_uri: same
+description: In a profile hidden Markov model, an emission probability p_k(x) is the probability of emitting sequence symbol x from match state k.
+
+[032]
+term: enzyme
+uri: https://purl.dsmz.de/schema/Enzyme
+updated_uri: https://goldbook.iupac.org/terms/view/E02159
+description: Enzymes are macromolecules, mostly proteins, that act as biological catalysts by increasing reaction rates.
+
+[033]
+term: harmonic angle force term
+uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#harmonicangleforce
+updated_uri: same
+description: A harmonic angle force assigns energy E = (1/2)k(theta - theta0)^2 to the angle between three particles, where theta0 is the equilibrium angle.
+
+[034]
+term: harmonic bond force term
+uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#harmonicbondforce
+updated_uri: same
+description: A harmonic bond force assigns energy E = (1/2)k(r - r0)^2 to the separation between two particles, where r0 is the equilibrium distance.
+
+[035]
+term: heavy atom
+uri: https://goldbook.iupac.org/terms/view/H02899
+updated_uri: https://www.rdkit.org/docs/cppapi/QueryOps_8h_source.html
+description: A heavy atom is an atom with atomic number greater than 1; in molecular structure analysis, this excludes hydrogen and its isotopes.
+
+[036]
+term: heterocyclic
+uri: https://goldbook.iupac.org/terms/view/H02798
+updated_uri: same
+description: Heterocyclic compounds are cyclic compounds that contain ring atoms of at least two different chemical elements.
+
+[037]
+term: heterogen
+uri: https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html
+updated_uri: same
+description: A heterogen is a nonstandard chemical component represented by HET/HETATM records in a PDB structure file, such as a ligand, solvent, or modified residue.
+
+[038]
+term: HMMER
+uri: http://hmmer.org/documentation.html
+updated_uri: https://hmmer.org/
+description: HMMER is a software suite for biological sequence analysis using profile hidden Markov models, including sequence homology searches.
+
+[039]
+term: hydrogen
+uri: http://purl.obolibrary.org/obo/CHEBI_18276
+updated_uri: same
+description: Hydrogen is the chemical element with atomic number 1 and chemical symbol H.
+
+[040]
+term: hydrogen bond
+uri: https://goldbook.iupac.org/terms/view/H02899
+updated_uri: same
+description: A hydrogen bond is an attractive interaction involving a hydrogen atom attached to an electronegative atom and another electronegative atom or electron-rich site.
+
+[041]
+term: hydrophobic
+uri: https://goldbook.iupac.org/terms/view/HT06964
+updated_uri: https://goldbook.iupac.org/terms/view/13831
+description: Hydrophobic describes a molecular entity or substituent that tends to interact unfavorably with polar molecules, especially water.
+
+[042]
+term: hydrophobic cluster
+uri: https://proteintools.uni-bayreuth.de/clusters/
+updated_uri: https://proteintools.uni-bayreuth.de/clusters/documentation
+description: Hydrophobic clusters are connected groups of contacting hydrophobic residues in a protein, often involving isoleucine, leucine and valine side chains; ProteinTools identifies clusters from a residue-contact graph.
+
+[043]
+term: hydrophobicity
+uri: https://goldbook.iupac.org/terms/view/HT06964
+updated_uri: same
+description: Hydrophobicity is the association of nonpolar groups or molecules in aqueous environments arising from water's tendency to exclude nonpolar substances.
+
+[044]
+term: intrinsically disordered region
+uri: https://disprot.org/ontology
+updated_uri: https://www.ebi.ac.uk/training/online/courses/proteins-domains/domains-motifs-and-regions/
+description: An intrinsically disordered region (IDR) is a segment of a protein that lacks a stable, well-defined three-dimensional structure under physiological conditions when considered in isolation.
+
+[045]
+term: ionic bond
+uri: https://goldbook.iupac.org/terms/view/IT07058
+updated_uri: same
+description: An ionic bond is the electrostatic attraction between oppositely charged ions, such as a cation and an anion.
+
+[046]
+term: isoelectric point
+uri: https://goldbook.iupac.org/terms/view/I03275
+updated_uri: same
+description: The isoelectric point is the pH at which the net electric charge of a molecule or particle is zero under specified conditions.
+
+[047]
+term: isolated node
+uri: https://mathworld.wolfram.com/IsolatedPoint.html
+updated_uri: https://mathworld.wolfram.com/IsolatedVertex.html
+description: An isolated node, or isolated vertex, is a vertex in a graph with degree zero, meaning it is incident to no edges.
+
+[048]
+term: isolated point
+uri: https://mathworld.wolfram.com/IsolatedPoint.html
+updated_uri: same
+description: An isolated point is a point of a set for which a neighborhood exists that contains no other point of that set.
+
+[049]
+term: LogP
+uri: https://doktormike.gitlab.io/posts/navigating-logp-logd-pka-and-logs-a-physicists-guide/
+updated_uri: https://goldbook.iupac.org/terms/view/14890
+description: LogP is the base-10 logarithm of the octanol-water partition coefficient, a measure of lipophilicity defined using the equilibrium distribution between octanol and water.
+
+[050]
+term: molar refractivity
+uri: https://old.iupac.org/reports/1997/6905vandewaterbeemd/glossary.html
+updated_uri: https://old.iupac.org/reports/provisional/abstract05/GreenBook051206_prs.pdf
+description: Molar refractivity is a molecular property defined from refractive index n and molar volume V_m as R = ((n^2 - 1) / (n^2 + 2)) V_m, and is related to molecular polarizability.
+
+[051]
+term: mole
+uri: http://qudt.org/vocab/unit/MOL
+updated_uri: same
+description: The mole (mol) is the SI unit of amount of substance, corresponding to exactly 6.02214076 x 10^23 specified elementary entities.
+
+[052]
+term: molecular
+uri: https://goldbook.iupac.org/terms/view/M03989
+updated_uri: https://goldbook.iupac.org/terms/view/M03986
+description: Molecular describes something associated with a molecule or molecular entity, where a molecular entity is constitutionally or isotopically distinct and identifiable as a separate unit.
+
+[053]
+term: molecular interaction
+uri: https://bioportal.bioontology.org/ontologies/MI
+updated_uri: https://www.ebi.ac.uk/training/online/courses/reactome-tools-for-analysing-biological-pathways/molecular-interactions-overlay/
+description: Molecular interactions encompass associations between molecular entities, including protein-protein and protein-compound interactions.
+
+[054]
+term: molecular structure
+uri: http://edamontology.org/data_0883
+updated_uri: https://www.ebi.ac.uk/training/events/structural-bioinformatics2021/
+description: Molecular structure describes the three-dimensional arrangement or shape of a molecule, such as a protein or a molecular complex.
+
+[055]
+term: molecular weight
+uri: https://goldbook.iupac.org/terms/view/R05271
+updated_uri: same
+description: Relative molecular mass (also called molecular weight) is the ratio of the mass of a molecule to the unified atomic mass unit.
+
+[056]
+term: moment of inertia
+uri: https://goldbook.iupac.org/terms/view/M03954
+updated_uri: https://goldbook.iupac.org/terms/view/M04006
+description: The moment of inertia of a body about an axis is the sum of its mass elements multiplied by the squares of their respective distances from that axis.
+
+[057]
+term: moment of inertia
+uri: https://goldbook.iupac.org/terms/view/M04006
+updated_uri: same
+description: The moment of inertia of a body about an axis is the sum of the products of its mass elements and the squares of their distances from that axis.
+
+[058]
+term: multi-hot encoding
+uri: https://developers.google.com/machine-learning/crash-course/categorical-data/one-hot-encoding
+updated_uri: same
+description: Multi-hot encoding is a categorical vector representation in which more than one element can take the value 1, representing multiple active categories.
+
+[059]
+term: mutant
+uri: https://ontobee.org/ontology/GENO?iri=http://purl.obolibrary.org/obo/GENO_0000480
+updated_uri: https://www.genome.gov/11511688/teaching-guide-for-life-in-the-lab
+description: A mutant is an organism with a permanent structural alteration in its DNA.
+
+[060]
+term: negatively charged
+uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
+updated_uri: same
+description: In the IMGT amino-acid charge classification, the negatively charged class comprises aspartate (D) and glutamate (E).
+
+[061]
+term: net electric charge
+uri: https://goldbook.iupac.org/terms/view/N04111
+updated_uri: same
+description: In the cited electrophoresis context, the net electric charge number of a particle is the algebraic sum of its surface charges divided by the elementary charge.
+
+[062]
+term: node
+uri: https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node
+updated_uri: same
+description: A node is an entity in a graph; relationships between nodes are represented by edges.
+
+[063]
+term: nonbonded force term
+uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#nonbondedforce
+updated_uri: same
+description: A nonbonded force includes particle-pair interactions such as Lennard-Jones and electrostatic interactions, with selectable treatment of distance cutoffs and long-range electrostatics.
+
+[064]
+term: numerical vector
+uri: https://mathworld.wolfram.com/Vector.html
+updated_uri: same
+description: A vector is a mathematical object with magnitude and direction that can be represented by numerical components in a coordinate system.
+
+[065]
+term: one-hot encoding
+uri: https://developers.google.com/machine-learning/glossary#one-hot_encoding
+updated_uri: same
+description: One-hot encoding represents a categorical value by a vector whose corresponding category position is 1 and all other positions are 0.
+
+[066]
+term: OpenMM Force
+uri: https://docs.openmm.org/latest/api-python/generated/openmm.openmm.Force.html
+updated_uri: same
+description: An OpenMM Force is an object that defines one contribution to the forces and potential energy acting on particles in a simulated System.
+
+[067]
+term: periodic torsion force term
+uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#periodictorsionforce
+updated_uri: same
+description: A periodic torsion force assigns energy E = k[1 + cos(n*theta - theta0)] to a dihedral angle between four particles, where n is the periodicity.
+
+[068]
+term: pi helix
+uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+updated_uri: same
+description: A pi helix is a protein secondary-structure class assigned the DSSP code I.
+
+[069]
+term: pi-pi stacking
+uri: https://goldbook.iupac.org/terms/view/13861
+updated_uri: same
+description: Pi-pi stacking is the inter- or intramolecular alignment of aromatic groups caused by interactions between their pi orbitals.
+
+[070]
+term: pKa
+uri: https://goldbook.iupac.org/terms/view/15441
+updated_uri: same
+description: pKa is the negative base-10 logarithm of the acid dissociation constant Ka; lower pKa values generally indicate stronger acids.
+
+[071]
+term: positively charged
+uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
+updated_uri: same
+description: The positively charged IMGT amino-acid class comprises arginine (R), histidine (H), and lysine (K), based on side-chain charge classification.
+
+[072]
+term: potential energy
+uri: https://goldbook.iupac.org/terms/view/P04778
+updated_uri: same
+description: Potential energy is the energy of position or orientation in a field of force.
+
+[073]
+term: protein backbone
+uri: http://edamontology.org/operation_1825
+updated_uri: https://www.ebi.ac.uk/training/online/courses/foundations-protein-structure/glossary/
+description: The protein backbone is the repeating chain of atoms forming a protein structural framework, with the sequence N-C-alpha-C and side chains projecting outward.
+
+[074]
+term: protein language model
+uri: https://synbiointel.com/glossary/protein-language-model/
+updated_uri: same
+description: A protein language model is a deep learning model trained on protein sequences to learn patterns of amino acid use and evolutionary relationships, supporting predictions of protein properties.
+
+[075]
+term: PyVOL
+uri: https://bio.tools/PyVOL
+updated_uri: https://schlessinger-lab.github.io/pyvol/index.html
+description: PyVOL is a Python library with a PyMOL interface for identifying protein binding pockets, subdividing them into sub-pockets, and calculating their volumes.
+
+[076]
+term: radius of gyration
+uri: https://goldbook.iupac.org/terms/view/R05121
+updated_uri: same
+description: The radius of gyration is a measure of the distribution of mass around an axis or center, defined through the corresponding mass-weighted mean-square distance.
+
+[077]
+term: RDKit
+uri: https://www.rdkit.org/docs/index.html
+updated_uri: same
+description: RDKit is an open-source toolkit for cheminformatics and machine learning that provides molecular representations, descriptors, and related chemistry functionality.
+
+[078]
+term: residue
+uri: http://purl.obolibrary.org/obo/GENO_0000782
+updated_uri: https://goldbook.iupac.org/terms/view/A00279
+description: An amino-acid residue is the portion of an amino acid remaining after loss of the elements of water during peptide formation.
+
+[079]
+term: residue
+uri: https://schlessinger-lab.github.io/pyvol/index.html
+updated_uri: https://goldbook.iupac.org/terms/view/A00279
+description: An amino-acid residue is the portion of an amino acid remaining after loss of the elements of water during peptide formation.
+
+[080]
+term: residue name
+uri: https://iupac.qmul.ac.uk/AminoAcid/A2021.html
+updated_uri: same
+description: A residue name identifies an amino-acid residue using standardized amino-acid nomenclature, including conventional three-letter names and one-letter symbols.
+
+[081]
+term: RING interaction type
+uri: https://ring.biocomputingup.it/help/interactions
+updated_uri: same
+description: RING interaction types categorize residue-residue contacts in protein structures by the physical interaction involved, including hydrogen bonds, van der Waals contacts, ionic interactions, and pi-related interactions.
+
+[082]
+term: secondary structure
+uri: http://edamontology.org/operation_1847
+updated_uri: https://goldbook.iupac.org/terms/view/S05530
+description: Secondary structure is the conformational arrangement of backbone segments of a macromolecule, such as alpha-helices and beta-sheets in proteins, independently of side-chain conformations.
+
+[083]
+term: sequence conservation
+uri: http://edamontology.org/operation_0448
+updated_uri: https://www.ebi.ac.uk/training/online/courses/foundations-protein-structure/fundamentals-of-protein-composition/the-peptide-bond-and-primary-structure/ss/
+description: Sequence conservation describes the retention of identical or similar residues at corresponding positions across evolutionarily related sequences, often assessed using multiple sequence alignments.
+
+[084]
+term: Shannon entropy
+uri: https://mathworld.wolfram.com/Entropy.html
+updated_uri: same
+description: Shannon entropy quantifies the uncertainty of a discrete probability distribution as H = -sum_i p_i log2(p_i), where p_i is the probability of outcome i.
+
+[085]
+term: SMILES
+uri: https://opensmiles.org/opensmiles.html
+updated_uri: same
+description: SMILES (Simplified Molecular Input Line Entry System) is a line notation for representing molecular structures as character strings.
+
+[086]
+term: sphere
+uri: https://mathworld.wolfram.com/Sphere.html
+updated_uri: same
+description: A sphere is the set of points in three-dimensional space at a fixed distance (the radius) from a specified center.
+
+[087]
+term: spherocity
+uri: https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html
+updated_uri: same
+description: Spherocity is a three-dimensional molecular-shape descriptor computed from a molecular conformer using RDKit's CalcSpherocityIndex function.
+
+[088]
+term: spherocity index
+uri: https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html
+updated_uri: same
+description: The spherocity index is a three-dimensional molecular-shape descriptor computed by RDKit's CalcSpherocityIndex function.
+
+[089]
+term: substrate
+uri: https://purl.dsmz.de/schema/Substrate
+updated_uri: https://goldbook.iupac.org/terms/view/S06083
+description: A substrate in biocatalysis is a chemical entity that is converted into one or more products through a reaction catalyzed by an enzyme.
+
+[090]
+term: sulfur
+uri: http://purl.obolibrary.org/obo/CHEBI_26833
+updated_uri: same
+description: Sulfur is the chemical element with symbol S and atomic number 16.
+
+[091]
+term: torsion angle
+uri: https://goldbook.iupac.org/terms/view/T06406
+updated_uri: same
+description: A torsion angle is the dihedral angle between two planes defined by four sequentially bonded atoms.
+
+[092]
+term: TPSA
+uri: https://www.rdkit.org/docs/GettingStartedInPython.html#descriptor-calculation
+updated_uri: same
+description: Topological polar surface area (TPSA) is a two-dimensional molecular descriptor estimating polar surface area from contributions of polar atom types and their bonding environments.
+
+[093]
+term: van der Waals forces
+uri: https://goldbook.iupac.org/terms/view/V06597
+updated_uri: same
+description: Van der Waals forces are intermolecular forces arising from interactions between permanent and induced electric dipoles, including dispersion forces.
+
+[094]
+term: wild-type
+uri: http://purl.obolibrary.org/obo/FBcv_0000348
+updated_uri: https://www.genome.gov/11511688/teaching-guide-for-life-in-the-lab
+description: Wild-type denotes the genotype or phenotype found in nature or in a standard laboratory stock for an organism, commonly used as the reference against which mutants are compared.

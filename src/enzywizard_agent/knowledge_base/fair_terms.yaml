@@ -1,0 +1,3213 @@
+terms:
+- term: 3-10 helix
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: A 3-10 helix is a protein secondary-structure class assigned the DSSP code G.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: alanine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_16977
+  description: The L -enantiomer of alanine.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: aliphatic
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/A00217
+  description: Aliphatic compounds are acyclic or cyclic, saturated or unsaturated carbon compounds, excluding
+    aromatic compounds.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: alpha carbon
+  aliases: []
+  uri: https://www.rcsb.org/docs/general-help/glossary
+  description: The alpha carbon is the backbone carbon atom adjacent to the carbonyl group in an alpha
+    amino acid, to which the amino-acid side chain is attached.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: alpha helix
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: An alpha-helix is a protein secondary-structure class assigned the DSSP code H.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: amino acid residue
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/A00279
+  description: An amino-acid residue is the portion of an amino acid remaining after loss of the elements
+    of water when amino acids combine to form a peptide.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-conservation
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-conservation
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: amino acid substitution
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/SO_0001606
+  description: A sequence variant of a codon resulting in the substitution of one amino acid for another
+    in the resulting polypeptide.
+  source_documents:
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: angstrom
+  aliases: []
+  uri: http://qudt.org/vocab/unit/ANGSTROM
+  description: The \(Angstr\ddot{o}m\) is an internationally recognized unit of length equal to \(0.1
+    \,nanometre\) or \(1 \times 10^{-10}\,metres\). Although accepted for use, it is not formally defined
+    within the International System of Units(SI). The angstrom is often used in the natural sciences to
+    express the sizes of atoms, lengths of chemical bonds and the wavelengths of electromagnetic radiation,
+    and in technology for the dimensions of parts of integrated circuits. It is also commonly used in
+    structural biology.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  - enzywizard-substrate
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: area
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/PATO_0001323
+  description: A 2-D extent quality inhering in a bearer by virtue of the bearer's two dimensional extent.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: arginine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_29016
+  description: "An \u03B1-amino acid that is glycine in which the \u03B1-is substituted by a 3-guanidinopropyl\
+    \ group."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: aromatic
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/A00441
+  description: Aromatic describes chemistry typified by benzene; in a broader sense, aromaticity is associated
+    with the enhanced stability of cyclically conjugated electron systems through delocalization.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: asparagine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_22653
+  description: "An \u03B1-amino acid in which one of the hydrogens attached to the \u03B1-carbon of glycine\
+    \ is substituted by a 2-amino-2-oxoethyl group."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: aspartic acid
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_22660
+  description: "An \u03B1-amino acid that consists of succinic acid bearing a single \u03B1-amino substituent"
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: asphericity
+  aliases: []
+  uri: https://www.rdkit.org/docs/source/rdkit.Chem.Descriptors3D.html
+  description: Asphericity is a three-dimensional molecular-shape descriptor calculated from the differences
+    among a molecule's three principal moments of inertia, optionally using atomic-mass weighting.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: atom
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/A00493
+  description: An atom is the smallest particle still characterizing a chemical element.
+  source_documents: &id001
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools: *id001
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: AutoDock Vina
+  aliases: []
+  uri: https://autodock-vina.readthedocs.io/en/latest/
+  description: AutoDock Vina is an open-source molecular docking engine used to predict ligand binding
+    poses and evaluate them with a scoring function.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: bend
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: A bend is a protein secondary-structure class assigned the DSSP code S.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: beta bridge
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: "B \u2014 residue in isolated beta-bridge;"
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: binding affinity
+  aliases: []
+  uri: https://vina.scripps.edu/manual/#output
+  description: In AutoDock Vina output, binding affinity is a predicted receptor-ligand binding score
+    reported in kcal/mol for a docking pose.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: binding pocket
+  aliases: []
+  uri: https://schlessinger-lab.github.io/pyvol/index.html
+  description: In PyVOL, a protein binding pocket is a cavity identified from the protein's solvent-excluded
+    geometry; PyVOL can calculate its volume and partition it into sub-pockets.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: binding pocket
+  aliases: []
+  uri: https://schlessinger-lab.github.io/pyvol/pocket_specification.html
+  description: PyVOL can localize a binding pocket of interest using a bound ligand, an adjacent residue,
+    or a spatial coordinate within the pocket.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: bond
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/B00697
+  description: A chemical bond is an interaction between atoms or groups of atoms that leads to the formation
+    of an aggregate sufficiently stable to be considered an independent molecular species.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: bounding box
+  aliases: []
+  uri: https://developer.mozilla.org/en-US/docs/Glossary/Bounding_box
+  description: The bounding box of an element is the smallest possible rectangle (aligned with the axes
+    of that element's user coordinate system) that entirely encloses it and its descendants. The bounding
+    box is the invisible rectangular box the browser places the object in when it draws the object on
+    a page.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: box
+  aliases: []
+  uri: https://www.pbr-book.org/3ed-2018/Geometry_and_Transformations/Bounding_Boxes
+  description: An axis-aligned bounding box is a rectangular region in two dimensions or a rectangular
+    volume in three dimensions used to enclose geometric objects, with bounds specified by minimum and
+    maximum coordinates.
+  source_documents:
+  - enzywizard-dock
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-dock
+  - enzywizard-pocket
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: cation-pi interaction
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/08154
+  description: A cation-pi interaction is a noncovalent attractive force between a positive ion and a
+    pi-electron system.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: centroid
+  aliases: []
+  uri: https://xlinux.nist.gov/dads/HTML/centroid.html
+  description: The centroid is the center of gravity or center of mass of an object.
+  source_documents:
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: chemical classification
+  aliases: []
+  uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
+  description: In the IMGT amino-acid classification scheme, residues are grouped by side-chain chemistry
+    into aliphatic, aromatic, sulfur-containing, hydroxyl, basic, acidic, and amide classes.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: classification
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/NCIT_C25161
+  description: Classification Classification Classification Classification A method of generalization,
+    the systematic arrangement of entities into classes or groups based on mutual similarity and certain
+    differing characteristics. Classified Classification C25161 C0008902 Intellectual Property
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: CMAP torsion force term
+  aliases: []
+  uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#cmaptorsionforce
+  description: A CMAP torsion force assigns an energy to a pair of coupled dihedral angles using a two-dimensional
+    tabulated energy function interpolated by a cubic spline.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: complex
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/C01203
+  description: A complex is a molecular entity formed by the association of two or more constituent molecular
+    entities, typically through interactions between a central atom or group and ligands.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: coordinate
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/NCIT_C44477
+  description: Coordinate X-Coordinate X-Coordinate C1704751 X-Coordinate A horizontal coordinate that
+    is used together with a vertical coordinate to specify an exact point in space. X-Coordinate X Spatial
+    Concept C44477
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: coordinate
+  aliases: []
+  uri: https://mathworld.wolfram.com/Coordinates.html
+  description: Coordinates are numbers that specify the position of a point relative to a reference system,
+    such as Cartesian axes.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - scientific_analysis
+- term: cubic angstrom
+  aliases: []
+  uri: http://qudt.org/vocab/unit/ANGSTROM3
+  description: A unit that is a non-SI unit, specifically a CGS unit, of polarizability known informally
+    as polarizability volume. The SI defined units for polarizability are C*m^2/V and can be converted
+    to \(Angstr\ddot{o}m\)^3 by multiplying the SI value by 4 times pi times the vacuum permittivity and
+    then converting the resulting m^3 to \(Angstr\ddot{o}m\)^3 through the SI base 10 conversion (multiplying
+    by 10^-30).
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: cubic centimeter
+  aliases: []
+  uri: http://qudt.org/vocab/unit/CentiM3
+  description: The CGS unit of volume, equal to 10-6 cubic meter, 1 milliliter, or about 0.061 023 7 cubic
+    inch
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: custom bond force term
+  aliases: []
+  uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#custombondforce
+  description: A custom bond force represents an interaction between a specified pair of particles using
+    a user-defined energy expression that depends on their separation.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: custom nonbonded force term
+  aliases: []
+  uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#customnonbondedforce
+  description: A custom nonbonded force evaluates user-defined pairwise interaction energies between particles
+    according to a specified algebraic expression.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: custom torsion force term
+  aliases: []
+  uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#customtorsionforce
+  description: A custom torsion force assigns an interaction energy to sets of four particles using a
+    user-defined expression of their dihedral angle.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: cysteine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_15356
+  description: A sulfur-containing amino acid that is propanoic acid with an amino group at position 2
+    and a sulfanyl group at position 3.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: dalton
+  aliases: []
+  uri: http://qudt.org/vocab/unit/DA
+  description: 'The unified atomic mass unit (symbol: \(\mu\)) or dalton (symbol: Da) is a unit that is
+    used for indicating mass on an atomic or molecular scale. It is defined as one twelfth of the rest
+    mass of an unbound atom of carbon-12 in its nuclear and electronic ground state, and has a value of
+    \(1.660538782(83) \times 10^{-27} kg\). One \(Da\) is approximately equal to the mass of one proton
+    or one neutron. The CIPM have categorised it as a "non-SI unit whose values in SI units must be obtained
+    experimentally".'
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: degree
+  aliases: []
+  uri: http://qudt.org/vocab/unit/DEG
+  description: A degree (in full, a degree of arc, arc degree, or arcdegree), usually denoted by \(^\circ\)
+    (the degree symbol), is a measurement of plane angle, representing 1/360 of a full rotation; one degree
+    is equivalent to \(2\pi /360 rad\), \(0.017453 rad\). It is not an SI unit, as the SI unit for angles
+    is radian, but is an accepted SI unit.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: diameter
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/PATO_0001334
+  description: A length quality which is equal to the length of any straight line segment that passes
+    through the center of a circle and whose endpoints are on the circular boundary.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - scientific_analysis
+- term: dimensionless
+  aliases: []
+  uri: http://qudt.org/vocab/unit/UNITLESS
+  description: An explicit unit to say something has no units.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-conservation
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-conservation
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: distance
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/PATO_0000040
+  description: A quality that is the extent of space between two entities.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - scientific_analysis
+- term: disulfide bond
+  aliases: []
+  uri: https://www.uniprot.org/help/disulfid
+  description: A disulfide bond is a covalent linkage between the sulfur atoms of two cysteine residues
+    in a protein.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: docking
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/11437
+  description: Docking comprises computational methods that optimize the placement of a ligand in a macromolecular
+    binding site of known or proposed three-dimensional structure and score the quality of the fit.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: DSSP
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: DSSP assigns protein secondary structure by recognizing characteristic hydrogen-bonding
+    patterns and geometric features; gmx dssp calculates such assignments from a structure.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: electric charge
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/E01923
+  description: Electric charge is the time integral of electric current; the elementary charge is the
+    magnitude of the charge carried by a proton.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: embedding
+  aliases: []
+  uri: https://developers.google.com/machine-learning/crash-course/embeddings
+  description: An embedding is a dense numerical vector representation of an item in which learned relationships
+    can be represented by distances or directions in vector space.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: emission probability
+  aliases: []
+  uri: https://pyhmmer.readthedocs.io/en/stable/api/plan7/hmms.html
+  description: In a profile hidden Markov model, an emission probability p_k(x) is the probability of
+    emitting sequence symbol x from match state k.
+  source_documents:
+  - enzywizard-conservation
+  related_tools:
+  - enzywizard-conservation
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: energy
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/PATO_0001021
+  description: A physical quality inhering in a bearer by virtue of the bearer's capacity to do work.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: enzyme
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/E02159
+  description: Enzymes are macromolecules, mostly proteins, that act as biological catalysts by increasing
+    reaction rates.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: ESM-2
+  aliases: []
+  uri: https://docs.nvidia.com/bionemo-framework/2.0/models/esm2/
+  description: ESM-2 is a pre-trained, bi-directional encoder (BERT-style model) over amino acid sequences.
+    ESM-2 models provide embeddings for amino acids that have led to state-of-the-art performance on downstream
+    tasks such as structure and function prediction. ESM-2 has been trained at a number of different model
+    sizes. BioNeMo2 includes converted checkpoints for the 650M and 3B parameter variants. The 650M model
+    has 33 layers, 20 attention heads, and a hidden space dimension of 1280. The 3B model has 36 layers,
+    40 attention heads, and a hidden space dimension of 2,560.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: extended strand
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: "E \u2014 extended strand that participates in beta-ladder;"
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: glutamic acid
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_18237
+  description: "An \u03B1-amino acid that is glutaric acid bearing a single amino substituent at position\
+    \ 2."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: glutamine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_18050
+  description: An optically active form of glutamine having L -configuration.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: glycine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_15428
+  description: The simplest (and the only achiral) proteinogenic amino acid, with a hydrogen atom as its
+    side chain.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: graph
+  aliases: []
+  uri: https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/
+  description: Neo4j uses a property graph database model. A graph data structure consists of nodes (discrete
+    objects) that can be connected by relationships . Below is the image of a graph with three nodes (the
+    circles) and three relationships (the arrows).
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: harmonic angle force term
+  aliases: []
+  uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#harmonicangleforce
+  description: A harmonic angle force assigns energy E = (1/2)k(theta - theta0)^2 to the angle between
+    three particles, where theta0 is the equilibrium angle.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: harmonic bond force term
+  aliases: []
+  uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#harmonicbondforce
+  description: A harmonic bond force assigns energy E = (1/2)k(r - r0)^2 to the separation between two
+    particles, where r0 is the equilibrium distance.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: heavy atom
+  aliases: []
+  uri: https://www.rdkit.org/docs/cppapi/QueryOps_8h_source.html
+  description: A heavy atom is an atom with atomic number greater than 1; in molecular structure analysis,
+    this excludes hydrogen and its isotopes.
+  source_documents:
+  - enzywizard-clean
+  - enzywizard-mut-clean
+  related_tools:
+  - enzywizard-clean
+  - enzywizard-mut-clean
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: heterocyclic
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/H02798
+  description: Heterocyclic compounds are cyclic compounds that contain ring atoms of at least two different
+    chemical elements.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: heterogen
+  aliases: []
+  uri: https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html
+  description: A heterogen is a nonstandard chemical component represented by HET/HETATM records in a
+    PDB structure file, such as a ligand, solvent, or modified residue.
+  source_documents:
+  - enzywizard-clean
+  - enzywizard-mut-clean
+  related_tools:
+  - enzywizard-clean
+  - enzywizard-mut-clean
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: hidden Markov model
+  aliases: []
+  uri: https://pyhmmer.readthedocs.io/en/stable/api/plan7/hmms.html
+  description: A data structure storing the Plan7 Hidden Markov Model.
+  source_documents:
+  - enzywizard-conservation
+  related_tools:
+  - enzywizard-conservation
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: histidine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_27570
+  description: "An \u03B1-amino acid that is propanoic acid bearing an amino substituent at position 2\
+    \ and a 1 H -imidazol-4-yl group at position 3."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: HMMER
+  aliases: []
+  uri: https://hmmer.org/
+  description: HMMER is a software suite for biological sequence analysis using profile hidden Markov
+    models, including sequence homology searches.
+  source_documents:
+  - enzywizard-conservation
+  related_tools:
+  - enzywizard-conservation
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: hydrogen
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_18276
+  description: Hydrogen is the chemical element with atomic number 1 and chemical symbol H.
+  source_documents:
+  - enzywizard-clean
+  - enzywizard-mut-clean
+  related_tools:
+  - enzywizard-clean
+  - enzywizard-mut-clean
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: hydrogen bond
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/H02899
+  description: A hydrogen bond is an attractive interaction involving a hydrogen atom attached to an electronegative
+    atom and another electronegative atom or electron-rich site.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: hydrophobic
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/13831
+  description: Hydrophobic describes a molecular entity or substituent that tends to interact unfavorably
+    with polar molecules, especially water.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: hydrophobic cluster
+  aliases: []
+  uri: https://proteintools.uni-bayreuth.de/clusters/documentation
+  description: Hydrophobic clusters are connected groups of contacting hydrophobic residues in a protein,
+    often involving isoleucine, leucine and valine side chains; ProteinTools identifies clusters from
+    a residue-contact graph.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: hydrophobicity
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/HT06964
+  description: Hydrophobicity is the association of nonpolar groups or molecules in aqueous environments
+    arising from water's tendency to exclude nonpolar substances.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: index
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/NCIT_C25390
+  description: Index C25390 Intellectual Product C0918012 A numerical scale used to compare variables
+    with one another or with some reference number; a number used to select an element of a list, vector,
+    array or other sequence. Index Index Index Scale
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-conservation
+  - enzywizard-disorder
+  - enzywizard-embedding
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-conservation
+  - enzywizard-disorder
+  - enzywizard-embedding
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - scientific_analysis
+- term: information content
+  aliases: []
+  uri: https://www.ebsco.com/research-starters/library-and-information-science/information-content
+  description: Information content is a fundamental concept in information theory that quantifies the
+    amount of information contained within a message. It serves as a pivotal measure in communication
+    engineering, akin to physical quantities such as mass or energy in other sciences. The broad interpretation
+    of "information" encompasses diverse forms, including text, visual data, signals in communication,
+    and the outcomes of random events. The theory originated from the need to understand how messages
+    can be transmitted effectively over communication channels, particularly in the presence of noise
+    that can distort the original message.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-conservation
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-conservation
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: interaction type
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/MI_0190
+  description: Connection between molecule.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: intrinsically disordered region
+  aliases: []
+  uri: https://www.ebi.ac.uk/training/online/courses/proteins-domains/domains-motifs-and-regions/
+  description: An intrinsically disordered region (IDR) is a segment of a protein that lacks a stable,
+    well-defined three-dimensional structure under physiological conditions when considered in isolation.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-disorder
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-disorder
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: ionic bond
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/IT07058
+  description: An ionic bond is the electrostatic attraction between oppositely charged ions, such as
+    a cation and an anion.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: isoelectric point
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/I03275
+  description: The isoelectric point is the pH at which the net electric charge of a molecule or particle
+    is zero under specified conditions.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: isolated node
+  aliases: []
+  uri: https://mathworld.wolfram.com/IsolatedVertex.html
+  description: An isolated node, or isolated vertex, is a vertex in a graph with degree zero, meaning
+    it is incident to no edges.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: isolated point
+  aliases: []
+  uri: https://mathworld.wolfram.com/IsolatedPoint.html
+  description: An isolated point is a point of a set for which a neighborhood exists that contains no
+    other point of that set.
+  source_documents:
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: isoleucine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_24898
+  description: A 2-amino-3-methylpentanoic acid having either (2 R ,3 R )- or (2 S ,3 S )-configuration.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: kilocalorie
+  aliases: []
+  uri: http://qudt.org/vocab/unit/KiloCAL
+  description: A \(\textit{Kilocalorie}\) is a unit for \(\textit{Energy And Work}\) expressed as \(kcal\).
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: kilojoule per mole
+  aliases: []
+  uri: http://qudt.org/vocab/unit/KiloJ-PER-MOL
+  description: 1 000-fold of the SI derived unit joule divided by the SI base unit mol
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: leucine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_25017
+  description: "A branched-chain amino acid that consists of glycine in which one of the hydrogens attached\
+    \ to the \u03B1-carbon is substituted by an isobutyl group."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: LogP
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/14890
+  description: LogP is the base-10 logarithm of the octanol-water partition coefficient, a measure of
+    lipophilicity defined using the equilibrium distribution between octanol and water.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: lysine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_25094
+  description: A diamino acid that is caproic (hexanoic) acid bearing two amino substituents at positions
+    2 and 6.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: methionine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_16811
+  description: A sulfur-containing amino acid that is butyric acid bearing an amino substituent at position
+    2 and a methylthio substituent at position 4.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: molar refractivity
+  aliases: []
+  uri: https://old.iupac.org/reports/provisional/abstract05/GreenBook051206_prs.pdf
+  description: Molar refractivity is a molecular property defined from refractive index n and molar volume
+    V_m as R = ((n^2 - 1) / (n^2 + 2)) V_m, and is related to molecular polarizability.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: mole
+  aliases: []
+  uri: http://qudt.org/vocab/unit/MOL
+  description: The mole (mol) is the SI unit of amount of substance, corresponding to exactly 6.02214076
+    x 10^23 specified elementary entities.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - parameter_extraction
+  - scientific_analysis
+- term: molecular
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/M03986
+  description: Molecular describes something associated with a molecule or molecular entity, where a molecular
+    entity is constitutionally or isotopically distinct and identifiable as a separate unit.
+  source_documents:
+  - enzywizard-energy
+  related_tools:
+  - enzywizard-energy
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: molecular fingerprint
+  aliases: []
+  uri: https://www.rdkit.org/docs/GettingStartedInPython.html#fingerprinting-and-molecular-similarity
+  description: a Daylight-like fingerprint based on hashing molecular subgraphs
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: molecular interaction
+  aliases: []
+  uri: https://www.ebi.ac.uk/training/online/courses/reactome-tools-for-analysing-biological-pathways/molecular-interactions-overlay/
+  description: Molecular interactions encompass associations between molecular entities, including protein-protein
+    and protein-compound interactions.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: molecular structure
+  aliases: []
+  uri: https://www.ebi.ac.uk/training/events/structural-bioinformatics2021/
+  description: Molecular structure describes the three-dimensional arrangement or shape of a molecule,
+    such as a protein or a molecular complex.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: molecular weight
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/R05271
+  description: Relative molecular mass (also called molecular weight) is the ratio of the mass of a molecule
+    to the unified atomic mass unit.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: moment of inertia
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/M04006
+  description: The moment of inertia of a body about an axis is the sum of its mass elements multiplied
+    by the squares of their respective distances from that axis.
+  source_documents: &id002
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools: *id002
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: multi-hot encoding
+  aliases: []
+  uri: https://developers.google.com/machine-learning/crash-course/categorical-data/one-hot-encoding
+  description: Multi-hot encoding is a categorical vector representation in which more than one element
+    can take the value 1, representing multiple active categories.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: mutant
+  aliases: []
+  uri: https://www.genome.gov/11511688/teaching-guide-for-life-in-the-lab
+  description: A mutant is an organism with a permanent structural alteration in its DNA.
+  source_documents:
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: negatively charged
+  aliases: []
+  uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
+  description: In the IMGT amino-acid charge classification, the negatively charged class comprises aspartate
+    (D) and glutamate (E).
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: net electric charge
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/N04111
+  description: In the cited electrophoresis context, the net electric charge number of a particle is the
+    algebraic sum of its surface charges divided by the elementary charge.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: node
+  aliases: []
+  uri: https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node
+  description: A node is an entity in a graph; relationships between nodes are represented by edges.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: nonbonded force term
+  aliases: []
+  uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#nonbondedforce
+  description: A nonbonded force includes particle-pair interactions such as Lennard-Jones and electrostatic
+    interactions, with selectable treatment of distance cutoffs and long-range electrostatics.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: numerical vector
+  aliases: []
+  uri: https://mathworld.wolfram.com/Vector.html
+  description: A vector is a mathematical object with magnitude and direction that can be represented
+    by numerical components in a coordinate system.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: one-hot encoding
+  aliases: []
+  uri: https://developers.google.com/machine-learning/glossary#one-hot_encoding
+  description: One-hot encoding represents a categorical value by a vector whose corresponding category
+    position is 1 and all other positions are 0.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: one-letter code
+  aliases: []
+  uri: https://iupac.qmul.ac.uk/AminoAcid/A2021.html
+  description: There are difficulties in using the three-letter system ( 3AA-14 to 3AA-19 ) in presenting
+    long protein sequences. A one-letter code is much more concise, and is helpful in summarizing large
+    amounts of data, in aligning and comparing homologous sequences, and in computer techniques for these
+    processes. It may also be used to label residues in three-dimensional pictures of protein molecules.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-conservation
+  - enzywizard-disorder
+  - enzywizard-embedding
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-conservation
+  - enzywizard-disorder
+  - enzywizard-embedding
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - scientific_analysis
+- term: OpenMM Force
+  aliases: []
+  uri: https://docs.openmm.org/latest/api-python/generated/openmm.openmm.Force.html
+  description: An OpenMM Force is an object that defines one contribution to the forces and potential
+    energy acting on particles in a simulated System.
+  source_documents:
+  - enzywizard-energy
+  related_tools:
+  - enzywizard-energy
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: periodic torsion force term
+  aliases: []
+  uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#periodictorsionforce
+  description: A periodic torsion force assigns energy E = k[1 + cos(n*theta - theta0)] to a dihedral
+    angle between four particles, where n is the periodicity.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: phenylalanine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_28044
+  description: An aromatic amino acid that is alanine in which one of the methyl hydrogens is substituted
+    by a phenyl group.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: pi helix
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: A pi helix is a protein secondary-structure class assigned the DSSP code I.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: pi-pi stacking
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/13861
+  description: Pi-pi stacking is the inter- or intramolecular alignment of aromatic groups caused by interactions
+    between their pi orbitals.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: pKa
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/15441
+  description: pKa is the negative base-10 logarithm of the acid dissociation constant Ka; lower pKa values
+    generally indicate stronger acids.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: positively charged
+  aliases: []
+  uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
+  description: The positively charged IMGT amino-acid class comprises arginine (R), histidine (H), and
+    lysine (K), based on side-chain charge classification.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: potential energy
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/P04778
+  description: Potential energy is the energy of position or orientation in a field of force.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-energy
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: profile
+  aliases: []
+  uri: https://pyhmmer.readthedocs.io/en/stable/api/plan7/hmms.html
+  description: "Optimized profiles store the match emissions and transition probabilities for a profile\
+    \ HMM so that they can be loaded in the SIMD code. Typically, matrices use aligned storage so that\
+    \ they can loaded efficiently, and are striped \xE0 la Farrar to compute pairwise scores for each\
+    \ sequence residue and profile node."
+  source_documents:
+  - enzywizard-conservation
+  related_tools:
+  - enzywizard-conservation
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: proline
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_17203
+  description: "Pyrrolidine in which the pro - S hydrogen at position 2 is substituted by a carboxylic\
+    \ acid group. L -Proline is the only one of the twenty DNA-encoded amino acids which has a secondary\
+    \ amino group \u03B1 to the carboxyl group. It is an essential component of collagen and is important\
+    \ for proper functioning of joints and tendons. It also helps maintain and strengthen heart muscles."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: protein backbone
+  aliases: []
+  uri: https://www.ebi.ac.uk/training/online/courses/foundations-protein-structure/glossary/
+  description: The protein backbone is the repeating chain of atoms forming a protein structural framework,
+    with the sequence N-C-alpha-C and side chains projecting outward.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: protein flexibility
+  aliases: []
+  uri: http://edamontology.org/operation_0244
+  description: Analyse flexibility and motion in protein structure.
+  source_documents:
+  - enzywizard-flexibility
+  related_tools:
+  - enzywizard-flexibility
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: protein language model
+  aliases: []
+  uri: https://synbiointel.com/glossary/protein-language-model/
+  description: A protein language model is a deep learning model trained on protein sequences to learn
+    patterns of amino acid use and evolutionary relationships, supporting predictions of protein properties.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: protein sequence
+  aliases: []
+  uri: http://edamontology.org/data_2976
+  description: One or more protein sequences, possibly with associated annotation.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-embedding
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: protein structure
+  aliases: []
+  uri: http://edamontology.org/data_1537
+  description: A human-readable collection of information about one or more specific protein 3D structure(s)
+    or structural domains.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-disorder
+  - enzywizard-energy
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-disorder
+  - enzywizard-energy
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: PyVOL
+  aliases: []
+  uri: https://schlessinger-lab.github.io/pyvol/index.html
+  description: PyVOL is a Python library with a PyMOL interface for identifying protein binding pockets,
+    subdividing them into sub-pockets, and calculating their volumes.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: radius of gyration
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/R05121
+  description: The radius of gyration is a measure of the distribution of mass around an axis or center,
+    defined through the corresponding mass-weighted mean-square distance.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: RDKit
+  aliases: []
+  uri: https://www.rdkit.org/docs/index.html
+  description: RDKit is an open-source toolkit for cheminformatics and machine learning that provides
+    molecular representations, descriptors, and related chemistry functionality.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: report
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/IAO_0000088
+  description: A document assembled by an author for the purpose of providing information for the audience.
+    A report is the output of a documenting process and has the objective to be consumed by a specific
+    audience. Topic of the report is on something that has completed. A report is not a single figure.
+    Examples of reports are journal article, patent application, grant progress report, case report (not
+    patient record).
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-conservation
+  - enzywizard-disorder
+  - enzywizard-dock
+  - enzywizard-embedding
+  - enzywizard-energy
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-conservation
+  - enzywizard-disorder
+  - enzywizard-dock
+  - enzywizard-embedding
+  - enzywizard-energy
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  - enzywizard-substrate
+  usage_categories:
+  - history_query
+  - scientific_analysis
+- term: residue
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/A00279
+  description: An amino-acid residue is the portion of an amino acid remaining after loss of the elements
+    of water during peptide formation.
+  source_documents: &id003
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-conservation
+  - enzywizard-disorder
+  - enzywizard-embedding
+  - enzywizard-flexibility
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools: *id003
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: residue name
+  aliases: []
+  uri: https://iupac.qmul.ac.uk/AminoAcid/A2021.html
+  description: A residue name identifies an amino-acid residue using standardized amino-acid nomenclature,
+    including conventional three-letter names and one-letter symbols.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: RING interaction type
+  aliases: []
+  uri: https://ring.biocomputingup.it/help/interactions
+  description: RING interaction types categorize residue-residue contacts in protein structures by the
+    physical interaction involved, including hydrogen bonds, van der Waals contacts, ionic interactions,
+    and pi-related interactions.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: root mean square fluctuation
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-rmsf.html
+  description: gmx rmsf computes the root mean square fluctuation (RMSF, i.e. standard deviation) of atomic
+    positions in the trajectory (supplied with -f ) after (optionally) fitting to a reference frame (supplied
+    with -s ).
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-flexibility
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-flexibility
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - workflow_planning
+  - scientific_analysis
+- term: secondary structure
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/S05530
+  description: Secondary structure is the conformational arrangement of backbone segments of a macromolecule,
+    such as alpha-helices and beta-sheets in proteins, independently of side-chain conformations.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: sequence conservation
+  aliases: []
+  uri: https://www.ebi.ac.uk/training/online/courses/foundations-protein-structure/fundamentals-of-protein-composition/the-peptide-bond-and-primary-structure/ss/
+  description: Sequence conservation describes the retention of identical or similar residues at corresponding
+    positions across evolutionarily related sequences, often assessed using multiple sequence alignments.
+  source_documents:
+  - enzywizard-conservation
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-conservation
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: sequence length
+  aliases: []
+  uri: http://edamontology.org/data_1249
+  description: The size (length) of a sequence, subsequence or region in a sequence, or range(s) of lengths.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-disorder
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-disorder
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: serine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_17822
+  description: "An \u03B1-amino acid that is alanine substituted at position 3 by a hydroxy group."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: Shannon entropy
+  aliases: []
+  uri: https://mathworld.wolfram.com/Entropy.html
+  description: Shannon entropy quantifies the uncertainty of a discrete probability distribution as H
+    = -sum_i p_i log2(p_i), where p_i is the probability of outcome i.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-conservation
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-conservation
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: size
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/PATO_0000117
+  description: A morphology quality inhering in a bearer by virtue of the bearer's physical magnitude.
+  source_documents:
+  - enzywizard-dock
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-dock
+  - enzywizard-pocket
+  usage_categories:
+  - scientific_analysis
+- term: SMILES
+  aliases: []
+  uri: https://opensmiles.org/opensmiles.html
+  description: SMILES (Simplified Molecular Input Line Entry System) is a line notation for representing
+    molecular structures as character strings.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: solvent accessibility
+  aliases: []
+  uri: http://edamontology.org/data_1542
+  description: Data on the solvent accessible or buried surface area of a protein structure.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: sphere
+  aliases: []
+  uri: https://mathworld.wolfram.com/Sphere.html
+  description: A sphere is the set of points in three-dimensional space at a fixed distance (the radius)
+    from a specified center.
+  source_documents:
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-pocket
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: spherocity
+  aliases: []
+  uri: https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html
+  description: Spherocity is a three-dimensional molecular-shape descriptor computed from a molecular
+    conformer using RDKit's CalcSpherocityIndex function.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: spherocity index
+  aliases: []
+  uri: https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html
+  description: The spherocity index is a three-dimensional molecular-shape descriptor computed by RDKit's
+    CalcSpherocityIndex function.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: standard deviation
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/STATO_0000237
+  description: The standard deviation of a random variable, statistical population, data set, or probability
+    distribution is a measure of variation which correspond to the average distance from the mean of the
+    data set to any given point of that dataset. It also corresponds to the square root of its variance.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - scientific_analysis
+- term: statistics
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/STATO_0000039
+  description: a statistic is a measurement datum to describe a dataset or a variable. It is generated
+    by a calculation on set of observed data.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-disorder
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-clean
+  - enzywizard-disorder
+  - enzywizard-hydrocluster
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - scientific_analysis
+- term: substrate
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/S06083
+  description: A substrate in biocatalysis is a chemical entity that is converted into one or more products
+    through a reaction catalyzed by an enzyme.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-dock
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: sulfur
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_26833
+  description: Sulfur is the chemical element with symbol S and atomic number 16.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: threonine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_16857
+  description: An optically active form of threonine having L -configuration.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: torsion angle
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/T06406
+  description: A torsion angle is the dihedral angle between two planes defined by four sequentially bonded
+    atoms.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: TPSA
+  aliases: []
+  uri: https://www.rdkit.org/docs/GettingStartedInPython.html#descriptor-calculation
+  description: Topological polar surface area (TPSA) is a two-dimensional molecular descriptor estimating
+    polar surface area from contributions of polar atom types and their bonding environments.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-substrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: tryptophan
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_27897
+  description: "An \u03B1-amino acid that is alanine bearing an indol-3-yl substituent at position 3."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: turn
+  aliases: []
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: "T \u2014 hydrogen-bonded turn;"
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: tyrosine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_18186
+  description: "An \u03B1-amino acid that is phenylalanine bearing a hydroxy substituent at position 4\
+    \ on the phenyl ring."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: uncharged polar
+  aliases: []
+  uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
+  description: The 'polar' class comprises amino acids with hydrogen donor and/or acceptor atoms, except
+    tryptophan. Indeed, tryptophan, despite its hydrogen donor atom, has been classified in the IMGT 'nonpolar'
+    class, as it participates to the nonpolar core of the structural domains.Regarding the 'Charge', the
+    'polar' class includes the 5 charged (R, H, K, D, E) and 5 uncharged (N, Q, S, T, Y) amino acids.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: valine
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/CHEBI_27266
+  description: "A branched-chain amino acid that consists of glycine in which one of the hydrogens attached\
+    \ to the \u03B1-carbon is substituted by an isopropyl group."
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
+- term: van der Waals forces
+  aliases: []
+  uri: https://goldbook.iupac.org/terms/view/V06597
+  description: Van der Waals forces are intermolecular forces arising from interactions between permanent
+    and induced electric dipoles, including dispersion forces.
+  source_documents:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-interaction
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis
+- term: volume
+  aliases: []
+  uri: http://purl.obolibrary.org/obo/PATO_0000918
+  description: A 3-D extent quality inhering in a bearer by virtue of the bearer's amount of 3-dimensional
+    space it occupies.
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  - enzywizard-pocket
+  usage_categories:
+  - scientific_analysis
+- term: wild-type
+  aliases: []
+  uri: https://www.genome.gov/11511688/teaching-guide-for-life-in-the-lab
+  description: Wild-type denotes the genotype or phenotype found in nature or in a standard laboratory
+    stock for an organism, commonly used as the reference against which mutants are compared.
+  source_documents:
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-mut-batch
+  - enzywizard-mut-clean
+  - enzywizard-mut-integrate
+  usage_categories:
+  - request_routing
+  - history_query
+  - workflow_planning
+  - parameter_extraction
+  - scientific_analysis

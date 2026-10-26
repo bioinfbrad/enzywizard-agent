@@ -13,6 +13,35 @@ _API_KEY_PATTERN = re.compile(
     r"(?i)((?:api[_-]?key|token|secret)\s*[:=]\s*[\"']?)([^\s,;\"']+)"
 )
 _COMMON_KEY_PATTERN = re.compile(r"\b(?:sk|dashscope|AIza)[-_A-Za-z0-9]{12,}\b")
+_SENSITIVE_MAPPING_KEYS = {
+    "api_key",
+    "apikey",
+    "authorization",
+    "access_token",
+    "refresh_token",
+    "bearer_token",
+    "client_secret",
+    "password",
+    "passphrase",
+    "private_key",
+    "secret",
+    "token",
+}
+
+
+def _is_sensitive_mapping_key(value: Any) -> bool:
+    normalized = re.sub(r"[^a-z0-9]+", "_", str(value).casefold()).strip("_")
+    return normalized in _SENSITIVE_MAPPING_KEYS or normalized.endswith(
+        (
+            "_api_key",
+            "_authorization",
+            "_token",
+            "_secret",
+            "_password",
+            "_passphrase",
+            "_private_key",
+        )
+    )
 
 
 def redact_text(value: Any, *, api_key: str | None = None) -> str:
@@ -35,7 +64,7 @@ def redact_mapping(value: Any, *, api_key: str | None = None) -> Any:
     if isinstance(value, dict):
         output: dict[str, Any] = {}
         for key, item in value.items():
-            if any(marker in str(key).casefold() for marker in ("key", "token", "secret", "authorization")):
+            if _is_sensitive_mapping_key(key):
                 output[str(key)] = "[REDACTED]"
             else:
                 output[str(key)] = redact_mapping(item, api_key=api_key)

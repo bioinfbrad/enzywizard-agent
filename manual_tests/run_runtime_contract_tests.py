@@ -429,6 +429,54 @@ def test_usage_and_budgets(workdir: Path) -> None:
     print("[PASS] LLM 调用、Token 和会话时间预算具有确定性终止行为。")
 
 
+def test_capability_runtime_limits_are_not_model_failures(workdir: Path) -> None:
+    original = llm_service.create_chat_model_for_state
+    llm_service._CAPABILITY_CACHE.clear()
+    try:
+        budget_state = make_state(
+            workdir / "capability-budget",
+            api_key="capability-budget-key",
+            base_url="https://capability-budget.invalid/v1",
+            model="capability-budget-model",
+            check_model_capabilities=True,
+            max_llm_calls=1,
+        )
+        budget_model = FakeOpenAICompatibleModel("capability-budget")
+        llm_service.create_chat_model_for_state = lambda _state: budget_model
+        try:
+            llm_service.check_model_capabilities(budget_state)
+        except RuntimeBudgetError:
+            pass
+        else:
+            raise AssertionError("Capability probing hid an exhausted LLM-call budget")
+        if budget_state["runtime_session"].model_capability is not None:
+            raise AssertionError("A local budget limit was recorded as a model capability")
+
+        timeout_state = make_state(
+            workdir / "capability-timeout",
+            api_key="capability-timeout-key",
+            base_url="https://capability-timeout.invalid/v1",
+            model="capability-timeout-model",
+            check_model_capabilities=True,
+            session_timeout_seconds=0.01,
+        )
+        timeout_state["runtime_session"].started_monotonic = time.monotonic() - 1
+        timeout_model = FakeOpenAICompatibleModel("capability-timeout")
+        llm_service.create_chat_model_for_state = lambda _state: timeout_model
+        try:
+            llm_service.check_model_capabilities(timeout_state)
+        except SessionTimeoutError:
+            pass
+        else:
+            raise AssertionError("Capability probing hid an expired session deadline")
+        if timeout_state["runtime_session"].model_capability is not None:
+            raise AssertionError("A local timeout was recorded as a model capability")
+    finally:
+        llm_service.create_chat_model_for_state = original
+        llm_service._CAPABILITY_CACHE.clear()
+    print("[PASS] 能力探测不会把本地预算或超时误报为模型契约失败。")
+
+
 def test_nullable_usage_metadata() -> None:
     usage = llm_service._extract_usage(FakeNullableUsageRawResponse())
     if usage != (11, 3, 14, None):
@@ -617,7 +665,10 @@ def test_manifest_and_redaction(workdir: Path) -> None:
             "https://private-user:private-password@example.invalid/v1"
             "?api_key=query-secret"
         ),
-        llm_extra_body={"Authorization": f"Bearer {secret_key}"},
+        llm_extra_body={
+            "Authorization": f"Bearer {secret_key}",
+            "max_tokens": 256,
+        },
     )
     input_path = workdir / "private-input.pdb"
     input_path.write_text("PRIVATE_INPUT_CONTENT", encoding="utf-8")
@@ -644,6 +695,12 @@ def test_manifest_and_redaction(workdir: Path) -> None:
             metadata={},
         )
     ]
+    state["runtime_session"].metadata["future_extension"] = {
+        "authorization": f"Bearer {secret_key}",
+        "service_token": secret_key,
+        "nested": [f"token={secret_key}"],
+        "estimated_input_tokens": 123,
+    }
     manifest_path = write_session_manifest(state)
     manifest_text = manifest_path.read_text(encoding="utf-8")
     forbidden = (
@@ -663,6 +720,14 @@ def test_manifest_and_redaction(workdir: Path) -> None:
         raise AssertionError("Input checksum is missing from the manifest")
     if payload["artifacts"][0]["path"] != "private-report.json":
         raise AssertionError("Session artifact path was not stored relatively")
+    if payload["runtime_metadata"]["future_extension"]["authorization"] != "[REDACTED]":
+        raise AssertionError("Runtime metadata credentials were not redacted")
+    if payload["runtime_metadata"]["future_extension"]["service_token"] != "[REDACTED]":
+        raise AssertionError("Custom runtime tokens were not redacted")
+    if payload["runtime_metadata"]["future_extension"]["estimated_input_tokens"] != 123:
+        raise AssertionError("Runtime token counts were incorrectly redacted")
+    if payload["model"]["extra_body"]["max_tokens"] != 256:
+        raise AssertionError("Non-secret model token settings were incorrectly redacted")
     redacted = redact_text(f"Authorization: Bearer {secret_key}", api_key=secret_key)
     if secret_key in redacted:
         raise AssertionError("Direct error redaction retained the API key")
@@ -675,6 +740,7 @@ def main() -> int:
         test_factory_contract(workdir / "factory")
         test_two_compatible_profiles(workdir / "compatibility")
         test_usage_and_budgets(workdir / "budgets")
+        test_capability_runtime_limits_are_not_model_failures(workdir / "limits")
         test_nullable_usage_metadata()
         test_structured_recovery_and_text(workdir / "model-output")
         test_runtime_mapping_rehydration(workdir / "rehydration")

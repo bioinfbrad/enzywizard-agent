@@ -12,6 +12,7 @@ from ..data_models.planning import ToolCall, ToolOutputReference
 from ..data_models.tool_execution import (
     ResolvedToolArgumentValue,
     ToolCallExecution,
+    ToolExecution,
 )
 from .security_utils import redact_text
 
@@ -24,6 +25,55 @@ STDOUT_HEAD_LENGTH = 500
 STDOUT_TAIL_LENGTH = 1500
 STDERR_TAIL_LENGTH = 2000
 LOG_TAIL_LENGTH = 2000
+FAILURE_AUDIT_ARTIFACT_TYPES = frozenset(
+    {"agent_stdout_log", "agent_stderr_log", "log_file"}
+)
+
+
+def artifacts_for_global_tracking(
+    call_execution: ToolCallExecution,
+) -> list[Artifact]:
+    """Return artifacts that may persist in cross-turn global state.
+
+    Failed scientific outputs remain attached to their ToolCallExecution for
+    auditing, but only process/tool logs may enter the global artifact catalog.
+    """
+
+    if call_execution.execution_status == "succeeded":
+        return list(call_execution.artifacts)
+    return [
+        artifact
+        for artifact in call_execution.artifacts
+        if artifact.artifact_type in FAILURE_AUDIT_ARTIFACT_TYPES
+    ]
+
+
+def is_safe_historical_artifact(
+    artifact: Artifact,
+    tool_executions: list[ToolExecution],
+) -> bool:
+    """Reject scientific outputs produced by failed calls in older checkpoints."""
+
+    if artifact.artifact_type in FAILURE_AUDIT_ARTIFACT_TYPES:
+        return True
+    return not any(
+        failed_artifact.path == artifact.path
+        for execution in tool_executions
+        for call_execution in execution.call_executions
+        if call_execution.execution_status == "failed"
+        for failed_artifact in call_execution.artifacts
+    )
+
+
+def is_agent_process_log(path: Path) -> bool:
+    """Return whether a path is an Agent-owned stdout/stderr audit log."""
+
+    name = path.name
+    if name in {"stdout.txt", "stderr.txt"}:
+        return True
+    return (
+        name.startswith("stdout_attempt_") or name.startswith("stderr_attempt_")
+    ) and name.endswith(".txt")
 
 
 def create_head_tail_excerpt(text: str, head_length: int, tail_length: int) -> str:
@@ -378,7 +428,7 @@ def discover_tool_artifacts(tool_call: ToolCall) -> tuple[list[Artifact], list[s
                 path
                 for path in matching_paths
                 if path not in reserved_paths
-                and path.name not in {"stdout.txt", "stderr.txt"}
+                and not is_agent_process_log(path)
             ]
         else:
             reserved_paths.update(matching_paths)

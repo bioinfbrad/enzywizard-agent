@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 from ..services.tool_calling_service import execute_approved_tool_plan
+from ..services.manifest_service import write_session_manifest
 from ..state import AgentState
-from ..utils.tool_execution_utils import update_cleaned_files_from_executions
+from ..utils.tool_execution_utils import (
+    artifacts_for_global_tracking,
+    update_cleaned_files_from_executions,
+)
 
 
 def tool_calling_node(state: AgentState) -> AgentState:
@@ -26,7 +30,8 @@ def tool_calling_node(state: AgentState) -> AgentState:
     known_paths = {artifact.path for artifact in state.setdefault("artifacts", [])}
     state["artifacts"].extend(
         artifact
-        for artifact in current_plan_artifacts
+        for call_execution in tool_execution.call_executions
+        for artifact in artifacts_for_global_tracking(call_execution)
         if artifact.path not in known_paths
     )
 
@@ -40,4 +45,6 @@ def tool_calling_node(state: AgentState) -> AgentState:
         print(f"[INFO] {tool_execution.summary}")
     else:
         print(f"[ERROR] {tool_execution.summary}")
+    if state.get("config") is not None:
+        write_session_manifest(state)
     return state

@@ -21,7 +21,7 @@ import uuid
 
 import yaml
 
-from evaluation_utils import aggregate_usage
+from evaluation_utils import aggregate_agent_traces, aggregate_usage
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -43,6 +43,7 @@ SUITE_LABELS = {
     "contract_confirmation": "用户确认与恢复契约",
     "contract_tool_calling": "工具调用契约",
     "contract_runtime": "模型兼容、预算、隐私与运行时契约",
+    "contract_knowledge_retrieval": "FAIR 术语与错误知识检索契约",
     "contract_analysis_and_cross_turn": "分析与跨轮状态契约",
     "live_request_routing_history_analysis": "请求路由、历史查询与分析语义",
     "live_planning": "计划生成语义",
@@ -91,6 +92,21 @@ def build_parser() -> argparse.ArgumentParser:
             "model suite, for example 'none' to disable Qwen thinking."
         ),
     )
+    parser.add_argument(
+        "--ontology_mode",
+        choices=("off", "retrieve", "control"),
+        default="retrieve",
+        help=(
+            "Local FAIR terminology enrichment mode for live suites "
+            "(default: retrieve)."
+        ),
+    )
+    parser.add_argument(
+        "--tool_recovery_mode",
+        choices=("off", "safe"),
+        default="safe",
+    )
+    parser.add_argument("--max_tool_recovery_attempts", type=int, default=1)
     parser.add_argument(
         "--workdir",
         default="~/enzywizard-agent-comprehensive-tests",
@@ -241,6 +257,7 @@ def attach_suite_metrics(
         "failed": max(0, total - passed),
     }
     suite_result["usage"] = payload.get("usage")
+    suite_result["trace"] = payload.get("trace")
     suite_result["child_results_file"] = str(path)
 
     stage_counts: Counter[str] = Counter()
@@ -295,6 +312,10 @@ def build_suite_commands(
                     "contract_runtime",
                     test_command("run_runtime_contract_tests.py"),
                 ),
+                (
+                    "contract_knowledge_retrieval",
+                    test_command("run_knowledge_retrieval_tests.py"),
+                ),
             ]
         )
         if args.analysis_run_dir:
@@ -319,6 +340,8 @@ def build_suite_commands(
             "--repeat",
             str(args.repeat_semantic),
             "--include_analysis",
+            "--ontology_mode",
+            args.ontology_mode,
         ]
         if args.reasoning_effort is not None:
             routing_args.extend(["--reasoning_effort", args.reasoning_effort])
@@ -342,6 +365,8 @@ def build_suite_commands(
             str(run_dir / "planning_results.json"),
             "--repeat",
             str(args.repeat_semantic),
+            "--ontology_mode",
+            args.ontology_mode,
         ]
         if args.reasoning_effort is not None:
             planning_args.extend(["--reasoning_effort", args.reasoning_effort])
@@ -362,6 +387,12 @@ def build_suite_commands(
             str(run_dir / "workflows"),
             "--output",
             str(workflow_results),
+            "--ontology_mode",
+            args.ontology_mode,
+            "--tool_recovery_mode",
+            args.tool_recovery_mode,
+            "--max_tool_recovery_attempts",
+            str(args.max_tool_recovery_attempts),
         ]
         if args.reasoning_effort is not None:
             workflow_args.extend(["--reasoning_effort", args.reasoning_effort])
@@ -487,6 +518,9 @@ def save_results(
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "model": args.model,
         "reasoning_effort": args.reasoning_effort,
+        "ontology_mode": args.ontology_mode,
+        "tool_recovery_mode": args.tool_recovery_mode,
+        "max_tool_recovery_attempts": args.max_tool_recovery_attempts,
         "base_url": args.base_url,
         "run_dir": str(run_dir),
         "execute_tools": args.execute_tools,
@@ -504,6 +538,7 @@ def save_results(
             "pass_rate": round(case_passed / case_total, 6) if case_total else None,
         },
         "usage": aggregate_usage(result.get("usage") for result in results),
+        "trace": aggregate_agent_traces(result.get("trace") for result in results),
         "failure_stages": dict(sorted(failure_stages.items())),
         "total_suite_duration_seconds": round(
             sum(result.get("duration_seconds", 0.0) for result in results),
@@ -521,6 +556,8 @@ def main() -> int:
         parser.error("--suites must contain at least one suite")
     if args.repeat_semantic < 1:
         parser.error("--repeat_semantic must be greater than or equal to 1")
+    if args.max_tool_recovery_attempts < 0:
+        parser.error("--max_tool_recovery_attempts must not be negative")
     if args.execute_tools and "workflows" not in args.suites:
         parser.error("--execute_tools requires the workflows suite")
     live_suites = {"routing", "planning", "workflows"}.intersection(args.suites)
@@ -562,6 +599,12 @@ def main() -> int:
     print(f"[模型] {args.model}", flush=True)
     print(
         f"[推理强度] {args.reasoning_effort or '模型默认值'}",
+        flush=True,
+    )
+    print(f"[FAIR 术语] {args.ontology_mode}", flush=True)
+    print(
+        "[工具恢复] "
+        f"{args.tool_recovery_mode}, max_attempts={args.max_tool_recovery_attempts}",
         flush=True,
     )
     print(f"[运行目录] {run_dir}", flush=True)

@@ -32,6 +32,7 @@ reports:
   enzywizard_pocket:
     artifact_type: pocket_report_json
     focus: predicted pocket counts, volumes, centers, and residues
+    caution: Predicted pockets are computational hypotheses and require experimental or orthogonal validation.
   enzywizard_substrate:
     artifact_type: substrate_report_json
     focus: substrate descriptors and generated conformers

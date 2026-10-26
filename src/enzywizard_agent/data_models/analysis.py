@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 # =============================================================================
@@ -20,6 +20,7 @@ AnalysisResponseMode = Literal[
     "conversation",
     "out_of_scope",
     "clarification",
+    "input_error",
     "request_routing_failure",
     "history_query_failure",
     "exit",
@@ -34,6 +35,7 @@ AnalysisStatus = Literal[
 AnalysisRoute = Literal[
     "answer_generated",
     "exit_requested",
+    "restart_required",
 ]
 
 AnalysisTerminationReason = Literal[
@@ -41,6 +43,16 @@ AnalysisTerminationReason = Literal[
     "max_turns",
     "session_timeout",
     "budget_exceeded",
+    "restart_required",
+]
+
+AnalysisErrorType = Literal[
+    "input_error",
+    "routing_error",
+    "planning_error",
+    "history_error",
+    "execution_error",
+    "analysis_error",
 ]
 
 EvidenceSourceKind = Literal[
@@ -149,6 +161,11 @@ class AnalysisEvidence(BaseModel):
     path: str | None
     field_path: str | None
     value_summary: str
+    source_uri: str | None = None
+    source_label: str | None = None
+    source_version: str | None = None
+    source_evidence_ids: list[str] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("evidence_id", "value_summary")
     @classmethod
@@ -178,6 +195,33 @@ class AnalysisFinding(BaseModel):
         return self
 
 
+class AnalysisErrorGuidance(BaseModel):
+    """Stable user-facing classification and resolution for a failed turn."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    error_type: AnalysisErrorType
+    stage: str
+    reason: str
+    can_continue_current_session: bool
+    restart_required: bool
+    user_actions: list[str]
+    evidence_paths: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_resolution(self) -> "AnalysisErrorGuidance":
+        if not self.stage or not self.reason or not self.user_actions:
+            raise ValueError(
+                "error guidance requires a stage, reason, and user actions"
+            )
+        if self.can_continue_current_session == self.restart_required:
+            raise ValueError(
+                "exactly one of can_continue_current_session and "
+                "restart_required must be true"
+            )
+        return self
+
+
 class AnalysisResult(BaseModel):
     """Analysis 节点写入状态的完整、可审计结果。"""
 
@@ -197,6 +241,7 @@ class AnalysisResult(BaseModel):
     limitations: list[str]
     error_messages: list[str]
     used_language_model: bool
+    error_guidance: AnalysisErrorGuidance | None = None
 
     @model_validator(mode="after")
     def validate_analysis_result(self) -> "AnalysisResult":
@@ -213,6 +258,23 @@ class AnalysisResult(BaseModel):
             raise ValueError("exit_requested route requires termination_reason")
         if self.analysis_route == "answer_generated" and self.termination_reason is not None:
             raise ValueError("answer_generated route cannot have termination_reason")
+        if self.analysis_route == "restart_required":
+            if self.termination_reason != "restart_required":
+                raise ValueError(
+                    "restart_required route requires matching termination_reason"
+                )
+            if self.error_guidance is None or not self.error_guidance.restart_required:
+                raise ValueError(
+                    "restart_required route requires restart error guidance"
+                )
+        if (
+            self.error_guidance is not None
+            and self.error_guidance.restart_required
+            and self.analysis_route != "restart_required"
+        ):
+            raise ValueError(
+                "restart error guidance requires analysis_route='restart_required'"
+            )
         if self.analysis_status == "failed" and not self.error_messages:
             raise ValueError("failed analysis requires error_messages")
 
@@ -229,4 +291,35 @@ class AnalysisResult(BaseModel):
             raise ValueError(
                 f"findings reference unknown evidence IDs: {sorted(missing_ids)}"
             )
+        evidence_by_id = {item.evidence_id: item for item in self.evidence}
+        missing_source_ids = {
+            source_id
+            for item in self.evidence
+            for source_id in item.source_evidence_ids
+            if source_id not in evidence_by_id
+        }
+        if missing_source_ids:
+            raise ValueError(
+                "evidence references unknown source evidence IDs: "
+                f"{sorted(missing_source_ids)}"
+            )
+        self_references = {
+            item.evidence_id
+            for item in self.evidence
+            if item.evidence_id in item.source_evidence_ids
+        }
+        if self_references:
+            raise ValueError(
+                "evidence cannot reference itself as source evidence: "
+                f"{sorted(self_references)}"
+            )
+        for finding in self.findings:
+            if finding.finding_kind not in {"result", "comparison"}:
+                continue
+            sources = [evidence_by_id[item] for item in finding.evidence_ids]
+            if sources and all(item.source_kind == "knowledge_base" for item in sources):
+                raise ValueError(
+                    "scientific results and comparisons cannot rely only on "
+                    "knowledge-base terminology"
+                )
         return self

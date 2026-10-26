@@ -17,7 +17,7 @@ from ..version import __version__
 from .runtime_service import elapsed_session_seconds, ensure_runtime_session, utc_now
 
 
-MANIFEST_SCHEMA_VERSION = "1"
+MANIFEST_SCHEMA_VERSION = "2"
 
 
 def get_session_dir(state: AgentState) -> Path:
@@ -116,6 +116,182 @@ def _artifact_records(state: AgentState, session_dir: Path) -> list[dict[str, An
     return records
 
 
+def _execution_records(state: AgentState, session_dir: Path) -> list[dict[str, Any]]:
+    """Serialize execution decisions without copying logs or scientific payloads."""
+
+    records: list[dict[str, Any]] = []
+    executions = list(state.get("tool_executions", []))
+    current = state.get("current_tool_execution")
+    if current is not None and all(
+        (item.turn_id, item.plan_id) != (current.turn_id, current.plan_id)
+        for item in executions
+    ):
+        executions.append(current)
+    for execution in executions:
+        records.append(
+            {
+                "turn_id": execution.turn_id,
+                "plan_id": execution.plan_id,
+                "execution_status": execution.execution_status,
+                "failed_step_index": execution.failed_step_index,
+                "summary": execution.summary,
+                "calls": [
+                    {
+                        "step_index": call.step_index,
+                        "attempt_index": call.attempt_index,
+                        "tool_name": call.tool_name,
+                        "side": call.side,
+                        "execution_status": call.execution_status,
+                        "exit_code": call.exit_code,
+                        "duration_seconds": round(call.duration_seconds, 6),
+                        "stdout_file": _file_record(
+                            call.stdout_file, session_dir
+                        )["path"],
+                        "stderr_file": _file_record(
+                            call.stderr_file, session_dir
+                        )["path"],
+                        "failure_diagnosis": (
+                            call.failure_diagnosis.model_dump(mode="json")
+                            if call.failure_diagnosis is not None
+                            else None
+                        ),
+                        "artifacts": [
+                            {
+                                "artifact_type": artifact.artifact_type,
+                                "path": _file_record(artifact.path, session_dir)["path"],
+                                "side": artifact.side,
+                            }
+                            for artifact in call.artifacts
+                        ],
+                    }
+                    for call in execution.call_executions
+                ],
+                "recovery_attempts": [
+                    {
+                        **attempt.model_dump(
+                            mode="json",
+                            exclude={"stdout_file", "stderr_file"},
+                        ),
+                        "stdout_file": (
+                            _file_record(attempt.stdout_file, session_dir)["path"]
+                            if attempt.stdout_file
+                            else None
+                        ),
+                        "stderr_file": (
+                            _file_record(attempt.stderr_file, session_dir)["path"]
+                            if attempt.stderr_file
+                            else None
+                        ),
+                    }
+                    for attempt in execution.recovery_attempts
+                ],
+                "workflow_decisions": [
+                    item.model_dump(mode="json")
+                    for item in execution.workflow_decisions
+                ],
+                "ai_failure_assessments": [
+                    item.model_dump(mode="json")
+                    for item in execution.ai_failure_assessments
+                ],
+            }
+        )
+    return records
+
+
+def _history_records(state: AgentState, session_dir: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for result in state.get("history_query_results", []):
+        records.append(
+            {
+                "turn_id": result.turn_id,
+                "query_status": result.query_status,
+                "query": result.query.model_dump(mode="json") if result.query else None,
+                "resolved_turn_ids": result.resolved_turn_ids,
+                "selected_artifacts": [
+                    {
+                        "turn_id": artifact.turn_id,
+                        "plan_id": artifact.plan_id,
+                        "artifact_type": artifact.artifact_type,
+                        "source_tool": artifact.source_tool,
+                        "side": artifact.side,
+                        "path": _file_record(artifact.path, session_dir)["path"],
+                    }
+                    for artifact in result.selected_artifacts
+                ],
+            }
+        )
+    return records
+
+
+def _analysis_records(state: AgentState, session_dir: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    analyses = list(state.get("analysis_results", []))
+    current = state.get("current_analysis_result")
+    if current is not None and all(item.turn_id != current.turn_id for item in analyses):
+        analyses.append(current)
+    for result in analyses:
+        records.append(
+            {
+                "turn_id": result.turn_id,
+                "response_mode": result.response_mode,
+                "analysis_status": result.analysis_status,
+                "analysis_route": result.analysis_route,
+                "termination_reason": result.termination_reason,
+                "used_language_model": result.used_language_model,
+                "error_guidance": (
+                    {
+                        **result.error_guidance.model_dump(
+                            mode="json",
+                            exclude={"evidence_paths"},
+                        ),
+                        "evidence_paths": [
+                            _file_record(path, session_dir)["path"]
+                            for path in result.error_guidance.evidence_paths
+                        ],
+                    }
+                    if result.error_guidance is not None
+                    else None
+                ),
+                "findings": [
+                    {
+                        "title": finding.title,
+                        "finding_kind": finding.finding_kind,
+                        "inference_level": finding.inference_level,
+                        "evidence_ids": finding.evidence_ids,
+                        "statement_sha256": sha256(
+                            finding.statement.encode("utf-8")
+                        ).hexdigest(),
+                    }
+                    for finding in result.findings
+                ],
+                "evidence": [
+                    {
+                        "evidence_id": evidence.evidence_id,
+                        "source_kind": evidence.source_kind,
+                        "inference_level": evidence.inference_level,
+                        "turn_id": evidence.turn_id,
+                        "plan_id": evidence.plan_id,
+                        "artifact_type": evidence.artifact_type,
+                        "source_tool": evidence.source_tool,
+                        "side": evidence.side,
+                        "path": (
+                            _file_record(evidence.path, session_dir)["path"]
+                            if evidence.path
+                            else None
+                        ),
+                        "field_path": evidence.field_path,
+                        "source_uri": evidence.source_uri,
+                        "source_label": evidence.source_label,
+                        "source_version": evidence.source_version,
+                        "metadata": evidence.metadata,
+                    }
+                    for evidence in result.evidence
+                ],
+            }
+        )
+    return records
+
+
 def _safe_parameter_value(name: str, value: Any, session_dir: Path) -> Any:
     """保留可复现参数，同时压缩路径和可能敏感的科学标识。"""
 
@@ -175,6 +351,11 @@ def _plan_records(state: AgentState, session_dir: Path) -> list[dict[str, Any]]:
                 "turn_id": tool_plan.turn_id,
                 "plan_id": tool_plan.plan_id,
                 "purpose_type": tool_plan.purpose_type,
+                "validation": (
+                    planning_result.plan_validation.model_dump(mode="json")
+                    if planning_result.plan_validation is not None
+                    else None
+                ),
                 "calls": [
                     {
                         "step_index": call.step_index,
@@ -232,6 +413,10 @@ def build_session_manifest(state: AgentState) -> dict[str, Any]:
             "timeout_seconds": config.llm_timeout_seconds,
             "max_retries": config.llm_max_retries,
             "capability_check_enabled": config.check_model_capabilities,
+            "ontology_mode": config.ontology_mode,
+            "tool_recovery_mode": config.tool_recovery_mode,
+            "max_tool_recovery_attempts": config.max_tool_recovery_attempts,
+            "failure_diagnosis_mode": config.failure_diagnosis_mode,
         },
         "budgets": {
             "max_turns": config.max_turns,
@@ -253,13 +438,23 @@ def build_session_manifest(state: AgentState) -> dict[str, Any]:
             else None
         ),
         "errors": [item.model_dump(mode="json") for item in runtime.errors],
+        "runtime_metadata": redact_mapping(
+            runtime.metadata,
+            api_key=config.api_key,
+        ),
         "versions": {
             "tools": _tool_versions(),
             "prompt_fingerprint": _fingerprint_source_tree(package_root / "prompts"),
             "schema_fingerprint": _fingerprint_source_tree(package_root / "data_models"),
+            "fair_terms_sha256": _sha256_file(
+                package_root / "knowledge_base" / "fair_terms.yaml"
+            ),
         },
         "inputs": _input_records(state, session_dir),
         "tool_plans": _plan_records(state, session_dir),
+        "history_queries": _history_records(state, session_dir),
+        "tool_executions": _execution_records(state, session_dir),
+        "analyses": _analysis_records(state, session_dir),
         "artifacts": _artifact_records(state, session_dir),
     }
 

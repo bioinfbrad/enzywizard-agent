@@ -418,6 +418,37 @@ def main() -> int:
         raise AssertionError(
             "A disabled model should return a partial deterministic result"
         )
+    internal_ids = ("[report-", "[comparison-", "[consistency-", "[recovery-")
+    if any(marker in result.final_answer for marker in internal_ids):
+        raise AssertionError("The user-facing answer leaked an internal evidence ID")
+    if "Evidence supporting the analysis:" not in result.final_answer:
+        raise AssertionError("The scientific answer omitted its evidence section")
+    if "[Evidence:" not in result.final_answer:
+        raise AssertionError("The deterministic answer omitted readable evidence labels")
+    first_evidence = result.evidence[0]
+    first_label = analysis_service._evidence_display_label(first_evidence)
+    if first_label != analysis_service._evidence_display_label(first_evidence):
+        raise AssertionError("Evidence display labels are not deterministic")
+    unknown_reference = analysis_service._replace_internal_evidence_references(
+        (
+            "Unsupported source [report-999]; bare comparison-999. "
+            "Known sources report-1 and [report-1; comparison-1]. "
+            "Mixed citation [source report-1]."
+        ),
+        result.evidence,
+    )
+    leaked_prefixes = (
+        "report-",
+        "comparison-",
+        "consistency-",
+        "recovery-",
+        "fair-term-",
+        "artifact-",
+    )
+    if any(prefix in unknown_reference for prefix in leaked_prefixes):
+        raise AssertionError("An internal evidence ID reached the user")
+    if "[[Evidence:" in unknown_reference:
+        raise AssertionError("Evidence rendering produced nested brackets")
     print("[PASS] Historical reports return a deterministic summary without a model.")
 
     state["current_user_message"] = "Which energy report files were generated last turn?"

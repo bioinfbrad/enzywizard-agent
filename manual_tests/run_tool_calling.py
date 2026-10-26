@@ -21,9 +21,11 @@ from enzywizard_agent.data_models.planning import (
 )
 from enzywizard_agent.data_models.user_confirmation import UserConfirmation
 from enzywizard_agent.nodes.tool_calling import tool_calling_node
+import enzywizard_agent.services.request_routing_service as routing_service
 from enzywizard_agent.state import AgentState
 from enzywizard_agent.utils.checkpoint_utils import create_in_memory_checkpointer
 from enzywizard_agent.utils.tool_plan_utils import (
+    audit_tool_plan,
     build_single_protein_tool_plan,
     build_wildtype_mutant_tool_plan,
 )
@@ -136,6 +138,18 @@ if should_fail:
     )
     print("x" * 2400 + " FAILURE_TAIL_MARKER", file=sys.stderr)
     raise SystemExit(7)
+
+if os.environ.get("FAKE_TRANSIENT_TOOL") == tool_name:
+    transient_marker = Path(args.output_dir).parent / ".transient_failure_seen"
+    if not transient_marker.exists():
+        (Path(args.output_dir) / "failed_attempt_only.tmp").write_text("stale")
+        transient_marker.write_text("failed once")
+        print("Service temporarily unavailable", file=sys.stderr)
+        raise SystemExit(75)
+
+if os.environ.get("FAKE_SCIENTIFIC_ERROR_TOOL") == tool_name:
+    print("Invalid parameter: scientific cutoff requires review", file=sys.stderr)
+    raise SystemExit(64)
 
 (Path(args.output_dir) / "log.txt").write_text(
     f"{tool_name} completed {printed_secret}\n"
@@ -480,6 +494,9 @@ def validate_generated_plan_references(workdir: Path) -> dict[str, object]:
         ],
         plan_reason="Test single-protein substrate references.",
     )
+    single_validation = audit_tool_plan(single_plan, workdir)
+    if not single_validation.passed:
+        raise AssertionError(single_validation.model_dump_json(indent=2))
     single_substrate = next(
         call for call in single_plan.calls if call.tool_name == "enzywizard-substrate"
     )
@@ -533,6 +550,9 @@ def validate_generated_plan_references(workdir: Path) -> dict[str, object]:
         ],
         plan_reason="Test WT/MUT substrate references.",
     )
+    mutant_validation = audit_tool_plan(mutant_plan, workdir)
+    if not mutant_validation.passed:
+        raise AssertionError(mutant_validation.model_dump_json(indent=2))
     shared_substrate = next(
         call
         for call in mutant_plan.calls
@@ -727,6 +747,31 @@ def validate_failed_execution(workdir: Path) -> dict[str, object]:
         raise AssertionError("stderr excerpt exceeds the intended state size.")
     if state["cleaned_files"].single_cleaned_cif_file is None:
         raise AssertionError("Successful clean output was lost after a later failure.")
+    failed_scientific_artifacts = [
+        artifact
+        for artifact in failed_call.artifacts
+        if artifact.artifact_type == "pocket_report_json"
+    ]
+    if len(failed_scientific_artifacts) != 1:
+        raise AssertionError("The fixture did not produce the expected partial report.")
+    global_paths = {artifact.path for artifact in state["artifacts"]}
+    if failed_scientific_artifacts[0].path in global_paths:
+        raise AssertionError("A failed scientific output entered global artifact state.")
+    if not any(
+        artifact.artifact_type in {"agent_stdout_log", "agent_stderr_log", "log_file"}
+        and artifact.source_tool == "enzywizard-pocket"
+        for artifact in state["artifacts"]
+    ):
+        raise AssertionError("Failed-call audit logs were not retained globally.")
+
+    # Simulate loading a checkpoint written before failed-output isolation existed.
+    state["artifacts"].extend(failed_scientific_artifacts)
+    state["current_turn_id"] = 2
+    catalog_paths = {
+        entry.artifact.path for entry in routing_service._history_catalog(state)
+    }
+    if failed_scientific_artifacts[0].path in catalog_paths:
+        raise AssertionError("A legacy failed output entered the history catalog.")
 
     return {
         "execution_status": execution.execution_status,
@@ -734,6 +779,7 @@ def validate_failed_execution(workdir: Path) -> dict[str, object]:
         "exit_code": failed_call.exit_code,
         "executed_call_count": len(execution.call_executions),
         "preserved_artifact_count": len(state["current_plan_artifacts"]),
+        "failed_scientific_output_isolated": True,
     }
 
 
@@ -763,6 +809,110 @@ def validate_missing_required_output(workdir: Path) -> dict[str, object]:
         "failed_step_index": execution.failed_step_index,
         "exit_code": failed_call.exit_code,
         "error_message": failed_call.error_message,
+    }
+
+
+def validate_bounded_transient_recovery(workdir: Path) -> dict[str, object]:
+    """Verify one classified transient failure is retried once and audited."""
+
+    workdir.mkdir(parents=True, exist_ok=True)
+    tool_plan = build_test_tool_plan(workdir)
+    tool_plan.calls = tool_plan.calls[:1]
+    (workdir / "input.pdb").write_text("RAW", encoding="utf-8")
+    state = build_test_state(tool_plan)
+    state["config"] = AgentConfig(
+        api_key="recovery-test-key",
+        base_url="https://example.invalid/v1",
+        model="test-model",
+        workdir=workdir,
+        tool_recovery_mode="safe",
+        max_tool_recovery_attempts=1,
+    )
+    state["session_id"] = "bounded-recovery-test"
+    os.environ["FAKE_TRANSIENT_TOOL"] = "enzywizard-clean"
+    try:
+        state = tool_calling_node(state)
+    finally:
+        os.environ.pop("FAKE_TRANSIENT_TOOL", None)
+
+    execution = state["current_tool_execution"]
+    if execution.execution_status != "succeeded":
+        raise AssertionError(execution.model_dump_json(indent=2))
+    if len(execution.recovery_attempts) != 1:
+        raise AssertionError("Transient failure was not retried exactly once")
+    attempt = execution.recovery_attempts[0]
+    if attempt.trigger_category != "transient_external":
+        raise AssertionError("Transient failure received the wrong diagnosis")
+    if attempt.execution_status != "succeeded":
+        raise AssertionError("The bounded retry did not succeed")
+    decisions = [item.decision for item in execution.workflow_decisions]
+    if decisions != ["retry", "continue"]:
+        raise AssertionError(f"Unexpected recovery decisions: {decisions}")
+    runtime_errors = state["runtime_session"].errors
+    if len(runtime_errors) != 1 or not runtime_errors[0].recoverable:
+        raise AssertionError("Recovered error was not retained as recoverable")
+    clean_dir = Path(tool_plan.calls[0].tool_execution_dir)
+    if (clean_dir / "failed_attempt_only.tmp").exists():
+        raise AssertionError("Failed-attempt output was not cleared before retry")
+    if not (clean_dir / "stderr.txt").is_file():
+        raise AssertionError("The first attempt's audit log was not preserved")
+    if not (clean_dir / "stderr_attempt_2.txt").is_file():
+        raise AssertionError("The retry audit log was not preserved")
+
+    manifest_path = workdir / "session_bounded-recovery-test/session_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest_execution = manifest["tool_executions"][0]
+    if len(manifest_execution["recovery_attempts"]) != 1:
+        raise AssertionError("Manifest omitted the recovery attempt")
+    return {
+        "execution_status": execution.execution_status,
+        "recovery_attempt_count": len(execution.recovery_attempts),
+        "workflow_decisions": decisions,
+        "manifest_schema_version": manifest["manifest_schema_version"],
+    }
+
+
+def validate_scientific_change_requires_confirmation(
+    workdir: Path,
+) -> dict[str, object]:
+    """Verify scientific parameter changes are never applied automatically."""
+
+    workdir.mkdir(parents=True, exist_ok=True)
+    tool_plan = build_test_tool_plan(workdir)
+    tool_plan.calls = tool_plan.calls[:1]
+    (workdir / "input.pdb").write_text("RAW", encoding="utf-8")
+    state = build_test_state(tool_plan)
+    state["config"] = AgentConfig(
+        api_key="confirmation-test-key",
+        base_url="https://example.invalid/v1",
+        model="test-model",
+        workdir=workdir,
+        tool_recovery_mode="safe",
+        max_tool_recovery_attempts=2,
+    )
+    state["session_id"] = "scientific-confirmation-test"
+    os.environ["FAKE_SCIENTIFIC_ERROR_TOOL"] = "enzywizard-clean"
+    try:
+        state = tool_calling_node(state)
+    finally:
+        os.environ.pop("FAKE_SCIENTIFIC_ERROR_TOOL", None)
+
+    execution = state["current_tool_execution"]
+    failed_call = execution.call_executions[-1]
+    diagnosis = failed_call.failure_diagnosis
+    if diagnosis is None or diagnosis.category != "scientific_configuration":
+        raise AssertionError("Scientific configuration failure was misclassified")
+    if diagnosis.recoverability != "confirmation_required":
+        raise AssertionError("Scientific configuration change did not require confirmation")
+    if execution.recovery_attempts:
+        raise AssertionError("A scientific parameter change was retried automatically")
+    if execution.workflow_decisions[-1].decision != "request_confirmation":
+        raise AssertionError("The workflow did not request confirmation")
+    return {
+        "execution_status": execution.execution_status,
+        "failure_category": diagnosis.category,
+        "recoverability": diagnosis.recoverability,
+        "recovery_attempt_count": len(execution.recovery_attempts),
     }
 
 
@@ -913,6 +1063,16 @@ def main() -> None:
                 "failure_case": validate_failed_execution(root_path / "failure"),
                 "missing_output_case": validate_missing_required_output(
                     root_path / "missing_output"
+                ),
+                "bounded_transient_recovery_case": (
+                    validate_bounded_transient_recovery(
+                        root_path / "bounded_transient_recovery"
+                    )
+                ),
+                "scientific_confirmation_case": (
+                    validate_scientific_change_requires_confirmation(
+                        root_path / "scientific_confirmation"
+                    )
                 ),
                 "unresolved_reference_case": validate_unresolved_reference(
                     root_path / "unresolved_reference"

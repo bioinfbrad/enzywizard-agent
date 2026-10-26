@@ -18,7 +18,12 @@ from enzywizard_agent.data_models.artifact import CleanedFiles
 from enzywizard_agent.nodes.planning import planning_node
 from enzywizard_agent.utils.IO_utils import create_session_id, normalize_path
 
-from evaluation_utils import aggregate_usage, runtime_usage_payload
+from evaluation_utils import (
+    agent_trace_payload,
+    aggregate_agent_traces,
+    aggregate_usage,
+    runtime_usage_payload,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +47,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--reasoning_effort",
         default=None,
         help="Optional OpenAI-compatible reasoning effort, such as 'none'.",
+    )
+    parser.add_argument(
+        "--ontology_mode",
+        choices=("off", "retrieve", "control"),
+        default="retrieve",
+        help="Local FAIR terminology enrichment mode (default: retrieve).",
     )
     parser.add_argument("--workdir", default="/tmp/enzywizard-agent-planning-batch")
     parser.add_argument("--cases", default=str(DEFAULT_CASES_PATH))
@@ -113,6 +124,7 @@ def build_case_state(
     base_url: str,
     model: str,
     reasoning_effort: str | None,
+    ontology_mode: str,
     workdir: Path,
 ) -> dict[str, Any]:
     """Build the first-turn Agent state for one Planning test case."""
@@ -139,6 +151,7 @@ def build_case_state(
             base_url=base_url,
             model=model,
             reasoning_effort=reasoning_effort,
+            ontology_mode=ontology_mode,
             workdir=workdir.resolve(),
             max_turns=3,
         ),
@@ -302,6 +315,7 @@ def run_case(
         args.base_url,
         args.model,
         args.reasoning_effort,
+        args.ontology_mode,
         case_workdir,
     )
     captured_log = io.StringIO()
@@ -324,6 +338,7 @@ def run_case(
             "planning_result": planning_result.model_dump(mode="json"),
             "planning_log": captured_log.getvalue().splitlines(),
             "usage": runtime_usage_payload(final_state.get("runtime_session")),
+            "trace": agent_trace_payload(final_state),
         }
     except Exception as error:
         return {
@@ -333,6 +348,7 @@ def run_case(
             "failures": [f"Unhandled test exception: {error}"],
             "planning_log": captured_log.getvalue().splitlines(),
             "usage": runtime_usage_payload(state.get("runtime_session")),
+            "trace": agent_trace_payload(state),
         }
 
 
@@ -365,6 +381,7 @@ def main() -> None:
             "generated_at": datetime.now(timezone.utc).isoformat(),
             "model": args.model,
             "reasoning_effort": args.reasoning_effort,
+            "ontology_mode": args.ontology_mode,
             "cases_file": str(cases_path),
             "summary": {
                 "total": len(results),
@@ -372,6 +389,9 @@ def main() -> None:
                 "failed": len(results) - passed,
             },
             "usage": aggregate_usage(result.get("usage") for result in results),
+            "trace": aggregate_agent_traces(
+                result.get("trace") for result in results
+            ),
             "results": results,
         }
         output_path.write_text(
@@ -382,6 +402,7 @@ def main() -> None:
     print("[运行模式] Planning 批量语义测试", flush=True)
     print(f"[模型] {args.model}", flush=True)
     print(f"[推理强度] {args.reasoning_effort or '模型默认值'}", flush=True)
+    print(f"[FAIR 术语] {args.ontology_mode}", flush=True)
     print(f"[案例数量] {len(cases)} x {args.repeat}", flush=True)
     print(f"[运行目录] {Path(args.workdir).expanduser().resolve()}", flush=True)
     print(f"[结果文件] {output_path}", flush=True)

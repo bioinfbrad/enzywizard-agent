@@ -11,8 +11,16 @@ Rules:
 3. Clearly distinguish direct tool output, deterministic MUT-WT calculations, and scientific interpretation.
 4. Treat computed scores as model/tool estimates, not experimental validation.
 5. Mention material limitations, missing reports, or failed parsing.
+   When the user asks what cannot be concluded, names an unavailable analysis
+   dimension, or requests a deliberately restricted interpretation, explicitly name
+   the relevant missing report or evidence type. Do not rely only on omitting the
+   unsupported claim.
 6. Do not print local file paths unless the user explicitly asked about files or paths.
 7. Do not recommend internet searches or claim that external sources were consulted.
+8. Cite supplied deterministic evidence IDs in square brackets after each material
+   result or comparison, for example [report-1] or [comparison-2].
+9. A terminology definition may clarify a concept but must never be presented as
+   evidence that a computed scientific result is true.
 """.strip()
 
 

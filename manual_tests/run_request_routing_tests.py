@@ -339,6 +339,9 @@ def main() -> int:
         routing_outputs = iter(
             [mixed_candidate, dropped_action_review, mixed_candidate]
         )
+        state["current_user_message"] = (
+            "List logs from the previous turn and run a new energy workflow."
+        )
         routing_service._create_llm = lambda _state: FakeModel(
             next(routing_outputs)
         )
@@ -354,6 +357,64 @@ def main() -> int:
         if preserved_actions != {"list_artifacts", "run_tool_workflow"}:
             raise AssertionError("Router review silently dropped a mixed action")
         print("[PASS] Router review cannot silently reduce a mixed request.")
+
+        unsupported_history = RequestRoutingDraft(
+            actions=[
+                RoutingDraftAction(
+                    kind="run_workflow",
+                    target="prepare glucose and dock it to the supplied enzyme",
+                ),
+                RoutingDraftAction(
+                    kind="summarize_history",
+                    target="integrate available reports",
+                ),
+            ]
+        )
+        state["current_user_message"] = (
+            "Prepare glucose and dock it to the supplied enzyme without "
+            "protein-substrate interaction analysis."
+        )
+        state["agent_inputs"].substrate_name = "glucose"
+        pruned = routing_service._prune_unsupported_mixed_history_actions(
+            state,
+            unsupported_history,
+        )
+        if not isinstance(pruned, RequestRoutingDraft) or [
+            action.kind for action in pruned.actions
+        ] != ["run_workflow"]:
+            raise AssertionError("Unsupported history action was not removed")
+
+        routing_outputs = iter([unsupported_history, unsupported_history])
+        routing_service._create_llm = lambda _state: FakeModel(
+            next(routing_outputs)
+        )
+        corrected_docking = routing_service.route_user_request(state)
+        if (
+            corrected_docking.route != "request_to_planning"
+            or corrected_docking.output is None
+            or corrected_docking.output.request_type != "tool_workflow"
+            or [
+                action.action_type for action in corrected_docking.output.actions
+            ]
+            != ["run_tool_workflow"]
+        ):
+            raise AssertionError(
+                "Unsupported docking history action still changed the route"
+            )
+
+        state["current_user_message"] = (
+            "Summarize the previous docking report and run a new energy workflow."
+        )
+        retained = routing_service._prune_unsupported_mixed_history_actions(
+            state,
+            unsupported_history,
+        )
+        if retained != unsupported_history:
+            raise AssertionError("Explicit mixed history request was removed")
+        state["agent_inputs"].substrate_name = None
+        print("[PASS] Unsupported mixed history actions are pruned conservatively.")
+
+        state["current_user_message"] = "Synthetic structured-routing test."
 
         required_reuse_draft = RequestRoutingDraft(
             actions=[

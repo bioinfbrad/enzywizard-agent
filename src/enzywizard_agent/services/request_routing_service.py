@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from collections import defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -31,6 +32,7 @@ from ..prompts.request_routing_prompt import (
 )
 from ..state import AgentState
 from ..utils.planning_utils import load_enzywizard_tool_specs
+from ..utils.tool_execution_utils import is_safe_historical_artifact
 from .llm_service import create_chat_model_for_state, invoke_structured
 from .runtime_service import is_runtime_limit_error
 
@@ -123,9 +125,61 @@ REPORT_TYPE_TO_ARTIFACT_TYPE = {
     "enzywizard_mut_integrate": "mut_integrate_report_json",
 }
 
+_HISTORY_ANALYSIS_ACTION_TYPES = {"analyze_history", "list_artifacts"}
+_HISTORY_DRAFT_KINDS = {
+    "summarize_history",
+    "explain_history",
+    "compare_history",
+    "list_history_files",
+}
+_WORKFLOW_DRAFT_KINDS = {
+    "run_workflow",
+    "rerun_previous_workflow",
+    "recompute_workflow",
+}
+_EXPLICIT_HISTORY_REFERENCE = re.compile(
+    r"\b(?:previous|earlier|prior|historical|history|already|existing|reuse|"
+    r"re-use|turn\s*#?\s*\d+|last\s+(?:turn|run|workflow|request))\b",
+    re.IGNORECASE,
+)
+_EXPLICIT_ARTIFACT_REQUEST = re.compile(
+    r"\b(?:list|show|find|open|download|inspect|analy[sz]e|compare|summari[sz]e|"
+    r"explain)\b.{0,80}\b(?:report|result|output|artifact|file|log)s?\b",
+    re.IGNORECASE | re.DOTALL,
+)
+
 
 def _create_llm(state: AgentState):
     return create_chat_model_for_state(state)
+
+
+def _has_explicit_history_request(state: AgentState) -> bool:
+    message = str(state.get("current_user_message", ""))
+    return bool(
+        _EXPLICIT_HISTORY_REFERENCE.search(message)
+        or _EXPLICIT_ARTIFACT_REQUEST.search(message)
+    )
+
+
+def _prune_unsupported_mixed_history_actions(
+    state: AgentState,
+    draft: RequestRoutingDraft | RequestRoutingOutput,
+) -> RequestRoutingDraft | RequestRoutingOutput:
+    """Drop unsupported history analysis added beside a current workflow."""
+
+    if not isinstance(draft, RequestRoutingDraft):
+        return draft
+    kinds = {action.kind for action in draft.actions}
+    if (
+        not kinds.intersection(_WORKFLOW_DRAFT_KINDS)
+        or not kinds.intersection(_HISTORY_DRAFT_KINDS)
+        or _has_explicit_history_request(state)
+    ):
+        return draft
+    actions = [
+        action for action in draft.actions if action.kind not in _HISTORY_DRAFT_KINDS
+    ]
+    return draft.model_copy(update={"actions": actions}) if actions else draft
 
 
 def _route_for_output(output: RequestRoutingOutput) -> str:
@@ -492,14 +546,65 @@ def _review_request_routing_draft(
             and final_output.request_type != "clarification"
             and len(final_output.actions) < len(candidate_output.actions)
         ):
-            # Reviewer 可以纠正动作，但不能无说明地删除混合请求中的独立任务。
-            # 出现动作数下降时保留首轮草稿，由后续严格编译继续校验。
-            return draft
+            candidate_types = {
+                action.action_type for action in candidate_output.actions
+            }
+            final_types = {action.action_type for action in final_output.actions}
+            removed_types = candidate_types - final_types
+            if (
+                not removed_types.issubset(_HISTORY_ANALYSIS_ACTION_TYPES)
+                or _has_explicit_history_request(state)
+            ):
+                # Preserve deleted independent tasks and explicit history requests.
+                return draft
         return final_draft
     except Exception as error:
         if is_runtime_limit_error(error):
             raise
         return draft
+
+
+def _apply_required_input_preflight(
+    state: AgentState,
+    output: RequestRoutingOutput,
+) -> RequestRoutingOutput:
+    """Check only the universal structure input before scientific planning."""
+
+    if output.request_type != "tool_workflow" or not output.requires_tool_execution:
+        return output
+    inputs = state.get("agent_inputs")
+    if inputs is None:
+        return output
+    missing: list[str] = []
+    if not inputs.structure_file and "reuse_historical_output" not in {
+        item.action_type for item in output.actions
+    }:
+        missing.append("a protein structure")
+    missing = list(dict.fromkeys(missing))
+    if not missing:
+        return output
+    if len(missing) == 1:
+        requirement = missing[0]
+    else:
+        requirement = ", ".join(missing[:-1]) + f", and {missing[-1]}"
+    return RequestRoutingOutput(
+        request_type="clarification",
+        actions=[
+            RequestedAction(
+                action_type="clarify_request",
+                target=f"provide {requirement} for the requested workflow",
+            )
+        ],
+        requires_tool_execution=False,
+        references_history=False,
+        requires_history_artifacts=False,
+        reuse_policy="none",
+        requests_recomputation=False,
+        clarification_question=(
+            f"Please provide {requirement} before I build this workflow."
+        ),
+        routing_reason="Required workflow input is unavailable.",
+    )
 
 
 def _routing_semantic_signature(output: RequestRoutingOutput) -> tuple[Any, ...]:
@@ -520,7 +625,7 @@ def _routing_semantic_signature(output: RequestRoutingOutput) -> tuple[Any, ...]
 
 
 def route_user_request(state: AgentState) -> RequestRoutingResult:
-    """调用专用 Router LLM，不在程序中解析自然语言关键词。"""
+    """调用专用 Router LLM，并校验混合动作是否有用户请求依据。"""
 
     turn_id = state.get("current_turn_id", 1)
     try:
@@ -536,7 +641,9 @@ def route_user_request(state: AgentState) -> RequestRoutingResult:
             normalizer=_normalize_routing_candidate,
         )
         draft = _review_request_routing_draft(state, draft)
+        draft = _prune_unsupported_mixed_history_actions(state, draft)
         output = _normalize_request_routing_draft(draft)
+        output = _apply_required_input_preflight(state, output)
         return RequestRoutingResult(
             turn_id=turn_id,
             routing_status="succeeded",
@@ -611,6 +718,10 @@ def _history_catalog(state: AgentState) -> list[_HistoryCatalogEntry]:
             artifact
             for artifact in state.get("artifacts", [])
             if artifact.turn_id < current_turn_id
+            and is_safe_historical_artifact(
+                artifact,
+                state.get("tool_executions", []),
+            )
         ),
         key=lambda item: (
             item.turn_id,
@@ -691,6 +802,39 @@ def _normalize_turn_candidate(candidate: Any, action_id: int) -> Any:
         "turn_scope": normalized.get("turn_scope"),
         "turn_ids": normalized.get("turn_ids"),
     }
+
+
+_EXPLICIT_TURN_REFERENCE = re.compile(
+    r"\bturns?\s+(#?\d+(?:\s*(?:,|and|&)\s*(?:turns?\s+)?#?\d+)*)",
+    flags=re.IGNORECASE,
+)
+
+
+def _extract_explicit_turn_ids(text: str) -> list[int]:
+    """Extract only explicit numeric turn references, preserving first-use order."""
+
+    turn_ids: list[int] = []
+    for match in _EXPLICIT_TURN_REFERENCE.finditer(text):
+        turn_ids.extend(int(value) for value in re.findall(r"\d+", match.group(1)))
+    return list(dict.fromkeys(turn_ids))
+
+
+def _explicit_turn_ids_for_action(
+    request: str,
+    action: RequestedAction,
+    *,
+    history_action_count: int,
+) -> list[int]:
+    """Resolve unambiguous numeric references without asking the language model."""
+
+    action_turn_ids = _extract_explicit_turn_ids(action.target)
+    if action_turn_ids:
+        return action_turn_ids
+    request_turn_ids = _extract_explicit_turn_ids(request)
+    if len(request_turn_ids) == 1 or history_action_count == 1:
+        return request_turn_ids
+    # Multiple actions and multiple global turn IDs require semantic assignment.
+    return []
 
 
 def _normalize_artifact_candidate(candidate: Any, action_id: int) -> Any:
@@ -812,9 +956,10 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
         for action_id, action in enumerate(actions):
             operation = _operation_for_action(action)
             operations.append(operation)
+            current_request = state.get("current_user_message", "")
             turn_context = {
                 "current_turn_id": current_turn_id,
-                "current_user_request": state.get("current_user_message", ""),
+                "current_user_request": current_request,
                 "routed_action": {
                     "action_id": action_id,
                     "operation": operation,
@@ -823,19 +968,32 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
                 "available_turn_ids": available_turn_ids,
             }
             model = _create_llm(state)
-            turn_selection = invoke_structured(
-                state,
-                stage=f"routing.history.turn_selection.{action_id}",
-                schema=HistoryTurnSelectionDraft,
-                llm=model,
-                messages=[
-                    SystemMessage(content=HISTORY_TURN_SELECTION_SYSTEM_PROMPT),
-                    HumanMessage(content=json.dumps(turn_context, indent=2)),
-                ],
-                normalizer=lambda candidate, expected=action_id: _normalize_turn_candidate(
-                    candidate, expected
-                ),
+            explicit_turn_ids = _explicit_turn_ids_for_action(
+                current_request,
+                action,
+                history_action_count=len(actions),
             )
+            if explicit_turn_ids:
+                turn_selection = HistoryTurnSelectionDraft(
+                    action_id=action_id,
+                    turn_scope="specific",
+                    turn_ids=explicit_turn_ids,
+                )
+            else:
+                turn_selection = invoke_structured(
+                    state,
+                    stage=f"routing.history.turn_selection.{action_id}",
+                    schema=HistoryTurnSelectionDraft,
+                    llm=model,
+                    messages=[
+                        SystemMessage(content=HISTORY_TURN_SELECTION_SYSTEM_PROMPT),
+                        HumanMessage(content=json.dumps(turn_context, indent=2)),
+                    ],
+                    normalizer=lambda candidate, expected=action_id: _normalize_turn_candidate(
+                        candidate, expected
+                    ),
+                    retrieval_context=action.target,
+                )
             turn_selections.append(turn_selection)
             candidate_turn_ids, turn_error = _resolve_turn_selection(
                 turn_selection, available_turn_ids
@@ -890,6 +1048,7 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
                 normalizer=lambda candidate, expected=action_id: _normalize_artifact_candidate(
                     candidate, expected
                 ),
+                retrieval_context=action.target,
             )
             entries_by_id = {
                 entry.catalog_id: entry for entry in candidate_entries
@@ -915,6 +1074,7 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
                     normalizer=lambda candidate, expected=action_id: _normalize_artifact_candidate(
                         candidate, expected
                     ),
+                    retrieval_context=action.target,
                 )
                 invalid_ids = sorted(
                     set(artifact_selection.artifact_ids) - set(entries_by_id)

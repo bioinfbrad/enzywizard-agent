@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import time
-from typing import Any
+from typing import Any, Literal
 
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.types import Command
@@ -19,7 +19,12 @@ from ..utils.security_utils import redact_text
 from ..validators.input_validators import validate_single_amino_acid_substitution
 from .llm_service import check_model_capabilities
 from .manifest_service import write_session_manifest
-from .runtime_service import enforce_session_deadline, record_runtime_error, utc_now
+from .runtime_service import (
+    enforce_session_deadline,
+    is_runtime_limit_error,
+    record_runtime_error,
+    utc_now,
+)
 
 
 _TERMINAL_RUNTIME_STATUSES = {
@@ -30,6 +35,22 @@ _TERMINAL_RUNTIME_STATUSES = {
 }
 
 
+def _print_startup_error(
+    message: str,
+    *,
+    category: str = "input_error",
+) -> None:
+    """Report pre-graph failures with the same resolution language as Agent turns."""
+
+    print(
+        f"[ERROR:{category}] Stage: startup_validation\n"
+        "Current session: not started; restart is required.\n"
+        f"Reason: {message}\n"
+        "Required action: correct the command-line input or configuration, then "
+        "restart EnzyWizard-Agent."
+    )
+
+
 def _write_graph_result_manifest(result: AgentState) -> None:
     """根据图状态写 manifest，保留预算、超时和取消等终态。"""
 
@@ -38,6 +59,15 @@ def _write_graph_result_manifest(result: AgentState) -> None:
     runtime = result.get("runtime_session")
     if runtime is not None and runtime.status in _TERMINAL_RUNTIME_STATUSES:
         write_session_manifest(result)
+        return
+    analysis = result.get("current_analysis_result")
+    guidance = getattr(analysis, "error_guidance", None)
+    if guidance is not None and guidance.restart_required:
+        write_session_manifest(
+            result,
+            status="failed",
+            stop_reason=f"{guidance.error_type}:restart_required",
+        )
         return
     interrupted = bool(result.get("__interrupt__"))
     write_session_manifest(
@@ -195,6 +225,10 @@ def run_agent_service(
     reasoning_effort: str | None = None,
     llm_extra_body: dict[str, Any] | None = None,
     check_model_capabilities: bool = True,
+    ontology_mode: Literal["off", "retrieve", "control"] = "retrieve",
+    tool_recovery_mode: Literal["off", "safe"] = "safe",
+    max_tool_recovery_attempts: int = 1,
+    failure_diagnosis_mode: Literal["deterministic", "hybrid"] = "hybrid",
     max_llm_calls: int | None = 64,
     max_input_tokens: int | None = 500_000,
     max_output_tokens: int | None = 128_000,
@@ -212,86 +246,91 @@ def run_agent_service(
         workdir = Path(workdir).expanduser().resolve()
         workdir.mkdir(parents=True, exist_ok=True)
     except Exception as e:
-        print(f"[ERROR] Failed to initialize agent workdir. Reason: {redact_text(e)}")
+        _print_startup_error(
+            f"Failed to initialize agent workdir: {redact_text(e)}",
+            category="configuration_error",
+        )
         return None
 
     print(f"[INFO] Agent parameter validation started: workdir={redact_text(workdir)}")
 
     # 模型连接参数和用户消息不能为空；strip 防止纯空白字符串通过校验。
     if not str(api_key).strip():
-        print("[ERROR] Invalid api_key: empty value is not allowed.")
+        _print_startup_error("Invalid api_key: empty value is not allowed.")
         return None
 
     if not str(base_url).strip():
-        print("[ERROR] Invalid base_url: empty value is not allowed.")
+        _print_startup_error("Invalid base_url: empty value is not allowed.")
         return None
 
     if not str(model).strip():
-        print("[ERROR] Invalid model: empty value is not allowed.")
+        _print_startup_error("Invalid model: empty value is not allowed.")
         return None
 
     if not str(message).strip():
-        print("[ERROR] Invalid message: empty value is not allowed.")
+        _print_startup_error("Invalid message: empty value is not allowed.")
         return None
 
     # 至少允许一轮，否则状态图没有可执行的用户会话。
     if max_turns < 1:
-        print(f"[ERROR] Invalid max_turns value: {max_turns}. Must be greater than or equal to 1.")
+        _print_startup_error(
+            f"Invalid max_turns value: {max_turns}. Must be greater than or equal to 1."
+        )
         return None
 
     # structure_file 是所有结构相关输入的基础：MSA 需要结构序列进行残基映射，
     # MUT 输入需要 WT 结构作为比较基准。
     if structure_file is None:
         if msa_file is not None:
-            print("[ERROR] Invalid input parameter combination: msa_file was provided without structure_file. MSA analysis needs a reference protein structure to fetch the sequence for residue mapping.")
+            _print_startup_error("Invalid input parameter combination: msa_file was provided without structure_file. MSA analysis needs a reference protein structure to fetch the sequence for residue mapping.")
             return None
         if mut_structure_file is not None:
-            print("[ERROR] Invalid input parameter combination: mut_structure_file was provided without structure_file. Mutant analysis needs a wild-type reference structure.")
+            _print_startup_error("Invalid input parameter combination: mut_structure_file was provided without structure_file. Mutant analysis needs a wild-type reference structure.")
             return None
         if mut_msa_file is not None:
-            print("[ERROR] Invalid input parameter combination: mut_msa_file was provided without structure_file. Mutant MSA analysis needs a wild-type reference structure.")
+            _print_startup_error("Invalid input parameter combination: mut_msa_file was provided without structure_file. Mutant MSA analysis needs a wild-type reference structure.")
             return None
 
     # 即使已有 WT 结构，MUT MSA 仍必须有 MUT 结构作为该侧序列参考。
     if mut_msa_file is not None and mut_structure_file is None:
-        print("[ERROR] Invalid input parameter combination: mut_msa_file was provided without mut_structure_file. Mutant MSA analysis needs a reference mutant protein structure to fetch the sequence for residue mapping.")
+        _print_startup_error("Invalid input parameter combination: mut_msa_file was provided without mut_structure_file. Mutant MSA analysis needs a reference mutant protein structure to fetch the sequence for residue mapping.")
         return None
 
     # 当前只支持一个底物。分号被视为用户尝试提交多个底物的明确分隔符。
     if substrate_name is not None:
         substrate_name = str(substrate_name).strip()
         if not substrate_name:
-            print("[ERROR] Invalid substrate_name: empty value is not allowed.")
+            _print_startup_error("Invalid substrate_name: empty value is not allowed.")
             return None
         if ";" in substrate_name:
-            print("[ERROR] Invalid substrate_name: multiple substrates are not supported yet. Provide one substrate name or SMILES string.")
+            _print_startup_error("Invalid substrate_name: multiple substrates are not supported yet. Provide one substrate name or SMILES string.")
             return None
         # 底物分析最终需要与蛋白结构关联，因此不能脱离主结构单独输入。
         if structure_file is None:
-            print("[ERROR] Invalid input parameter combination: substrate_name was provided without structure_file. Substrate analysis needs a reference protein structure.")
+            _print_startup_error("Invalid input parameter combination: substrate_name was provided without structure_file. Substrate analysis needs a reference protein structure.")
             return None
 
     # 突变替换统一转为大写，再检查结构依赖和 A123V 格式。
     if amino_acid_substitution is not None:
         amino_acid_substitution = str(amino_acid_substitution).strip().upper()
         if not amino_acid_substitution:
-            print("[ERROR] Invalid amino_acid_substitution: empty value is not allowed.")
+            _print_startup_error("Invalid amino_acid_substitution: empty value is not allowed.")
             return None
         if structure_file is None:
-            print("[ERROR] Invalid input parameter combination: amino_acid_substitution was provided without structure_file. Mutation analysis needs a wild-type reference structure.")
+            _print_startup_error("Invalid input parameter combination: amino_acid_substitution was provided without structure_file. Mutation analysis needs a wild-type reference structure.")
             return None
         if mut_structure_file is None:
-            print("[ERROR] Invalid input parameter combination: amino_acid_substitution was provided without mut_structure_file. The amino acid substitution must describe the residue replacement between the wild-type and mutant structures.")
+            _print_startup_error("Invalid input parameter combination: amino_acid_substitution was provided without mut_structure_file. The amino acid substitution must describe the residue replacement between the wild-type and mutant structures.")
             return None
         # 具体格式和标准氨基酸检查放在 validators 中，服务层只处理返回错误。
         error_message = validate_single_amino_acid_substitution(amino_acid_substitution)
         if error_message is not None:
-            print(f"[ERROR] {error_message}")
+            _print_startup_error(error_message)
             return None
 
     # MUT 结构和替换信息互相依赖，防止出现无法解释生物学意义的突变比较。
     if mut_structure_file is not None and amino_acid_substitution is None:
-        print("[ERROR] Invalid input parameter combination: mut_structure_file was provided without amino_acid_substitution. Mutation comparison needs the residue replacement, such as A123V, to align biological meaning between wild-type and mutant structures.")
+        _print_startup_error("Invalid input parameter combination: mut_structure_file was provided without amino_acid_substitution. Mutation comparison needs the residue replacement, such as A123V, to align biological meaning between wild-type and mutant structures.")
         return None
 
     # 所有校验完成后才创建不可变配置，避免无效参数进入状态。
@@ -309,6 +348,10 @@ def run_agent_service(
             reasoning_effort=reasoning_effort,
             llm_extra_body=llm_extra_body,
             check_model_capabilities=check_model_capabilities,
+            ontology_mode=ontology_mode,
+            tool_recovery_mode=tool_recovery_mode,
+            max_tool_recovery_attempts=max_tool_recovery_attempts,
+            failure_diagnosis_mode=failure_diagnosis_mode,
             max_llm_calls=max_llm_calls,
             max_input_tokens=max_input_tokens,
             max_output_tokens=max_output_tokens,
@@ -316,7 +359,10 @@ def run_agent_service(
             tool_timeout_seconds=tool_timeout_seconds,
         )
     except ValueError as error:
-        print(f"[ERROR] Invalid Agent configuration: {error}")
+        _print_startup_error(
+            f"Invalid Agent configuration: {error}",
+            category="configuration_error",
+        )
         return None
     # 所有文件路径在进入 AgentState 前统一转为绝对路径。
     agent_inputs = AgentInputs(
@@ -412,12 +458,15 @@ def run_agent_service(
             stop_reason="user_interrupt",
         )
         raise
-    except Exception:
-        write_session_manifest(
-            state,
-            status="failed",
-            stop_reason="model_capability_check_failed",
-        )
+    except Exception as error:
+        if is_runtime_limit_error(error):
+            write_session_manifest(state)
+        else:
+            write_session_manifest(
+                state,
+                status="failed",
+                stop_reason="model_capability_check_failed",
+            )
         raise
 
     # 一个 CLI 进程只创建一个内存 checkpointer 和编译图。图对象会连同首次

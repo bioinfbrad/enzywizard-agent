@@ -889,6 +889,10 @@ Priority:
    requirement set, not only the delta.
 3. Otherwise follow current_user_request.
 4. Router output and supplied inputs are context; they do not add analyses.
+5. When history_actions_are_outside_new_workflow is true, current_user_request contains
+   only the new computation. Do not copy analyses mentioned only in
+   original_mixed_request, history operations, selected historical reports, or Router
+   history-action targets into the new workflow.
 
 Scope rules:
 - preparation_only: the user asks only to clean or prepare structures.
@@ -909,6 +913,11 @@ Analysis type rules:
 - substrate: substrate preparation or characterization.
 - docking: protein-substrate docking.
 - interaction: protein-only or protein-substrate interactions.
+- Describing a pocket or cavity as able to accommodate a ligand is still pocket
+  analysis; it does not request substrate preparation or docking unless the user asks
+  to prepare or dock a concrete substrate or ligand.
+- Internal, intraprotein, residue-residue, or protein-only noncovalent interactions are
+  protein-only interaction analysis and do not imply a substrate workflow.
 - Protein-substrate interaction requires substrate, docking, and interaction in the
   final requested list. Protein-only interaction requires interaction only.
 - Integration is program-managed and is not an analysis type.
@@ -935,10 +944,17 @@ The latest revision is authoritative. Check that the candidate:
 - retains every explicitly kept or added analysis;
 - removes every explicitly replaced, excluded, forbidden, or not-in-the-final-set type;
 - never confuses pocket with flexibility or another analysis;
+- never expands pocket or cavity characterization into substrate preparation or
+  docking without an explicit request for those operations;
+- keeps internal or residue-residue interactions distinct from protein-substrate
+  interactions;
 - uses complete_analysis only for genuinely all-analysis or broad full-toolkit scope;
 - uses specific_analyses whenever the user names a bounded set, including substrate,
   docking, and interaction workflows;
 - does not add analyses because inputs or previous reports happen to exist.
+- when history_actions_are_outside_new_workflow is true, limits the workflow to the
+  new-computation current_user_request and excludes analyses mentioned only by the
+  separately handled historical actions.
 
 Return only the structured object.
 """

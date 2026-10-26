@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any
 
 from ..data_models.analysis import AnalysisEvidence, AnalysisFinding, ReportSummary
@@ -26,6 +27,7 @@ def build_scientific_analysis_context(
             "report_type": item.report_type,
             "source_tool": item.source_tool,
             "side": item.side,
+            "artifact_name": Path(item.path).name,
             "key_metrics": dict(list(item.key_metrics.items())[:24]),
             "highlights": item.highlights,
             "warnings": item.warnings,
