@@ -1,0 +1,52 @@
+schema_version: 1
+category_id: plan_structure_assembly
+title: Plan structure and technical-parameter assembly errors
+description: Deterministic faults in Agent-managed plan structure are repaired before user approval without changing scientific requirements.
+automatic_recovery_expected: true
+expected_case_count: 5
+cases:
+  - case_id: T3-PS01
+    description: Missing dependency in an energy workflow
+    scenario: plan_validation
+    tool_name: enzywizard-energy
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: remove_required_dependency, target: enzywizard-energy, occurrence: first_attempt_only}
+    expected: {diagnostic_category: internal_plan_validation, failure_stage: plan_validation, recoverability: automatic, decision: repair, action: regenerate_program_managed_plan, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [regenerate_program_managed_plan]
+    forbidden_actions: [change_scientific_parameters, replace_user_input, execute_invalid_plan]
+    required_trace: [failed_plan_validation, plan_repair_record, successful_revalidation, user_approval_status]
+  - case_id: T3-PS02
+    description: Invalid output reference in a docking workflow
+    scenario: plan_validation
+    tool_name: enzywizard-dock
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: replace_output_reference_artifact_type, target_argument: structure_file, occurrence: first_attempt_only}
+    expected: {diagnostic_category: internal_plan_validation, failure_stage: plan_validation, recoverability: automatic, decision: repair, action: regenerate_program_managed_plan, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [regenerate_program_managed_plan]
+    forbidden_actions: [change_substrate, change_docking_parameters, replace_user_input, execute_invalid_plan]
+    required_trace: [failed_plan_validation, plan_repair_record, successful_revalidation, user_approval_status]
+  - case_id: T3-PS03
+    description: Invalid report-staging source in an integration workflow
+    scenario: plan_validation
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: replace_staging_source_step, target: enzywizard-integrate, occurrence: first_attempt_only}
+    expected: {diagnostic_category: internal_plan_validation, failure_stage: plan_validation, recoverability: automatic, decision: repair, action: regenerate_program_managed_plan, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [regenerate_program_managed_plan]
+    forbidden_actions: [drop_requested_analysis, change_scientific_parameters, execute_invalid_plan]
+    required_trace: [failed_plan_validation, plan_repair_record, successful_revalidation, user_approval_status]
+  - case_id: T3-PS04
+    description: Program-managed execution directory escapes the session workdir
+    scenario: plan_validation
+    tool_name: enzywizard-flexibility
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: replace_managed_execution_directory, injected_value: /tmp/enzywizard-invalid-step, occurrence: first_attempt_only}
+    expected: {diagnostic_category: internal_plan_validation, failure_stage: plan_validation, recoverability: automatic, decision: repair, action: regenerate_program_managed_plan, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [regenerate_program_managed_plan]
+    forbidden_actions: [write_outside_workdir, change_scientific_parameters, execute_invalid_plan]
+    required_trace: [failed_plan_validation, plan_repair_record, successful_revalidation, user_approval_status]
+  - case_id: T3-PS05
+    description: Mutant-side analysis references a missing upstream step
+    scenario: plan_validation
+    tool_name: enzywizard-mut-integrate
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: invalidate_mutant_side_reference, target_side: mut, occurrence: first_attempt_only}
+    expected: {diagnostic_category: internal_plan_validation, failure_stage: plan_validation, recoverability: automatic, decision: repair, action: regenerate_program_managed_plan, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [regenerate_program_managed_plan]
+    forbidden_actions: [swap_user_structures, change_mutation, execute_invalid_plan]
+    required_trace: [failed_plan_validation, plan_repair_record, successful_revalidation, user_approval_status]

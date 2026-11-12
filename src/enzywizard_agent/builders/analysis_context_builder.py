@@ -9,6 +9,96 @@ from ..state import AgentState
 from .request_routing_context_builder import build_prior_plan_catalog
 
 
+MAX_PRIOR_ANALYSES = 3
+MAX_PRIOR_ANSWER_CHARS = 6000
+MAX_PRIOR_FINDINGS = 16
+MAX_PRIOR_EVIDENCE = 32
+
+
+def _clip_text(value: str, limit: int) -> str:
+    if len(value) <= limit:
+        return value
+    return value[: limit - 3].rstrip() + "..."
+
+
+def _bounded_evidence(
+    evidence: list[AnalysisEvidence], limit: int
+) -> list[AnalysisEvidence]:
+    """Keep report roots and calculations before optional field details."""
+
+    primary = [
+        item
+        for item in evidence
+        if item.metadata.get("role") != "report_metric"
+    ]
+    metrics = [
+        item
+        for item in evidence
+        if item.metadata.get("role") == "report_metric"
+    ]
+    return (primary + metrics)[:limit]
+
+
+def _explicit_prior_analysis_payload(state: AgentState) -> list[dict[str, Any]]:
+    """Return only analyses from turns explicitly resolved by history query."""
+
+    history = state.get("current_history_query")
+    if history is None or history.query is None:
+        return []
+    if not set(history.query.operations).intersection(
+        {"summarize", "explain", "compare"}
+    ):
+        return []
+
+    current_turn = int(state.get("current_turn_id", 0))
+    resolved_turns = set(history.resolved_turn_ids)
+    selected = [
+        result
+        for result in state.get("analysis_results", [])
+        if result.turn_id in resolved_turns
+        and result.turn_id < current_turn
+        and result.response_mode == "scientific_result"
+    ][-MAX_PRIOR_ANALYSES:]
+
+    payload: list[dict[str, Any]] = []
+    for result in selected:
+        evidence_id_map = {
+            item.evidence_id: f"prior-turn-{result.turn_id}-{item.evidence_id}"
+            for item in result.evidence
+        }
+        evidence = []
+        for item in _bounded_evidence(result.evidence, MAX_PRIOR_EVIDENCE):
+            dumped = item.model_dump(mode="json", exclude={"path"})
+            dumped["evidence_id"] = evidence_id_map[item.evidence_id]
+            dumped["source_evidence_ids"] = [
+                evidence_id_map.get(source_id, source_id)
+                for source_id in item.source_evidence_ids
+            ]
+            dumped["artifact_name"] = Path(item.path).name if item.path else None
+            evidence.append(dumped)
+        findings = []
+        for item in result.findings[:MAX_PRIOR_FINDINGS]:
+            dumped = item.model_dump(mode="json")
+            dumped["evidence_ids"] = [
+                evidence_id_map.get(evidence_id, evidence_id)
+                for evidence_id in item.evidence_ids
+            ]
+            findings.append(dumped)
+        payload.append(
+            {
+                "turn_id": result.turn_id,
+                "summary": _clip_text(result.summary, 1200),
+                "final_answer": _clip_text(
+                    result.final_answer, MAX_PRIOR_ANSWER_CHARS
+                ),
+                "findings": findings,
+                "evidence": evidence,
+                "limitations": result.limitations[:12],
+            }
+        )
+    return payload
+
+
 def build_scientific_analysis_context(
     state: AgentState,
     report_summaries: list[ReportSummary],
@@ -40,7 +130,7 @@ def build_scientific_analysis_context(
             for key, value in item.model_dump(mode="json").items()
             if key != "path"
         }
-        for item in evidence[:80]
+        for item in _bounded_evidence(evidence, 80)
     ]
     payload: dict[str, Any] = {
         "user_request": state.get("current_user_message", ""),
@@ -51,11 +141,18 @@ def build_scientific_analysis_context(
         "deterministic_findings": [
             item.model_dump(mode="json") for item in findings[:80]
         ],
-        "prior_analysis_summary": state.get("analysis_summary", ""),
         "request_routing": _routing_payload(state),
         "history_query": _history_query_payload(state),
         "prior_approved_plans": build_prior_plan_catalog(state),
     }
+    prior_analyses = _explicit_prior_analysis_payload(state)
+    if prior_analyses:
+        payload["explicitly_referenced_prior_analyses"] = prior_analyses
+        payload["prior_analysis_instruction"] = (
+            "Use the referenced prior analysis only to answer the requested follow-up "
+            "or revision. Recheck every retained or revised scientific statement "
+            "against the supplied current report summaries and deterministic evidence."
+        )
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
 

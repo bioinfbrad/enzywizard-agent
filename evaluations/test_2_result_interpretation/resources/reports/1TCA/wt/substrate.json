@@ -1,0 +1,65 @@
+{
+  "report_type": "enzywizard_substrate",
+  "substrates": [
+    {
+      "substrate_name": "4-nitrophenyl butyrate",
+      "substrate_smiles": "CCCC(=O)OC1=CC=C(C=C1)[N+](=O)[O-]",
+      "substrate_fingerprint_encoding": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "substrate_atom_count": 15,
+      "substrate_molecular_weight": 209.20099999999996,
+      "substrate_logp": 2.3003,
+      "substrate_tpsa": 69.44,
+      "substrate_heavy_atom_count": 15,
+      "substrate_hbond_donor_count": 0,
+      "substrate_hbond_acceptor_count": 4,
+      "substrate_rotatable_bond_count": 4,
+      "substrate_molar_refractivity": 53.63940000000002,
+      "substrate_possible_structures": [
+        {
+          "substrate_structure_name": "4-nitrophenyl_butyrate_1",
+          "substrate_structure_energy": 23.97976456080326,
+          "substrate_structure_max_3d_diameter": 10.5795906950219,
+          "substrate_structure_mean_pairwise_atom_distance": 4.5473113718866625,
+          "substrate_structure_std_pairwise_atom_distance": 2.2451840780025063,
+          "substrate_structure_asphericity": 0.6518381549893018,
+          "substrate_structure_spherocity": 0.20947710283700516,
+          "substrate_structure_principal_moment_ratio": 7.371134410865439,
+          "substrate_structure_radius_of_gyration": 3.341045897136981
+        },
+        {
+          "substrate_structure_name": "4-nitrophenyl_butyrate_2",
+          "substrate_structure_energy": 23.979777438169084,
+          "substrate_structure_max_3d_diameter": 10.488468866330997,
+          "substrate_structure_mean_pairwise_atom_distance": 4.545698580415181,
+          "substrate_structure_std_pairwise_atom_distance": 2.241763535647277,
+          "substrate_structure_asphericity": 0.6470421637995906,
+          "substrate_structure_spherocity": 0.2094216135648204,
+          "substrate_structure_principal_moment_ratio": 7.257211549482408,
+          "substrate_structure_radius_of_gyration": 3.338011920682429
+        },
+        {
+          "substrate_structure_name": "4-nitrophenyl_butyrate_3",
+          "substrate_structure_energy": 24.05881070602994,
+          "substrate_structure_max_3d_diameter": 10.238257146066655,
+          "substrate_structure_mean_pairwise_atom_distance": 4.587274668067933,
+          "substrate_structure_std_pairwise_atom_distance": 2.283677930204945,
+          "substrate_structure_asphericity": 0.6552601967427601,
+          "substrate_structure_spherocity": 0.13537149468290324,
+          "substrate_structure_principal_moment_ratio": 7.527548524666168,
+          "substrate_structure_radius_of_gyration": 3.3592205396800923
+        },
+        {
+          "substrate_structure_name": "4-nitrophenyl_butyrate_4",
+          "substrate_structure_energy": 24.093386144374254,
+          "substrate_structure_max_3d_diameter": 10.648416262937266,
+          "substrate_structure_mean_pairwise_atom_distance": 4.658738640757362,
+          "substrate_structure_std_pairwise_atom_distance": 2.359852616149586,
+          "substrate_structure_asphericity": 0.7042584194154361,
+          "substrate_structure_spherocity": 0.08200029340295319,
+          "substrate_structure_principal_moment_ratio": 9.031433686058188,
+          "substrate_structure_radius_of_gyration": 3.413103832101439
+        }
+      ]
+    }
+  ]
+}

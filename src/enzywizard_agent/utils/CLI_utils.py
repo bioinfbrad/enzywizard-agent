@@ -130,6 +130,11 @@ def display_tool_plan_confirmation(payload: dict[str, Any]) -> None:
     if payload.get("summary"):
         print(f"Summary: {payload['summary']}")
     print(f"Reason: {payload['plan_reason']}")
+    if payload.get("plan_repairs"):
+        print(
+            "Internal validation recovery: Agent-managed plan structure was "
+            "regenerated and revalidated before confirmation."
+        )
 
     # 每个步骤都展示实际参数和预期产物，使用户确认的是完整可执行计划。
     for call in payload.get("calls", []):

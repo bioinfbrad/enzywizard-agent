@@ -104,6 +104,10 @@ def build_ai_failure_context(
         "evidence_items": evidence_items,
         "safety_constraints": {
             "automatic_actions": ["retry_same_call"],
+            "deterministic_internal_repairs": [
+                "repair_managed_inputs (policy-controlled; never selected by the model)",
+                "rebuild_managed_workspace (policy-controlled; never selected by the model)",
+            ],
             "scientific_changes_require_confirmation": True,
             "startup_files_cannot_be_replaced_in_chat": True,
             "arbitrary_commands_are_forbidden": True,
@@ -152,6 +156,23 @@ def review_ai_recovery_proposal(
     """Authorize only bounded actions; the model never directly controls execution."""
 
     action = diagnosis.recommended_action
+    if (
+        deterministic_diagnosis.scientific_change_required
+        and action == "request_user_input"
+    ):
+        action = "request_parameter_confirmation"
+    if (
+        deterministic_diagnosis.recoverability == "not_recoverable"
+        and deterministic_diagnosis.category in {"missing_dependency", "unknown"}
+        and action in {"request_user_input", "request_parameter_confirmation"}
+    ):
+        return (
+            "stop",
+            "stop",
+            False,
+            "The deterministic diagnosis requires a safe stop; additional chat input "
+            "cannot repair this environment or unknown failure in the current run.",
+        )
     if action == "retry_same_call":
         if config is None or config.failure_diagnosis_mode != "hybrid":
             return "stop", "stop", False, "Hybrid AI recovery is disabled."

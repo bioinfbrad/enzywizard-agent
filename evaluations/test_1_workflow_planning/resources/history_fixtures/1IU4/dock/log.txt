@@ -1,0 +1,10 @@
+[2026-11-10 11:43:50] [INFO] Dock processing started: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/representative_enzymes/cleaned_structures/1IU4/cleaned_1IU4-assembly1.cif
+[2026-11-10 11:43:50] [INFO] Protein name resolved: cleaned_1IU4-assembly1
+[2026-11-10 11:43:50] [INFO] Structure loaded
+[2026-11-10 11:43:50] [INFO] Structure checked
+[2026-11-10 11:43:50] [INFO] Docking workflow started
+[2026-11-10 11:44:17] [INFO] Docking succeeded and early_stop=True, returning the first successful result.
+[2026-11-10 11:44:17] [INFO] Docking finished
+[2026-11-10 11:44:17] [INFO] Saving docking results and generating report
+[2026-11-10 11:44:59] [INFO] Report JSON saved: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/benchmark_results/dock/outputs/1IU4/dock_report_cleaned_1IU4-assembly1_Z-Gln-Gly.json
+[2026-11-10 11:44:59] [INFO] Dock processing finished

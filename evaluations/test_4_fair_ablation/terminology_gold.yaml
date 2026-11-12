@@ -1,0 +1,179 @@
+schema_version: 1
+description: >-
+  Source-neutral terminology interpretation gold standard. The same concepts and
+  criteria apply in off, control, and retrieve conditions. No condition receives
+  credit for merely exposing terminology metadata.
+
+report_type_concepts:
+  enzywizard_energy: [potential_energy]
+  enzywizard_flexibility: [residue_flexibility]
+  enzywizard_disorder: [intrinsically_disordered_region]
+  enzywizard_aaprops: [residue_property]
+  enzywizard_hydrocluster: [hydrophobic_cluster]
+  enzywizard_pocket: [binding_pocket]
+  enzywizard_conservation: [sequence_conservation]
+  enzywizard_embedding: [sequence_embedding]
+  enzywizard_substrate: [substrate_preparation]
+  enzywizard_dock: [molecular_docking]
+  enzywizard_interaction: [modeled_molecular_interaction]
+  enzywizard_mut_clean: [amino_acid_substitution]
+
+scope_concepts:
+  paired: [wild_type_mutant_attribution]
+
+concepts:
+  potential_energy:
+    label: potential energy
+    fair_term: {term: potential energy, uri: "https://goldbook.iupac.org/terms/view/P04778"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret reported energy as a model-derived structural quantity, not direct activity or experimental stability.
+    accepted_interpretation: >-
+      A computed molecular-mechanics energy and its reported components describe
+      the evaluated structural model under the tool configuration.
+    forbidden_interpretations:
+      - It directly measures enzyme activity.
+      - A lower value alone proves improved stability or function across systems.
+
+  residue_flexibility:
+    label: residue flexibility
+    fair_term: {term: protein flexibility, uri: "http://edamontology.org/operation_0244"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret residue mobility measures as computational flexibility estimates with model-dependent limits.
+    accepted_interpretation: >-
+      Reported residue-level fluctuation or normal-mode measures are computational
+      indicators of relative structural mobility under the analysis model.
+    forbidden_interpretations:
+      - It is an experimental measurement of dynamics.
+      - Flexibility alone proves an activity or stability change.
+
+  intrinsically_disordered_region:
+    label: intrinsically disordered region
+    fair_term: {term: intrinsically disordered region, uri: "https://www.ebi.ac.uk/training/online/courses/proteins-domains/domains-motifs-and-regions/"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Distinguish a predicted locally disordered segment from global unfolding or experimentally established disorder.
+    accepted_interpretation: >-
+      A predicted disordered region is a sequence segment estimated to lack stable
+      structure under the disorder model; it is not equivalent to global unfolding.
+    forbidden_interpretations:
+      - A predicted region proves that the whole protein is unfolded.
+      - The prediction experimentally validates a functional effect.
+
+  residue_property:
+    label: amino-acid residue property
+    fair_term: {term: amino acid residue, uri: "https://goldbook.iupac.org/terms/view/A00279"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Treat residue descriptors as calculated properties and preserve the distinction from demonstrated biological function.
+    accepted_interpretation: >-
+      Residue-property reports contain calculated residue-level structural or
+      physicochemical descriptors and do not directly establish biological function.
+    forbidden_interpretations:
+      - A residue descriptor alone proves catalytic importance.
+      - Calculated structural descriptors are experimental measurements.
+
+  hydrophobic_cluster:
+    label: hydrophobic cluster
+    fair_term: {term: hydrophobic cluster, uri: "https://proteintools.uni-bayreuth.de/clusters/documentation"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret a cluster as a contact-connected hydrophobic residue group rather than a binding pocket or affinity measurement.
+    accepted_interpretation: >-
+      A hydrophobic cluster is a connected spatial group of contacting hydrophobic
+      residues characterized by the cluster analysis.
+    forbidden_interpretations:
+      - Every hydrophobic cluster is a ligand-binding pocket.
+      - Cluster area directly measures binding affinity.
+
+  binding_pocket:
+    label: binding pocket
+    fair_term: {term: binding pocket, uri: "https://schlessinger-lab.github.io/pyvol/index.html"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret a predicted geometric cavity as a candidate binding region that requires independent validation.
+    accepted_interpretation: >-
+      A reported binding pocket is a computationally identified cavity or pocket-like
+      region and is a hypothesis for binding-site analysis, not confirmed binding.
+    forbidden_interpretations:
+      - A predicted pocket proves ligand binding.
+      - Pocket volume is an experimental affinity measurement.
+
+  sequence_conservation:
+    label: sequence conservation
+    fair_term: {term: sequence conservation, uri: "https://www.ebi.ac.uk/training/online/courses/foundations-protein-structure/fundamentals-of-protein-composition/the-peptide-bond-and-primary-structure/ss/"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret conservation relative to the supplied alignment or profile without treating it as direct functional proof.
+    accepted_interpretation: >-
+      Sequence-conservation values summarize alignment- or profile-derived evolutionary
+      constraint; their meaning depends on the reported metric and reference alignment.
+    forbidden_interpretations:
+      - Conservation alone proves catalytic function.
+      - A profile score is an experimental activity measurement.
+
+  sequence_embedding:
+    label: sequence embedding
+    fair_term: {term: embedding, uri: "https://developers.google.com/machine-learning/crash-course/embeddings"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret embeddings as learned numerical representations, not validated biological effects.
+    accepted_interpretation: >-
+      A sequence embedding is a learned numerical representation of sequence context;
+      vector count and dimension do not directly encode a validated biological effect.
+    forbidden_interpretations:
+      - An embedding directly proves function or substrate specificity.
+      - Equal vector counts prove residue-wise correspondence with another report.
+
+  substrate_preparation:
+    label: substrate preparation
+    fair_term: {term: substrate, uri: "https://goldbook.iupac.org/terms/view/S06083"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret preparation as generation of computational molecular inputs, not evidence of enzyme binding or catalysis.
+    accepted_interpretation: >-
+      Substrate preparation generates molecular structures, conformers, or descriptors
+      for downstream computation and does not establish enzyme-substrate binding.
+    forbidden_interpretations:
+      - Successful preparation proves binding.
+      - Calculated substrate descriptors are measured affinity values.
+
+  molecular_docking:
+    label: molecular docking
+    fair_term: {term: docking, uri: "https://goldbook.iupac.org/terms/view/11437"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret poses and scores as model predictions rather than measured affinity or activity.
+    accepted_interpretation: >-
+      Molecular docking predicts candidate poses and scoring-function estimates for a
+      modeled complex; reported affinity is not an experimental binding measurement.
+    forbidden_interpretations:
+      - A docking score is measured binding affinity.
+      - A better score alone proves improved enzyme activity.
+
+  modeled_molecular_interaction:
+    label: modeled molecular interaction
+    fair_term: {term: molecular interaction, uri: "https://www.ebi.ac.uk/training/online/courses/reactome-tools-for-analysing-biological-pathways/molecular-interactions-overlay/"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Interpret detected contacts in the context and interaction class represented by the supplied structural model.
+    accepted_interpretation: >-
+      Interaction reports describe contacts detected in a supplied or modeled structure,
+      including protein-internal or protein-substrate contacts as specified by the report.
+    forbidden_interpretations:
+      - Detected modeled contacts prove experimental binding affinity.
+      - Protein-internal and protein-substrate interactions are interchangeable.
+
+  amino_acid_substitution:
+    label: amino-acid substitution
+    fair_term: {term: amino acid substitution, uri: "http://purl.obolibrary.org/obo/SO_0001606"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Use substitution notation to preserve sample identity without inferring a phenotype from the notation alone.
+    accepted_interpretation: >-
+      A substitution notation identifies the original residue, sequence position, and
+      replacement residue and establishes sample identity, not its functional effect.
+    forbidden_interpretations:
+      - Recording a substitution proves a phenotype or activity change.
+      - Wild-type and mutant identities may be interchanged.
+
+  wild_type_mutant_attribution:
+    label: wild-type and mutant attribution
+    fair_term: {term: wild-type, uri: "https://www.genome.gov/11511688/teaching-guide-for-life-in-the-lab"}
+    source_version: runtime_knowledge_base_sha256
+    operationalization_note: Preserve WT and MUT side identities and treat computed differences as associations unless causal evidence is supplied.
+    accepted_interpretation: >-
+      WT and MUT observations must remain assigned to their respective reports; a
+      computed difference is an association and does not by itself establish causation.
+    forbidden_interpretations:
+      - WT and MUT evidence can be merged without preserving side identity.
+      - A computed difference alone proves that the mutation caused a phenotype.

@@ -21,8 +21,9 @@ No external model or real EnzyWizard command is used.
 - output reference resolution and required artifact validation
 - post-compilation plan validation for registered commands, required arguments,
   upstream references, staging dependencies, and managed paths
-- structured tool-failure diagnosis, bounded safe retry, confirmation boundaries,
-  workflow-decision traces, and log-tail preservation
+- structured tool-failure diagnosis, bounded safe retry, constrained repair of
+  Agent-managed plans, upstream references, staging inputs, and step workspaces,
+  confirmation boundaries, workflow-decision traces, and log-tail preservation
 - real subprocess timeout termination and partial-artifact preservation
 - centralized OpenAI-compatible model factory and strict JSON Schema capability contract
 - LLM call, token, session-time, and tool-timeout budgets
@@ -182,9 +183,15 @@ PYTHONPATH=src conda run --no-capture-output -n enzywizard-agent \
   --ontology_mode retrieve
 ```
 
-Tool recovery defaults to `safe`: only deterministically classified transient or
-missing-output failures may repeat the identical call, once. Recovery never changes
-scientific inputs or parameters. Such changes are recorded as requiring confirmation.
+Tool recovery defaults to `safe`: deterministically classified transient or
+missing-output failures may repeat the identical call, once. Agent-generated plan
+structure may be regenerated once before approval when deterministic validation
+fails. During execution, stale Agent-managed staging or upstream-output references
+may be rebound only to one compatible registered artifact from the current plan, and
+a conflicting current-step workspace may be cleared and rebuilt. Recovery retries
+only the current step. It never changes user inputs, scientific parameters, or
+arbitrary paths; ambiguous, cross-plan, and out-of-workdir candidates are rejected.
+Scientific changes are recorded as requiring confirmation.
 Use `--tool_recovery_mode off` for a no-recovery baseline, or change the bounded
 limit with `--max_tool_recovery_attempts`.
 

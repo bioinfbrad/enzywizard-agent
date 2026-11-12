@@ -1,0 +1,249 @@
+schema_version: 1
+category_id: historical_reuse
+title: Historical artifact reuse
+description: Reuse, inspection, or recomputation requests grounded in explicit prior turns and fixed historical artifacts.
+expected_case_count: 12
+cases:
+  - case_id: T1-HR01
+    enzyme_id: 1MXT
+    legacy_case_id: T1-H01
+    description: Reuse cholesterol oxidase cleaned structure for energy
+    request: Reuse the cleaned structure from turn 1 and run energy analysis.
+    input_profile: 1mxt_single
+    fair_relevance: relevant
+    history:
+      turn_id: 1
+      operation: reuse_as_input
+      artifacts:
+        - {artifact_type: cleaned_structure_cif, side: single, artifact_path: resources/history_fixtures/1MXT/clean/cleaned_structure.cif}
+        - {artifact_type: cleaned_sequence_fasta, side: single, artifact_path: resources/enzymes/1MXT/single/sequence.fasta}
+        - {artifact_type: clean_report_json, side: single, artifact_path: resources/history_fixtures/1MXT/clean/clean_report.json}
+      reuse_policy: required
+    expected_actions: [reuse_historical_output, run_tool_workflow]
+    expected_plan: reused_energy
+    provenance_profile: historical_artifact_workflow
+  - case_id: T1-HR02
+    enzyme_id: 1MXT
+    legacy_case_id: T1-H04
+    description: List and reuse cholesterol oxidase structure outputs
+    request: List structure outputs from turn 1, then reuse the cleaned structure for disorder analysis.
+    input_profile: 1mxt_single
+    fair_relevance: neutral
+    history:
+      turn_id: 1
+      operation: list_and_reuse
+      artifacts:
+        - {artifact_type: cleaned_structure_cif, side: single, artifact_path: resources/history_fixtures/1MXT/clean/cleaned_structure.cif}
+        - {artifact_type: cleaned_sequence_fasta, side: single, artifact_path: resources/enzymes/1MXT/single/sequence.fasta}
+        - {artifact_type: clean_report_json, side: single, artifact_path: resources/history_fixtures/1MXT/clean/clean_report.json}
+      reuse_policy: required
+    expected_actions: [list_artifacts, reuse_historical_output, run_tool_workflow]
+    expected_plan: reused_disorder
+    provenance_profile: historical_artifact_workflow
+  - case_id: T1-HR03
+    enzyme_id: 1MXT
+    legacy_case_id: T1-H05
+    description: Summarize historical cholesterol oxidase energy and run pockets
+    request: Summarize the energy report from turn 2, then run a new binding-pocket analysis.
+    input_profile: 1mxt_single
+    fair_relevance: relevant
+    history:
+      turn_id: 2
+      operation: summarize
+      artifacts:
+        - {artifact_type: energy_report_json, side: single, artifact_path: resources/history_fixtures/1MXT/energy/energy_report.json}
+      reuse_policy: none
+    expected_actions: [analyze_history, run_tool_workflow]
+    expected_plan: pocket
+    provenance_profile: historical_artifact_workflow
+  - case_id: T1-HR04
+    enzyme_id: 1MXT
+    legacy_case_id: tool_modify_previous_plan
+    description: Extend a prior cholesterol oxidase plan
+    request: Use the previous approved energy and flexibility plan as the starting point, add disorder analysis, and run the revised workflow.
+    input_profile: 1mxt_single
+    fair_relevance: relevant
+    history:
+      turn_id: 2
+      operation: reuse_plan
+      prior_plan:
+        plan_profile: energy_flexibility
+        parameters:
+          - {tool: enzywizard-clean, side: single, parameter: add_H, value: true}
+          - {tool: enzywizard-clean, side: single, parameter: pH, value: 7.0}
+          - {tool: enzywizard-energy, side: single, parameter: minimize_energy, value: true}
+          - {tool: enzywizard-energy, side: single, parameter: minimization_iteration, value: 100}
+          - {tool: enzywizard-flexibility, side: single, parameter: method, value: ANM}
+          - {tool: enzywizard-flexibility, side: single, parameter: cutoff, value: 15.0}
+          - {tool: enzywizard-flexibility, side: single, parameter: n_modes, value: 20}
+    expected_actions: [reference_historical_context, run_tool_workflow]
+    expected_plan: dynamics
+    provenance_profile: historical_plan_workflow
+
+  - case_id: T1-HR05
+    enzyme_id: 1IU4
+    legacy_case_id: T1-H02
+    description: Reuse transglutaminase cleaned structure for flexibility
+    request: Use the cleaned structure from turn 1 for a new flexibility analysis.
+    input_profile: 1iu4_single
+    fair_relevance: relevant
+    history:
+      turn_id: 1
+      operation: reuse_as_input
+      artifacts:
+        - {artifact_type: cleaned_structure_cif, side: single, artifact_path: resources/history_fixtures/1IU4/clean/cleaned_structure.cif}
+        - {artifact_type: cleaned_sequence_fasta, side: single, artifact_path: resources/enzymes/1IU4/single/sequence.fasta}
+        - {artifact_type: clean_report_json, side: single, artifact_path: resources/history_fixtures/1IU4/clean/clean_report.json}
+      reuse_policy: required
+    expected_actions: [reuse_historical_output, run_tool_workflow]
+    expected_plan: reused_flexibility
+    provenance_profile: historical_artifact_workflow
+  - case_id: T1-HR06
+    enzyme_id: 1IU4
+    legacy_case_id: mixed_reuse_substrate_docking
+    description: Reuse prepared Z-Gln-Gly conformers for docking
+    request: Reuse the prepared Z-Gln-Gly conformers from turn 2 and perform a new docking calculation.
+    input_profile: 1iu4_ligand
+    fair_relevance: relevant
+    history:
+      turn_id: 2
+      operation: reuse_as_input
+      artifacts:
+        - {artifact_type: substrate_report_json, side: single, artifact_path: resources/history_fixtures/1IU4/substrate/substrate_report.json}
+        - artifact_type: substrate_sdf
+          side: single
+          artifact_paths:
+            - resources/history_fixtures/1IU4/substrate/Z-Gln-Gly_1.sdf
+            - resources/history_fixtures/1IU4/substrate/Z-Gln-Gly_2.sdf
+            - resources/history_fixtures/1IU4/substrate/Z-Gln-Gly_3.sdf
+            - resources/history_fixtures/1IU4/substrate/Z-Gln-Gly_4.sdf
+            - resources/history_fixtures/1IU4/substrate/Z-Gln-Gly_5.sdf
+      reuse_policy: required
+    expected_actions: [reuse_historical_output, run_tool_workflow]
+    expected_plan: reused_substrate_dock
+    provenance_profile: historical_artifact_workflow
+  - case_id: T1-HR07
+    enzyme_id: 1IU4
+    legacy_case_id: T1-H06
+    description: Explain transglutaminase docking and recompute energy
+    request: Explain the docking report from turn 3 and recompute energy from the current structure.
+    input_profile: 1iu4_single
+    fair_relevance: relevant
+    history:
+      turn_id: 3
+      operation: explain
+      artifacts:
+        - {artifact_type: substrate_report_json, side: single, artifact_path: resources/history_fixtures/1IU4/substrate/substrate_report.json}
+        - {artifact_type: dock_report_json, side: single, artifact_path: resources/history_fixtures/1IU4/dock/dock_report.json}
+        - {artifact_type: docked_substrate_sdf, side: single, artifact_path: resources/history_fixtures/1IU4/dock/docked_substrate.sdf}
+      reuse_policy: none
+    expected_actions: [analyze_history, run_tool_workflow]
+    expected_plan: energy
+    provenance_profile: historical_artifact_workflow
+  - case_id: T1-HR08
+    enzyme_id: 1IU4
+    legacy_case_id: mixed_logs_and_rerun_previous
+    description: List prior logs and rerun a transglutaminase workflow
+    request: List the log files from the previous energy-analysis turn and rerun that turn's workflow with the same settings.
+    input_profile: 1iu4_single
+    fair_relevance: neutral
+    history:
+      turn_id: 2
+      operation: list_and_rerun
+      artifacts:
+        - {artifact_type: log_file, side: single, artifact_path: resources/history_fixtures/1IU4/energy/log.txt}
+        - {artifact_type: energy_report_json, side: single, artifact_path: resources/history_fixtures/1IU4/energy/energy_report.json}
+      prior_plan:
+        plan_profile: energy
+        parameters:
+          - {tool: enzywizard-clean, side: single, parameter: add_H, value: true}
+          - {tool: enzywizard-clean, side: single, parameter: pH, value: 7.0}
+          - {tool: enzywizard-energy, side: single, parameter: minimize_energy, value: true}
+          - {tool: enzywizard-energy, side: single, parameter: minimization_iteration, value: 100}
+      reuse_policy: none
+    expected_actions: [list_artifacts, reference_historical_context, run_tool_workflow]
+    expected_plan: energy
+    provenance_profile: historical_artifact_plan_workflow
+
+  - case_id: T1-HR09
+    enzyme_id: 1TCA
+    legacy_case_id: T1-H03
+    description: Reuse docked CALB substrate for interaction analysis
+    request: Reuse docked 4-nitrophenyl butyrate from turn 3 and analyze protein-substrate interactions without docking again.
+    input_profile: 1tca_ligand
+    fair_relevance: relevant
+    history:
+      turn_id: 3
+      operation: reuse_as_input
+      artifacts:
+        - {artifact_type: cleaned_structure_cif, side: single, artifact_path: resources/history_fixtures/1TCA/clean/cleaned_structure.cif}
+        - {artifact_type: cleaned_sequence_fasta, side: single, artifact_path: resources/enzymes/1TCA/single/sequence.fasta}
+        - {artifact_type: clean_report_json, side: single, artifact_path: resources/history_fixtures/1TCA/clean/clean_report.json}
+        - {artifact_type: substrate_report_json, side: single, artifact_path: resources/history_fixtures/1TCA/substrate/substrate_report.json}
+        - {artifact_type: dock_report_json, side: single, artifact_path: resources/history_fixtures/1TCA/dock/dock_report.json}
+        - {artifact_type: docked_substrate_sdf, side: single, artifact_path: resources/history_fixtures/1TCA/dock/docked_substrate.sdf}
+      reuse_policy: required
+    expected_actions: [reuse_historical_output, run_tool_workflow]
+    expected_plan: reused_interaction
+    provenance_profile: historical_artifact_workflow
+  - case_id: T1-HR10
+    enzyme_id: 1TCA
+    legacy_case_id: mixed_optional_clean_reuse
+    description: Optionally reuse compatible CALB clean output
+    request: Calculate flexibility, reusing the cleaned structure from turn 1 if it is compatible; otherwise clean the supplied structure again.
+    input_profile: 1tca_single
+    fair_relevance: neutral
+    history:
+      turn_id: 1
+      operation: reuse_as_input
+      artifacts:
+        - {artifact_type: cleaned_structure_cif, side: single, artifact_path: resources/history_fixtures/1TCA/clean/cleaned_structure.cif}
+        - {artifact_type: cleaned_sequence_fasta, side: single, artifact_path: resources/enzymes/1TCA/single/sequence.fasta}
+        - {artifact_type: clean_report_json, side: single, artifact_path: resources/history_fixtures/1TCA/clean/clean_report.json}
+      reuse_policy: allowed
+    accepted_action_sequences:
+      - [reuse_historical_output, run_tool_workflow]
+      - [run_tool_workflow]
+    acceptable_plans: [reused_flexibility, flexibility]
+    provenance_profile: historical_artifact_workflow
+  - case_id: T1-HR11
+    enzyme_id: 1TCA
+    legacy_case_id: tool_rerun_previous_settings
+    description: Rerun the previous CALB energy workflow
+    request: Rerun the previous energy analysis with exactly the same tools and parameter settings.
+    input_profile: 1tca_single
+    fair_relevance: neutral
+    history:
+      turn_id: 2
+      operation: reuse_plan
+      artifacts:
+        - {artifact_type: energy_report_json, side: single, artifact_path: resources/history_fixtures/1TCA/energy/energy_report.json}
+      prior_plan:
+        plan_profile: energy
+        parameters:
+          - {tool: enzywizard-clean, side: single, parameter: add_H, value: true}
+          - {tool: enzywizard-clean, side: single, parameter: pH, value: 7.0}
+          - {tool: enzywizard-energy, side: single, parameter: minimize_energy, value: true}
+          - {tool: enzywizard-energy, side: single, parameter: minimization_iteration, value: 100}
+      reuse_policy: none
+    expected_actions: [reference_historical_context, run_tool_workflow]
+    expected_plan: energy
+    provenance_profile: historical_plan_workflow
+  - case_id: T1-HR12
+    enzyme_id: 1TCA
+    legacy_case_id: mixed_analyze_dock_and_energy
+    description: Explain prior CALB docking and run a new pocket analysis
+    request: Explain the docking report from the previous turn, then run a new binding-pocket analysis for the supplied enzyme.
+    input_profile: 1tca_single
+    fair_relevance: relevant
+    history:
+      turn_id: 3
+      operation: explain
+      artifacts:
+        - {artifact_type: substrate_report_json, side: single, artifact_path: resources/history_fixtures/1TCA/substrate/substrate_report.json}
+        - {artifact_type: dock_report_json, side: single, artifact_path: resources/history_fixtures/1TCA/dock/dock_report.json}
+        - {artifact_type: docked_substrate_sdf, side: single, artifact_path: resources/history_fixtures/1TCA/dock/docked_substrate.sdf}
+      reuse_policy: none
+    expected_actions: [analyze_history, run_tool_workflow]
+    expected_plan: pocket
+    provenance_profile: historical_artifact_workflow

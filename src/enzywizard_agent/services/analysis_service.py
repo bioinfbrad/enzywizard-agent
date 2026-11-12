@@ -250,6 +250,36 @@ def _load_report_cautions(report_types: set[str]) -> list[str]:
         return []
 
 
+def _analysis_retrieval_context(summaries: list[ReportSummary]) -> str:
+    """Describe actual report semantics for bounded FAIR-term retrieval."""
+
+    spec_path = (
+        Path(__file__).resolve().parents[1]
+        / "knowledge_base"
+        / "analysis_report_specs.yaml"
+    )
+    terms: list[str] = []
+    try:
+        payload = yaml.safe_load(spec_path.read_text(encoding="utf-8"))
+        reports = payload.get("reports", {}) if isinstance(payload, dict) else {}
+        for summary in summaries:
+            spec = reports.get(summary.report_type, {})
+            configured = spec.get("fair_retrieval_terms", [])
+            if isinstance(configured, list):
+                terms.extend(
+                    str(item).strip()
+                    for item in configured
+                    if str(item).strip()
+                )
+    except (OSError, UnicodeError, yaml.YAMLError, AttributeError, TypeError):
+        pass
+
+    sides = {summary.side for summary in summaries}
+    if {"wt", "mut"}.issubset(sides):
+        terms.extend(["wild-type", "amino acid substitution", "WT/MUT comparison"])
+    return "; ".join(dict.fromkeys(terms))
+
+
 def _match_failure_hints(error_text: str) -> list[dict[str, str]]:
     """用本地规则匹配明确错误片段，不进行联网搜索或宽泛原因猜测。"""
 
@@ -790,7 +820,9 @@ def _deterministic_scientific_answer(
 
 _INTERNAL_EVIDENCE_ID_SEARCH_PATTERN = re.compile(
     r"(?<![A-Za-z0-9_-])"
-    r"(?:(?:report|comparison|consistency|recovery|fair-term|artifact)-\d+|"
+    r"(?:prior-turn-\d+-[A-Za-z0-9_-]+|"
+    r"report-\d+(?:-metric-\d+)?|"
+    r"(?:comparison|consistency|recovery|fair-term|artifact)-\d+|"
     r"planning-failure|execution-failure|plan-rejected)"
     r"(?![A-Za-z0-9_-])"
 )
@@ -811,6 +843,13 @@ def _evidence_display_label(item: AnalysisEvidence) -> str:
     }.get(item.side, "")
 
     if item.source_kind == "report":
+        if item.metadata.get("role") == "report_metric":
+            metric_kind = (
+                "calculated metric"
+                if item.inference_level == "calculated"
+                else "metric"
+            )
+            return f"Evidence: {metric_kind} from {tool} report{turn}{field}"
         if item.inference_level == "calculated":
             return f"Evidence: {side or 'report'} comparison calculated from {tool} reports{turn}{field}"
         prefix = f"{side} " if side else ""
@@ -914,7 +953,7 @@ def _successful_recovery_evidence(
         recovery_evidence_by_step[attempt.step_index] = evidence_id
         succeeded = attempt.execution_status == "succeeded"
         statement = (
-            f"Step {attempt.step_index} retry attempt {attempt.attempt_index} "
+            f"Step {attempt.step_index} recovery attempt {attempt.attempt_index} "
             f"{'succeeded' if succeeded else 'failed'} using {attempt.action}."
         )
         evidence.append(
@@ -934,6 +973,10 @@ def _successful_recovery_evidence(
                     "trigger_category": attempt.trigger_category,
                     "action": attempt.action,
                     "execution_status": attempt.execution_status,
+                    "managed_input_repairs": [
+                        item.model_dump(mode="json")
+                        for item in attempt.managed_input_repairs
+                    ],
                 },
             )
         )
@@ -1016,7 +1059,16 @@ def _analyze_reports(
 ) -> AnalysisResult:
     report_artifacts = select_report_artifacts(artifacts)
     summaries = [summarize_report_artifact(artifact) for artifact in report_artifacts]
-    evidence, findings = build_report_evidence(summaries)
+    history = state.get("current_history_query")
+    comparison_requested = bool(
+        history is not None
+        and history.query is not None
+        and "compare" in history.query.operations
+    )
+    evidence, findings = build_report_evidence(
+        summaries,
+        enable_general_comparison=comparison_requested,
+    )
     recovery_evidence, recovery_findings = _successful_recovery_evidence(state)
     evidence.extend(recovery_evidence)
     findings.extend(recovery_findings)
@@ -1063,6 +1115,7 @@ def _analyze_reports(
             stage="analysis.scientific_narrative",
             schema=AnalysisNarrativeOutput,
             llm=_create_llm(state),
+            retrieval_context=_analysis_retrieval_context(summaries),
             messages=[
                 SystemMessage(content=SCIENTIFIC_RESULT_SYSTEM_PROMPT),
                 HumanMessage(content=context),

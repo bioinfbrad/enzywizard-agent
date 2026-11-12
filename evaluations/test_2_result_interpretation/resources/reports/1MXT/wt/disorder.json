@@ -1,0 +1,1472 @@
+{
+  "report_type": "enzywizard_disorder",
+  "disordered_region_statistics": {
+    "disordered_region_count": 14,
+    "max_disordered_region_length": 63,
+    "total_disordered_region_length": 348
+  },
+  "disordered_regions": [
+    {
+      "disordered_region_length": 63,
+      "residues": [
+        {
+          "residue_index": 114,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 115,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 116,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 117,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 118,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 119,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 120,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 121,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 122,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 123,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 124,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 125,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 126,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 127,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 128,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 129,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 130,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 131,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 132,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 133,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 134,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 135,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 136,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 137,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 138,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 139,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 140,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 141,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 142,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 143,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 144,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 145,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 146,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 147,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 148,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 149,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 150,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 151,
+          "residue_name": "H"
+        },
+        {
+          "residue_index": 152,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 153,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 154,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 155,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 156,
+          "residue_name": "W"
+        },
+        {
+          "residue_index": 157,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 158,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 159,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 160,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 161,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 162,
+          "residue_name": "W"
+        },
+        {
+          "residue_index": 163,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 164,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 165,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 166,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 167,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 168,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 169,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 170,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 171,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 172,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 173,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 174,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 175,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 176,
+          "residue_name": "A"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 46,
+      "residues": [
+        {
+          "residue_index": 289,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 290,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 291,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 292,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 293,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 294,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 295,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 296,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 297,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 298,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 299,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 300,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 301,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 302,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 303,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 304,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 305,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 306,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 307,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 308,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 309,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 310,
+          "residue_name": "W"
+        },
+        {
+          "residue_index": 311,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 312,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 313,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 314,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 315,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 316,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 317,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 318,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 319,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 320,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 321,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 322,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 323,
+          "residue_name": "H"
+        },
+        {
+          "residue_index": 324,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 325,
+          "residue_name": "W"
+        },
+        {
+          "residue_index": 326,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 327,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 328,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 329,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 330,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 331,
+          "residue_name": "H"
+        },
+        {
+          "residue_index": 332,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 333,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 334,
+          "residue_name": "S"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 41,
+      "residues": [
+        {
+          "residue_index": 235,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 236,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 237,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 238,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 239,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 240,
+          "residue_name": "H"
+        },
+        {
+          "residue_index": 241,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 242,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 243,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 244,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 245,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 246,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 247,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 248,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 249,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 250,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 251,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 252,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 253,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 254,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 255,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 256,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 257,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 258,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 259,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 260,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 261,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 262,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 263,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 264,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 265,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 266,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 267,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 268,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 269,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 270,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 271,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 272,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 273,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 274,
+          "residue_name": "C"
+        },
+        {
+          "residue_index": 275,
+          "residue_name": "R"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 33,
+      "residues": [
+        {
+          "residue_index": 371,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 372,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 373,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 374,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 375,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 376,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 377,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 378,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 379,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 380,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 381,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 382,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 383,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 384,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 385,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 386,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 387,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 388,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 389,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 390,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 391,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 392,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 393,
+          "residue_name": "W"
+        },
+        {
+          "residue_index": 394,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 395,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 396,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 397,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 398,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 399,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 400,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 401,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 402,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 403,
+          "residue_name": "N"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 24,
+      "residues": [
+        {
+          "residue_index": 77,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 78,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 79,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 80,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 81,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 82,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 83,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 84,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 85,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 86,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 87,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 88,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 89,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 90,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 91,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 92,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 93,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 94,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 95,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 96,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 97,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 98,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 99,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 100,
+          "residue_name": "V"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 22,
+      "residues": [
+        {
+          "residue_index": 47,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 48,
+          "residue_name": "C"
+        },
+        {
+          "residue_index": 49,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 50,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 51,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 52,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 53,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 54,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 55,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 56,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 57,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 58,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 59,
+          "residue_name": "W"
+        },
+        {
+          "residue_index": 60,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 61,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 62,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 63,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 64,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 65,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 66,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 67,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 68,
+          "residue_name": "L"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 20,
+      "residues": [
+        {
+          "residue_index": 408,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 409,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 410,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 411,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 412,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 413,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 414,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 415,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 416,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 417,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 418,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 419,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 420,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 421,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 422,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 423,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 424,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 425,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 426,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 427,
+          "residue_name": "T"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 20,
+      "residues": [
+        {
+          "residue_index": 447,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 448,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 449,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 450,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 451,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 452,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 453,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 454,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 455,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 456,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 457,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 458,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 459,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 460,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 461,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 462,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 463,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 464,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 465,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 466,
+          "residue_name": "D"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 15,
+      "residues": [
+        {
+          "residue_index": 209,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 210,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 211,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 212,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 213,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 214,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 215,
+          "residue_name": "H"
+        },
+        {
+          "residue_index": 216,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 217,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 218,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 219,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 220,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 221,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 222,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 223,
+          "residue_name": "T"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 14,
+      "residues": [
+        {
+          "residue_index": 32,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 33,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 34,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 35,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 36,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 37,
+          "residue_name": "W"
+        },
+        {
+          "residue_index": 38,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 39,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 40,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 41,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 42,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 43,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 44,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 45,
+          "residue_name": "N"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 14,
+      "residues": [
+        {
+          "residue_index": 187,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 188,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 189,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 190,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 191,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 192,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 193,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 194,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 195,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 196,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 197,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 198,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 199,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 200,
+          "residue_name": "V"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 14,
+      "residues": [
+        {
+          "residue_index": 486,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 487,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 488,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 489,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 490,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 491,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 492,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 493,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 494,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 495,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 496,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 497,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 498,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 499,
+          "residue_name": "T"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 12,
+      "residues": [
+        {
+          "residue_index": 340,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 341,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 342,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 343,
+          "residue_name": "W"
+        },
+        {
+          "residue_index": 344,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 345,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 346,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 347,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 348,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 349,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 350,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 351,
+          "residue_name": "F"
+        }
+      ]
+    },
+    {
+      "disordered_region_length": 10,
+      "residues": [
+        {
+          "residue_index": 430,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 431,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 432,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 433,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 434,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 435,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 436,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 437,
+          "residue_name": "C"
+        },
+        {
+          "residue_index": 438,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 439,
+          "residue_name": "H"
+        }
+      ]
+    }
+  ]
+}

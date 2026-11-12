@@ -52,6 +52,10 @@ Rules:
   explain_history and list_history_files.
 - Generic questions about files a tool normally produces are software_help;
   list_history_files is only for a completed run, result, or turn.
+- A question asking whether an explicitly absent report, result, or supplied evidence
+  is sufficient to support a scientific conclusion is a science_question about the
+  evidence boundary, not a request to run a new workflow. Use run_workflow only when
+  the user also explicitly asks to calculate, analyze, or generate new evidence.
 - Route a scientifically clear execution request as run_workflow even when a
   conditionally required input such as an MSA, mutant, or substrate may be absent.
   Planning determines the exact workflow first and asks for only the inputs that the
@@ -91,6 +95,9 @@ not commentary. Each action must contain exactly kind and target.
   fresh recomputation from current inputs uses recompute_workflow.
 - Generic application behavior is software_help; conceptual protein/enzyme science is
   science_question.
+- Questions about whether explicitly absent reports, results, or supplied evidence can
+  support a conclusion are science_question unless the user separately requests a new
+  calculation or analysis.
 - Do not replace a clear run_workflow action with clarify merely because a conditional
   scientific input may be missing; Planning performs the input check after resolving
   the requested analyses.

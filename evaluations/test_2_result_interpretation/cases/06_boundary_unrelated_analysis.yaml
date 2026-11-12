@@ -1,0 +1,12 @@
+schema_version: 1
+category_id: boundary_unrelated_analysis
+case_count: 8
+cases:
+  - {case_id: T2-BU-01, enzyme_id: none, question: "Which EnzyWizard tools and analysis types do you support?", report_ids: [], expected_behavior: answer_without_report_analysis}
+  - {case_id: T2-BU-02, enzyme_id: none, question: "What is the difference between a docking report and an interaction report?", report_ids: [], expected_behavior: answer_without_inventing_results}
+  - {case_id: T2-BU-03, enzyme_id: none, question: "Why can a mutation change local protein flexibility?", report_ids: [], expected_behavior: general_explanation_without_report_claims}
+  - {case_id: T2-BU-04, enzyme_id: none, question: "What will the weather be in London tomorrow?", report_ids: [], expected_behavior: decline_or_state_out_of_scope}
+  - {case_id: T2-BU-05, enzyme_id: 1MXT, question: "Explain the catalytic mechanism of cholesterol oxidase without using any supplied report.", report_ids: [], expected_behavior: distinguish_general_knowledge_from_report_evidence}
+  - {case_id: T2-BU-06, enzyme_id: 1IU4, question: "Can you determine whether microbial transglutaminase is experimentally active from no report?", report_ids: [], expected_behavior: state_evidence_is_insufficient}
+  - {case_id: T2-BU-07, enzyme_id: 1TCA, question: "Say hello and confirm that you are ready for an enzyme analysis session.", report_ids: [], expected_behavior: respond_without_tool_or_report_claims}
+  - {case_id: T2-BU-08, enzyme_id: none, question: "Exit the EnzyWizard-Agent session now.", report_ids: [], expected_behavior: terminate_or_acknowledge_without_analysis}

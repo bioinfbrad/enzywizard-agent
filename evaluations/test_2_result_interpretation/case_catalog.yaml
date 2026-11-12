@@ -1,0 +1,115 @@
+schema_version: 2
+test_id: test_2_result_interpretation
+title: Scientific result interpretation and evidence provenance
+
+automatic_evaluation:
+  factual_unit: Each predeclared report metric identified by report ID, metric name, side, field path, expected value, tolerance, and accepted aliases.
+  factual_support: The Agent must emit matching structured metric evidence whose source exists, field path matches, and value is within the fixed tolerance.
+  required_fact_policy: Each case receives three to six question-relevant key facts. Single-report cases select up to four prioritized facts, two-report cases select up to three per report, and three-report cases select up to two per report. Paired cases also include the recorded mutation identity.
+  evidence_attribution_policy: Precision validates each emitted gold-fact-to-evidence edge; recall validates evidence support for every required gold fact.
+  narrative_policy: Free-text integration quality and inference boundaries are evaluated only by the human IIS rubric.
+
+key_fact_metric_priority:
+  enzywizard_energy: [total_potential_energy, nonbonded_potential_energy, periodic_torsion_potential_energy]
+  enzywizard_flexibility: [residue_root_mean_square_fluctuation_mean, residue_root_mean_square_fluctuation_max, protein_flexibility_count]
+  enzywizard_disorder: [disordered_region_count, total_disordered_region_length, max_disordered_region_length]
+  enzywizard_aaprops: [amino_acid_residue_properties_count, residue_relative_solvent_accessibility_mean, residue_backbone_phi_angle_mean, residue_backbone_psi_angle_mean]
+  enzywizard_hydrocluster: [hydrophobic_cluster_count, max_hydrophobic_cluster_area, total_hydrophobic_cluster_area]
+  enzywizard_pocket: [binding_pocket_count, max_binding_pocket_volume, total_binding_pocket_volume]
+  enzywizard_conservation: [sequence_conservation_scores_count, hmm_profile_raw_score_mean, normalized_emission_probability_mean, normalized_shannon_information_content_mean]
+  enzywizard_embedding: [sequence_embeddings_count, embedding_dimension]
+  enzywizard_substrate: [substrates_count, substrate_molecular_weight_mean, substrate_logp_mean, substrate_tpsa_mean]
+  enzywizard_dock: [enzyme_substrate_binding_affinity, enzyme_substrate_complex_name, docked_substrate_names]
+  enzywizard_interaction: [molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count, molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count, van_der_waals_contact_count]
+
+report_side_policy:
+  paired_case: Assign references containing _wt_ to wt, references containing _mut_ to mut, and mut_clean reports to shared.
+  single_case: Assign a sole WT report to single and a sole mutant report to mut.
+  mixed_single_case: Assign WT-only multi-report inputs to single.
+
+categories:
+  single_report_interpretation: {case_count: 12, enzyme_balanced: true}
+  multi_report_integration: {case_count: 12, enzyme_balanced: true}
+  multi_report_comparison: {case_count: 12, enzyme_balanced: true}
+  multi_turn_follow_up_revision: {case_count: 12, enzyme_balanced: true}
+  report_evidence_localization: {case_count: 12, enzyme_balanced: true}
+  boundary_unrelated_analysis: {case_count: 8, enzyme_balanced: false}
+
+enzymes:
+  1MXT:
+    name: Streptomyces cholesterol oxidase
+    mutation: T244M
+    substrate: Cholesterol
+  1IU4:
+    name: Streptomyces mobaraensis microbial transglutaminase
+    mutation: S72N
+    substrate: Z-Gln-Gly
+  1TCA:
+    name: Moesziomyces antarcticus lipase B (CALB)
+    mutation: G107A
+    substrate: 4-nitrophenyl butyrate
+
+# A report reference is immutable benchmark evidence. Cases assign its semantic side
+# (single, wt, mut, or shared) and conversational turn when constructing artifacts.
+reports:
+  1mxt_wt_energy: {path: resources/reports/1MXT/wt/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1mxt_wt_flexibility: {path: resources/reports/1MXT/wt/flexibility.json, artifact_type: flexibility_report_json, source_tool: enzywizard-flexibility, report_type: enzywizard_flexibility}
+  1mxt_wt_disorder: {path: resources/reports/1MXT/wt/disorder.json, artifact_type: disorder_report_json, source_tool: enzywizard-disorder, report_type: enzywizard_disorder}
+  1mxt_wt_aaprops: {path: resources/reports/1MXT/wt/aaprops.json, artifact_type: aaprops_report_json, source_tool: enzywizard-aaprops, report_type: enzywizard_aaprops}
+  1mxt_wt_hydrocluster: {path: resources/reports/1MXT/wt/hydrocluster.json, artifact_type: hydrocluster_report_json, source_tool: enzywizard-hydrocluster, report_type: enzywizard_hydrocluster}
+  1mxt_wt_pocket: {path: resources/reports/1MXT/wt/pocket.json, artifact_type: pocket_report_json, source_tool: enzywizard-pocket, report_type: enzywizard_pocket}
+  1mxt_wt_conservation: {path: resources/reports/1MXT/wt/conservation.json, artifact_type: conservation_report_json, source_tool: enzywizard-conservation, report_type: enzywizard_conservation}
+  1mxt_wt_embedding: {path: resources/reports/1MXT/wt/embedding.json, artifact_type: embedding_report_json, source_tool: enzywizard-embedding, report_type: enzywizard_embedding}
+  1mxt_wt_substrate: {path: resources/reports/1MXT/wt/substrate.json, artifact_type: substrate_report_json, source_tool: enzywizard-substrate, report_type: enzywizard_substrate}
+  1mxt_wt_dock: {path: resources/reports/1MXT/wt/dock.json, artifact_type: dock_report_json, source_tool: enzywizard-dock, report_type: enzywizard_dock}
+  1mxt_wt_interaction: {path: resources/reports/1MXT/wt/interaction.json, artifact_type: interaction_report_json, source_tool: enzywizard-interaction, report_type: enzywizard_interaction}
+  1mxt_mut_clean: {path: resources/reports/1MXT/mut/mut_clean.json, artifact_type: mut_clean_report_json, source_tool: enzywizard-mut-clean, report_type: enzywizard_mut_clean}
+  1mxt_mut_energy: {path: resources/reports/1MXT/mut/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1mxt_mut_flexibility: {path: resources/reports/1MXT/mut/flexibility.json, artifact_type: flexibility_report_json, source_tool: enzywizard-flexibility, report_type: enzywizard_flexibility}
+  1mxt_mut_disorder: {path: resources/reports/1MXT/mut/disorder.json, artifact_type: disorder_report_json, source_tool: enzywizard-disorder, report_type: enzywizard_disorder}
+
+  1iu4_wt_energy: {path: resources/reports/1IU4/wt/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1iu4_wt_flexibility: {path: resources/reports/1IU4/wt/flexibility.json, artifact_type: flexibility_report_json, source_tool: enzywizard-flexibility, report_type: enzywizard_flexibility}
+  1iu4_wt_disorder: {path: resources/reports/1IU4/wt/disorder.json, artifact_type: disorder_report_json, source_tool: enzywizard-disorder, report_type: enzywizard_disorder}
+  1iu4_wt_aaprops: {path: resources/reports/1IU4/wt/aaprops.json, artifact_type: aaprops_report_json, source_tool: enzywizard-aaprops, report_type: enzywizard_aaprops}
+  1iu4_wt_hydrocluster: {path: resources/reports/1IU4/wt/hydrocluster.json, artifact_type: hydrocluster_report_json, source_tool: enzywizard-hydrocluster, report_type: enzywizard_hydrocluster}
+  1iu4_wt_pocket: {path: resources/reports/1IU4/wt/pocket.json, artifact_type: pocket_report_json, source_tool: enzywizard-pocket, report_type: enzywizard_pocket}
+  1iu4_wt_conservation: {path: resources/reports/1IU4/wt/conservation.json, artifact_type: conservation_report_json, source_tool: enzywizard-conservation, report_type: enzywizard_conservation}
+  1iu4_wt_embedding: {path: resources/reports/1IU4/wt/embedding.json, artifact_type: embedding_report_json, source_tool: enzywizard-embedding, report_type: enzywizard_embedding}
+  1iu4_wt_substrate: {path: resources/reports/1IU4/wt/substrate.json, artifact_type: substrate_report_json, source_tool: enzywizard-substrate, report_type: enzywizard_substrate}
+  1iu4_wt_dock: {path: resources/reports/1IU4/wt/dock.json, artifact_type: dock_report_json, source_tool: enzywizard-dock, report_type: enzywizard_dock}
+  1iu4_wt_interaction: {path: resources/reports/1IU4/wt/interaction.json, artifact_type: interaction_report_json, source_tool: enzywizard-interaction, report_type: enzywizard_interaction}
+  1iu4_mut_clean: {path: resources/reports/1IU4/mut/mut_clean.json, artifact_type: mut_clean_report_json, source_tool: enzywizard-mut-clean, report_type: enzywizard_mut_clean}
+  1iu4_mut_conservation: {path: resources/reports/1IU4/mut/conservation.json, artifact_type: conservation_report_json, source_tool: enzywizard-conservation, report_type: enzywizard_conservation}
+  1iu4_mut_embedding: {path: resources/reports/1IU4/mut/embedding.json, artifact_type: embedding_report_json, source_tool: enzywizard-embedding, report_type: enzywizard_embedding}
+
+  1tca_wt_energy: {path: resources/reports/1TCA/wt/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1tca_wt_flexibility: {path: resources/reports/1TCA/wt/flexibility.json, artifact_type: flexibility_report_json, source_tool: enzywizard-flexibility, report_type: enzywizard_flexibility}
+  1tca_wt_disorder: {path: resources/reports/1TCA/wt/disorder.json, artifact_type: disorder_report_json, source_tool: enzywizard-disorder, report_type: enzywizard_disorder}
+  1tca_wt_aaprops: {path: resources/reports/1TCA/wt/aaprops.json, artifact_type: aaprops_report_json, source_tool: enzywizard-aaprops, report_type: enzywizard_aaprops}
+  1tca_wt_hydrocluster: {path: resources/reports/1TCA/wt/hydrocluster.json, artifact_type: hydrocluster_report_json, source_tool: enzywizard-hydrocluster, report_type: enzywizard_hydrocluster}
+  1tca_wt_pocket: {path: resources/reports/1TCA/wt/pocket.json, artifact_type: pocket_report_json, source_tool: enzywizard-pocket, report_type: enzywizard_pocket}
+  1tca_wt_conservation: {path: resources/reports/1TCA/wt/conservation.json, artifact_type: conservation_report_json, source_tool: enzywizard-conservation, report_type: enzywizard_conservation}
+  1tca_wt_embedding: {path: resources/reports/1TCA/wt/embedding.json, artifact_type: embedding_report_json, source_tool: enzywizard-embedding, report_type: enzywizard_embedding}
+  1tca_wt_substrate: {path: resources/reports/1TCA/wt/substrate.json, artifact_type: substrate_report_json, source_tool: enzywizard-substrate, report_type: enzywizard_substrate}
+  1tca_wt_dock: {path: resources/reports/1TCA/wt/dock.json, artifact_type: dock_report_json, source_tool: enzywizard-dock, report_type: enzywizard_dock}
+  1tca_wt_interaction: {path: resources/reports/1TCA/wt/interaction.json, artifact_type: interaction_report_json, source_tool: enzywizard-interaction, report_type: enzywizard_interaction}
+  1tca_mut_clean: {path: resources/reports/1TCA/mut/mut_clean.json, artifact_type: mut_clean_report_json, source_tool: enzywizard-mut-clean, report_type: enzywizard_mut_clean}
+  1tca_mut_energy: {path: resources/reports/1TCA/mut/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1tca_mut_pocket: {path: resources/reports/1TCA/mut/pocket.json, artifact_type: pocket_report_json, source_tool: enzywizard-pocket, report_type: enzywizard_pocket}
+  1tca_mut_dock: {path: resources/reports/1TCA/mut/dock.json, artifact_type: dock_report_json, source_tool: enzywizard-dock, report_type: enzywizard_dock}
+  1tca_mut_interaction: {path: resources/reports/1TCA/mut/interaction.json, artifact_type: interaction_report_json, source_tool: enzywizard-interaction, report_type: enzywizard_interaction}
+
+evidence_path_roots:
+  enzywizard_energy: [$.energy_terms]
+  enzywizard_flexibility: [$.protein_flexibility]
+  enzywizard_disorder: [$.disordered_region_statistics, $.disordered_regions]
+  enzywizard_aaprops: [$.residue_properties_statistics, $.amino_acid_residue_properties]
+  enzywizard_hydrocluster: [$.hydrophobic_cluster_statistics, $.hydrophobic_clusters]
+  enzywizard_pocket: [$.binding_pocket_statistics, $.binding_pockets]
+  enzywizard_conservation: [$.sequence_conservation_scores]
+  enzywizard_embedding: [$.sequence_embeddings]
+  enzywizard_substrate: [$.substrates]
+  enzywizard_dock: [$.enzyme_substrate_docking_result]
+  enzywizard_interaction: [$.molecular_interaction_statistics, $.molecular_interactions]
+  enzywizard_mut_clean: [$.amino_acid_substitution, $.cleaned_amino_acid_substitution]

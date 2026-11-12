@@ -1,0 +1,27 @@
+schema_version: 1
+test_id: test_3_failure_recovery
+title: Failure diagnosis, safe handling, recovery provenance, and automatic adjustment
+metric_names: [EDA, EHA, EHPCR, AARSR]
+automatic_recovery_categories:
+  - plan_structure_assembly
+  - artifact_reference
+  - input_staging_workspace
+  - current_step_output_workspace
+metric_contract:
+  EDA:
+    name: Error Diagnosis Accuracy
+    applicability: all_cases
+    aggregation: case_binary_macro_average
+  EHA:
+    name: Error Handling Accuracy
+    applicability: all_cases
+    aggregation: case_binary_macro_average
+  EHPCR:
+    name: Error Handling Provenance Completeness Rate
+    applicability: all_cases
+    aggregation: case_fraction_macro_average
+  AARSR:
+    name: Automatic Adjustment and Recovery Success Rate
+    applicability: automatic_recovery_cases_only
+    aggregation: case_binary_macro_average
+

@@ -291,6 +291,12 @@ def _render_fair_context(matches: Sequence[KnowledgeMatch]) -> str:
         "Local FAIR terminology (reference only):",
         "Use these definitions only to interpret concepts already present in the "
         "request or current context. Do not infer additional requested actions.",
+        "For every definition that directly corresponds to a reported concept in "
+        "the requested answer, briefly state the concept's scientific meaning and "
+        "principal inference boundary. Do not repeat labels without interpretation, "
+        "and ignore definitions that are irrelevant to the current reports. Before "
+        "returning, silently check that the relevant meanings or boundaries are "
+        "represented in the answer.",
     ]
     for match in matches:
         term = str(match.entry.get("term", "")).strip()

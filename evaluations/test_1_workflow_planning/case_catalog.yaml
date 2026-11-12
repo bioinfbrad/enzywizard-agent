@@ -1,0 +1,391 @@
+schema_version: 2
+test_id: test_1_workflow_planning
+title: Scientific goal translation and dynamic workflow construction
+
+metrics:
+  workflow: [TSA, PCVR, WOVR, RAC, E2E-SR, PPCR]
+  boundary: [TSA]
+
+scoring_contract:
+  tsa: Compare the actual tool-call multiset with expected_calls, including side.
+  pcvr: Validate required arguments and case-level parameter expectations for each expected call.
+  wovr: Require every applicable partial-order constraint in order_constraints.
+  rac: Resolve required_artifact_groups from this catalog; never derive expected artifacts from the generated plan.
+  revision_cases: Score TSA, PCVR, and WOVR on both plans; score RAC and E2E-SR on the final executed plan.
+  boundary_cases: Expect an empty tool-call multiset; all metrics except TSA are not applicable.
+
+provenance_profiles:
+  standard_workflow:
+    - request_to_plan_link
+    - tool_selection_reason
+    - parameter_value_and_source
+    - order_and_dependency_record
+    - final_validation_and_approval
+  historical_artifact_workflow:
+    - request_to_plan_link
+    - tool_selection_reason
+    - parameter_value_and_source
+    - order_and_dependency_record
+    - historical_reuse_origin
+    - final_validation_and_approval
+  historical_plan_workflow:
+    - request_to_plan_link
+    - tool_selection_reason
+    - parameter_value_and_source
+    - order_and_dependency_record
+    - historical_reuse_origin
+    - final_validation_and_approval
+  historical_artifact_plan_workflow:
+    - request_to_plan_link
+    - tool_selection_reason
+    - parameter_value_and_source
+    - order_and_dependency_record
+    - historical_reuse_origin
+    - final_validation_and_approval
+  revised_workflow:
+    - request_to_plan_link
+    - tool_selection_reason
+    - parameter_value_and_source
+    - order_and_dependency_record
+    - plan_revision_trace
+    - final_validation_and_approval
+
+input_profiles:
+  1mxt_single: &1mxt_single
+    structure_file: resources/enzymes/1MXT/single/structure.cif
+  1mxt_single_msa:
+    <<: *1mxt_single
+    msa_file: resources/enzymes/1MXT/single/alignment.sto
+  1mxt_ligand:
+    <<: *1mxt_single
+    substrate_name: Cholesterol
+  1mxt_pair: &1mxt_pair
+    structure_file: resources/enzymes/1MXT/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1MXT/paired/mutant_structure.cif
+    amino_acid_substitution: T244M
+  1mxt_pair_msa:
+    <<: *1mxt_pair
+    msa_file: resources/enzymes/1MXT/paired/wt_alignment.sto
+    mut_msa_file: resources/enzymes/1MXT/paired/mutant_alignment.sto
+  1mxt_pair_ligand:
+    <<: *1mxt_pair
+    substrate_name: Cholesterol
+
+  1iu4_single: &1iu4_single
+    structure_file: resources/enzymes/1IU4/single/structure.cif
+  1iu4_single_msa:
+    <<: *1iu4_single
+    msa_file: resources/enzymes/1IU4/single/alignment.sto
+  1iu4_ligand:
+    <<: *1iu4_single
+    substrate_name: Z-Gln-Gly
+  1iu4_pair: &1iu4_pair
+    structure_file: resources/enzymes/1IU4/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1IU4/paired/mutant_structure.cif
+    amino_acid_substitution: S72N
+  1iu4_pair_msa:
+    <<: *1iu4_pair
+    msa_file: resources/enzymes/1IU4/paired/wt_alignment.sto
+    mut_msa_file: resources/enzymes/1IU4/paired/mutant_alignment.sto
+  1iu4_pair_ligand:
+    <<: *1iu4_pair
+    substrate_name: Z-Gln-Gly
+
+  1tca_single: &1tca_single
+    structure_file: resources/enzymes/1TCA/single/structure.cif
+  1tca_single_msa:
+    <<: *1tca_single
+    msa_file: resources/enzymes/1TCA/single/alignment.sto
+  1tca_ligand:
+    <<: *1tca_single
+    substrate_name: 4-nitrophenyl butyrate
+  1tca_full:
+    <<: *1tca_single
+    msa_file: resources/enzymes/1TCA/single/alignment.sto
+    substrate_name: 4-nitrophenyl butyrate
+  1tca_pair: &1tca_pair
+    structure_file: resources/enzymes/1TCA/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1TCA/paired/mutant_structure.cif
+    amino_acid_substitution: G107A
+  1tca_pair_msa:
+    <<: *1tca_pair
+    msa_file: resources/enzymes/1TCA/paired/wt_alignment.sto
+    mut_msa_file: resources/enzymes/1TCA/paired/mutant_alignment.sto
+  1tca_pair_ligand:
+    <<: *1tca_pair
+    substrate_name: 4-nitrophenyl butyrate
+  1tca_pair_full:
+    <<: *1tca_pair
+    msa_file: resources/enzymes/1TCA/paired/wt_alignment.sto
+    mut_msa_file: resources/enzymes/1TCA/paired/mutant_alignment.sto
+    substrate_name: 4-nitrophenyl butyrate
+
+# RAC covers every required non-log output declared by the corresponding tool.
+# Counts refer to required logical artifacts, not the number of conformer files
+# inside a logical substrate_sdf artifact set. Runtime logs are evaluated as
+# process provenance rather than scientific result artifacts.
+artifact_groups:
+  single_clean:
+    - {artifact_type: cleaned_structure_cif, side: single, count: 1}
+    - {artifact_type: cleaned_structure_pdb, side: single, count: 1}
+    - {artifact_type: cleaned_sequence_fasta, side: single, count: 1}
+    - {artifact_type: clean_report_json, side: single, count: 1}
+  paired_clean:
+    - {artifact_type: wt_cleaned_structure_cif, side: wt, count: 1}
+    - {artifact_type: wt_cleaned_structure_pdb, side: wt, count: 1}
+    - {artifact_type: wt_cleaned_sequence_fasta, side: wt, count: 1}
+    - {artifact_type: mut_cleaned_structure_cif, side: mut, count: 1}
+    - {artifact_type: mut_cleaned_structure_pdb, side: mut, count: 1}
+    - {artifact_type: mut_cleaned_sequence_fasta, side: mut, count: 1}
+    - {artifact_type: mut_clean_report_json, side: shared, count: 1}
+  single_integrate:
+    - {artifact_type: integrate_report_json, side: single, count: 1}
+    - {artifact_type: integrate_nodes_json, side: single, count: 1}
+    - {artifact_type: integrate_edges_json, side: single, count: 1}
+  paired_integrate:
+    - {artifact_type: mut_integrate_report_json, side: shared, count: 1}
+    - {artifact_type: wt_integrate_nodes_json, side: wt, count: 1}
+    - {artifact_type: wt_integrate_edges_json, side: wt, count: 1}
+    - {artifact_type: mut_integrate_nodes_json, side: mut, count: 1}
+    - {artifact_type: mut_integrate_edges_json, side: mut, count: 1}
+  batch_single:
+    - {artifact_type: integrate_report_json, side: single, count: 1}
+    - {artifact_type: integrate_nodes_json, side: single, count: 1}
+    - {artifact_type: integrate_edges_json, side: single, count: 1}
+  batch_pair:
+    - {artifact_type: mut_integrate_report_json, side: shared, count: 1}
+    - {artifact_type: wt_integrate_nodes_json, side: wt, count: 1}
+    - {artifact_type: wt_integrate_edges_json, side: wt, count: 1}
+    - {artifact_type: mut_integrate_nodes_json, side: mut, count: 1}
+    - {artifact_type: mut_integrate_edges_json, side: mut, count: 1}
+  energy_single: [{artifact_type: energy_report_json, side: single, count: 1}]
+  energy_pair:
+    - {artifact_type: energy_report_json, side: wt, count: 1}
+    - {artifact_type: energy_report_json, side: mut, count: 1}
+  flexibility_single: [{artifact_type: flexibility_report_json, side: single, count: 1}]
+  flexibility_pair:
+    - {artifact_type: flexibility_report_json, side: wt, count: 1}
+    - {artifact_type: flexibility_report_json, side: mut, count: 1}
+  disorder_single: [{artifact_type: disorder_report_json, side: single, count: 1}]
+  disorder_pair:
+    - {artifact_type: disorder_report_json, side: wt, count: 1}
+    - {artifact_type: disorder_report_json, side: mut, count: 1}
+  pocket_single: [{artifact_type: pocket_report_json, side: single, count: 1}]
+  pocket_pair:
+    - {artifact_type: pocket_report_json, side: wt, count: 1}
+    - {artifact_type: pocket_report_json, side: mut, count: 1}
+  conservation_single:
+    - {artifact_type: cleaned_msa_sto, side: single, count: 1}
+    - {artifact_type: hmm_profile, side: single, count: 1}
+    - {artifact_type: conservation_report_json, side: single, count: 1}
+  conservation_pair:
+    - {artifact_type: cleaned_msa_sto, side: wt, count: 1}
+    - {artifact_type: hmm_profile, side: wt, count: 1}
+    - {artifact_type: conservation_report_json, side: wt, count: 1}
+    - {artifact_type: cleaned_msa_sto, side: mut, count: 1}
+    - {artifact_type: hmm_profile, side: mut, count: 1}
+    - {artifact_type: conservation_report_json, side: mut, count: 1}
+  embedding_single: [{artifact_type: embedding_report_json, side: single, count: 1}]
+  embedding_pair:
+    - {artifact_type: embedding_report_json, side: wt, count: 1}
+    - {artifact_type: embedding_report_json, side: mut, count: 1}
+  aaprops_single: [{artifact_type: aaprops_report_json, side: single, count: 1}]
+  hydrocluster_single: [{artifact_type: hydrocluster_report_json, side: single, count: 1}]
+  substrate_single:
+    - {artifact_type: substrate_report_json, side: single, count: 1}
+    - {artifact_type: substrate_sdf, side: single, count: 1}
+  substrate_shared:
+    - {artifact_type: substrate_report_json, side: shared, count: 1}
+    - {artifact_type: substrate_sdf, side: shared, count: 1}
+  dock_single:
+    - {artifact_type: dock_report_json, side: single, count: 1}
+    - {artifact_type: docked_substrate_sdf, side: single, count: 1}
+    - {artifact_type: docked_complex_structure, side: single, count: 1}
+  dock_pair:
+    - {artifact_type: dock_report_json, side: wt, count: 1}
+    - {artifact_type: docked_substrate_sdf, side: wt, count: 1}
+    - {artifact_type: docked_complex_structure, side: wt, count: 1}
+    - {artifact_type: dock_report_json, side: mut, count: 1}
+    - {artifact_type: docked_substrate_sdf, side: mut, count: 1}
+    - {artifact_type: docked_complex_structure, side: mut, count: 1}
+  interaction_single: [{artifact_type: interaction_report_json, side: single, count: 1}]
+  interaction_pair:
+    - {artifact_type: interaction_report_json, side: wt, count: 1}
+    - {artifact_type: interaction_report_json, side: mut, count: 1}
+
+plan_profiles:
+  clean:
+    expected_calls: [{tool: enzywizard-clean, side: single}]
+    order_constraints: []
+    required_artifact_groups: [single_clean]
+  mut_clean:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}]
+    order_constraints: []
+    required_artifact_groups: [paired_clean]
+  full_single:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-batch, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-batch:single]]
+    required_artifact_groups: [single_clean, batch_single]
+  full_pair:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-mut-batch, side: shared}]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-mut-batch:shared]]
+    required_artifact_groups: [paired_clean, batch_pair]
+
+  energy:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-energy, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-energy:single], [enzywizard-energy:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, energy_single, single_integrate]
+  flexibility:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-flexibility, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-flexibility:single], [enzywizard-flexibility:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, flexibility_single, single_integrate]
+  disorder:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-disorder, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-disorder:single], [enzywizard-disorder:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, disorder_single, single_integrate]
+  pocket:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-pocket, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-pocket:single], [enzywizard-pocket:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, pocket_single, single_integrate]
+  conservation:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-conservation, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-conservation:single], [enzywizard-conservation:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, conservation_single, single_integrate]
+  embedding:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-embedding, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-embedding:single], [enzywizard-embedding:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, embedding_single, single_integrate]
+  aaprops:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-aaprops, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-aaprops:single], [enzywizard-aaprops:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, aaprops_single, single_integrate]
+  hydrocluster:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-hydrocluster, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-hydrocluster:single], [enzywizard-hydrocluster:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, hydrocluster_single, single_integrate]
+  internal_interaction:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-interaction, side: single}, {tool: enzywizard-integrate, side: single}]
+    forbidden_tools: [enzywizard-substrate, enzywizard-dock]
+    order_constraints: [[enzywizard-clean:single, enzywizard-interaction:single], [enzywizard-interaction:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, interaction_single, single_integrate]
+
+  energy_flexibility:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-energy, side: single}, {tool: enzywizard-flexibility, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-energy:single], [enzywizard-clean:single, enzywizard-flexibility:single], [enzywizard-energy:single, enzywizard-integrate:single], [enzywizard-flexibility:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, energy_single, flexibility_single, single_integrate]
+  energy_pocket:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-energy, side: single}, {tool: enzywizard-pocket, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-energy:single], [enzywizard-clean:single, enzywizard-pocket:single], [enzywizard-energy:single, enzywizard-integrate:single], [enzywizard-pocket:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, energy_single, pocket_single, single_integrate]
+  dynamics:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-energy, side: single}, {tool: enzywizard-flexibility, side: single}, {tool: enzywizard-disorder, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-energy:single], [enzywizard-clean:single, enzywizard-flexibility:single], [enzywizard-clean:single, enzywizard-disorder:single], [enzywizard-energy:single, enzywizard-integrate:single], [enzywizard-flexibility:single, enzywizard-integrate:single], [enzywizard-disorder:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, energy_single, flexibility_single, disorder_single, single_integrate]
+  dynamics_pocket:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-energy, side: single}, {tool: enzywizard-flexibility, side: single}, {tool: enzywizard-disorder, side: single}, {tool: enzywizard-pocket, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-energy:single], [enzywizard-clean:single, enzywizard-flexibility:single], [enzywizard-clean:single, enzywizard-disorder:single], [enzywizard-clean:single, enzywizard-pocket:single], [enzywizard-energy:single, enzywizard-integrate:single], [enzywizard-flexibility:single, enzywizard-integrate:single], [enzywizard-disorder:single, enzywizard-integrate:single], [enzywizard-pocket:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, energy_single, flexibility_single, disorder_single, pocket_single, single_integrate]
+  structure_profile:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-aaprops, side: single}, {tool: enzywizard-hydrocluster, side: single}, {tool: enzywizard-pocket, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-aaprops:single], [enzywizard-clean:single, enzywizard-hydrocluster:single], [enzywizard-clean:single, enzywizard-pocket:single], [enzywizard-aaprops:single, enzywizard-integrate:single], [enzywizard-hydrocluster:single, enzywizard-integrate:single], [enzywizard-pocket:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, aaprops_single, hydrocluster_single, pocket_single, single_integrate]
+  sequence_profile:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-conservation, side: single}, {tool: enzywizard-embedding, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-conservation:single], [enzywizard-clean:single, enzywizard-embedding:single], [enzywizard-conservation:single, enzywizard-integrate:single], [enzywizard-embedding:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, conservation_single, embedding_single, single_integrate]
+  energy_conservation:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-energy, side: single}, {tool: enzywizard-conservation, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-energy:single], [enzywizard-clean:single, enzywizard-conservation:single], [enzywizard-energy:single, enzywizard-integrate:single], [enzywizard-conservation:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, energy_single, conservation_single, single_integrate]
+  structure_dynamics:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-energy, side: single}, {tool: enzywizard-flexibility, side: single}, {tool: enzywizard-aaprops, side: single}, {tool: enzywizard-hydrocluster, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-energy:single], [enzywizard-clean:single, enzywizard-flexibility:single], [enzywizard-clean:single, enzywizard-aaprops:single], [enzywizard-clean:single, enzywizard-hydrocluster:single], [enzywizard-energy:single, enzywizard-integrate:single], [enzywizard-flexibility:single, enzywizard-integrate:single], [enzywizard-aaprops:single, enzywizard-integrate:single], [enzywizard-hydrocluster:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, energy_single, flexibility_single, aaprops_single, hydrocluster_single, single_integrate]
+  internal_pocket:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-pocket, side: single}, {tool: enzywizard-interaction, side: single}, {tool: enzywizard-integrate, side: single}]
+    forbidden_tools: [enzywizard-substrate, enzywizard-dock]
+    order_constraints: [[enzywizard-clean:single, enzywizard-pocket:single], [enzywizard-clean:single, enzywizard-interaction:single], [enzywizard-pocket:single, enzywizard-integrate:single], [enzywizard-interaction:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, pocket_single, interaction_single, single_integrate]
+  flex_disorder:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-flexibility, side: single}, {tool: enzywizard-disorder, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-flexibility:single], [enzywizard-clean:single, enzywizard-disorder:single], [enzywizard-flexibility:single, enzywizard-integrate:single], [enzywizard-disorder:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, flexibility_single, disorder_single, single_integrate]
+
+  dock:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-substrate, side: single}, {tool: enzywizard-dock, side: single}, {tool: enzywizard-integrate, side: single}]
+    forbidden_tools: [enzywizard-interaction]
+    order_constraints: [[enzywizard-clean:single, enzywizard-dock:single], [enzywizard-substrate:single, enzywizard-dock:single], [enzywizard-dock:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, substrate_single, dock_single, single_integrate]
+  dock_interaction:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-substrate, side: single}, {tool: enzywizard-dock, side: single}, {tool: enzywizard-interaction, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-dock:single], [enzywizard-substrate:single, enzywizard-dock:single], [enzywizard-dock:single, enzywizard-interaction:single], [enzywizard-dock:single, enzywizard-integrate:single], [enzywizard-interaction:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, substrate_single, dock_single, interaction_single, single_integrate]
+  dock_energy:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-energy, side: single}, {tool: enzywizard-substrate, side: single}, {tool: enzywizard-dock, side: single}, {tool: enzywizard-integrate, side: single}]
+    forbidden_tools: [enzywizard-interaction]
+    order_constraints: [[enzywizard-clean:single, enzywizard-energy:single], [enzywizard-clean:single, enzywizard-dock:single], [enzywizard-substrate:single, enzywizard-dock:single], [enzywizard-energy:single, enzywizard-integrate:single], [enzywizard-dock:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, energy_single, substrate_single, dock_single, single_integrate]
+  dock_pocket_interaction:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-pocket, side: single}, {tool: enzywizard-substrate, side: single}, {tool: enzywizard-dock, side: single}, {tool: enzywizard-interaction, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-pocket:single], [enzywizard-clean:single, enzywizard-dock:single], [enzywizard-substrate:single, enzywizard-dock:single], [enzywizard-dock:single, enzywizard-interaction:single], [enzywizard-pocket:single, enzywizard-integrate:single], [enzywizard-dock:single, enzywizard-integrate:single], [enzywizard-interaction:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, pocket_single, substrate_single, dock_single, interaction_single, single_integrate]
+
+  mut_energy:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-energy, side: wt}, {tool: enzywizard-energy, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-energy:wt], [enzywizard-mut-clean:shared, enzywizard-energy:mut], [enzywizard-energy:wt, enzywizard-mut-integrate:shared], [enzywizard-energy:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, energy_pair, paired_integrate]
+  mut_energy_pocket:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-energy, side: wt}, {tool: enzywizard-energy, side: mut}, {tool: enzywizard-pocket, side: wt}, {tool: enzywizard-pocket, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-energy:wt], [enzywizard-mut-clean:shared, enzywizard-energy:mut], [enzywizard-mut-clean:shared, enzywizard-pocket:wt], [enzywizard-mut-clean:shared, enzywizard-pocket:mut], [enzywizard-energy:wt, enzywizard-mut-integrate:shared], [enzywizard-energy:mut, enzywizard-mut-integrate:shared], [enzywizard-pocket:wt, enzywizard-mut-integrate:shared], [enzywizard-pocket:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, energy_pair, pocket_pair, paired_integrate]
+  mut_dynamics:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-energy, side: wt}, {tool: enzywizard-energy, side: mut}, {tool: enzywizard-flexibility, side: wt}, {tool: enzywizard-flexibility, side: mut}, {tool: enzywizard-disorder, side: wt}, {tool: enzywizard-disorder, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-energy:wt], [enzywizard-mut-clean:shared, enzywizard-energy:mut], [enzywizard-mut-clean:shared, enzywizard-flexibility:wt], [enzywizard-mut-clean:shared, enzywizard-flexibility:mut], [enzywizard-mut-clean:shared, enzywizard-disorder:wt], [enzywizard-mut-clean:shared, enzywizard-disorder:mut], [enzywizard-energy:wt, enzywizard-mut-integrate:shared], [enzywizard-energy:mut, enzywizard-mut-integrate:shared], [enzywizard-flexibility:wt, enzywizard-mut-integrate:shared], [enzywizard-flexibility:mut, enzywizard-mut-integrate:shared], [enzywizard-disorder:wt, enzywizard-mut-integrate:shared], [enzywizard-disorder:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, energy_pair, flexibility_pair, disorder_pair, paired_integrate]
+  mut_energy_flexibility:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-energy, side: wt}, {tool: enzywizard-energy, side: mut}, {tool: enzywizard-flexibility, side: wt}, {tool: enzywizard-flexibility, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-energy:wt], [enzywizard-mut-clean:shared, enzywizard-energy:mut], [enzywizard-mut-clean:shared, enzywizard-flexibility:wt], [enzywizard-mut-clean:shared, enzywizard-flexibility:mut], [enzywizard-energy:wt, enzywizard-mut-integrate:shared], [enzywizard-energy:mut, enzywizard-mut-integrate:shared], [enzywizard-flexibility:wt, enzywizard-mut-integrate:shared], [enzywizard-flexibility:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, energy_pair, flexibility_pair, paired_integrate]
+  mut_energy_disorder:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-energy, side: wt}, {tool: enzywizard-energy, side: mut}, {tool: enzywizard-disorder, side: wt}, {tool: enzywizard-disorder, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-energy:wt], [enzywizard-mut-clean:shared, enzywizard-energy:mut], [enzywizard-mut-clean:shared, enzywizard-disorder:wt], [enzywizard-mut-clean:shared, enzywizard-disorder:mut], [enzywizard-energy:wt, enzywizard-mut-integrate:shared], [enzywizard-energy:mut, enzywizard-mut-integrate:shared], [enzywizard-disorder:wt, enzywizard-mut-integrate:shared], [enzywizard-disorder:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, energy_pair, disorder_pair, paired_integrate]
+  mut_sequence:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-conservation, side: wt}, {tool: enzywizard-conservation, side: mut}, {tool: enzywizard-embedding, side: wt}, {tool: enzywizard-embedding, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-conservation:wt], [enzywizard-mut-clean:shared, enzywizard-conservation:mut], [enzywizard-mut-clean:shared, enzywizard-embedding:wt], [enzywizard-mut-clean:shared, enzywizard-embedding:mut], [enzywizard-conservation:wt, enzywizard-mut-integrate:shared], [enzywizard-conservation:mut, enzywizard-mut-integrate:shared], [enzywizard-embedding:wt, enzywizard-mut-integrate:shared], [enzywizard-embedding:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, conservation_pair, embedding_pair, paired_integrate]
+  mut_dock:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-substrate, side: shared}, {tool: enzywizard-dock, side: wt}, {tool: enzywizard-dock, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    forbidden_tools: [enzywizard-interaction]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-dock:wt], [enzywizard-mut-clean:shared, enzywizard-dock:mut], [enzywizard-substrate:shared, enzywizard-dock:wt], [enzywizard-substrate:shared, enzywizard-dock:mut], [enzywizard-dock:wt, enzywizard-mut-integrate:shared], [enzywizard-dock:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, substrate_shared, dock_pair, paired_integrate]
+  mut_dock_interaction:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-substrate, side: shared}, {tool: enzywizard-dock, side: wt}, {tool: enzywizard-dock, side: mut}, {tool: enzywizard-interaction, side: wt}, {tool: enzywizard-interaction, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-dock:wt], [enzywizard-mut-clean:shared, enzywizard-dock:mut], [enzywizard-substrate:shared, enzywizard-dock:wt], [enzywizard-substrate:shared, enzywizard-dock:mut], [enzywizard-dock:wt, enzywizard-interaction:wt], [enzywizard-dock:mut, enzywizard-interaction:mut], [enzywizard-dock:wt, enzywizard-mut-integrate:shared], [enzywizard-dock:mut, enzywizard-mut-integrate:shared], [enzywizard-interaction:wt, enzywizard-mut-integrate:shared], [enzywizard-interaction:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, substrate_shared, dock_pair, interaction_pair, paired_integrate]
+  mut_dock_energy:
+    expected_calls: [{tool: enzywizard-mut-clean, side: shared}, {tool: enzywizard-energy, side: wt}, {tool: enzywizard-energy, side: mut}, {tool: enzywizard-substrate, side: shared}, {tool: enzywizard-dock, side: wt}, {tool: enzywizard-dock, side: mut}, {tool: enzywizard-mut-integrate, side: shared}]
+    forbidden_tools: [enzywizard-interaction]
+    order_constraints: [[enzywizard-mut-clean:shared, enzywizard-energy:wt], [enzywizard-mut-clean:shared, enzywizard-energy:mut], [enzywizard-mut-clean:shared, enzywizard-dock:wt], [enzywizard-mut-clean:shared, enzywizard-dock:mut], [enzywizard-substrate:shared, enzywizard-dock:wt], [enzywizard-substrate:shared, enzywizard-dock:mut], [enzywizard-energy:wt, enzywizard-mut-integrate:shared], [enzywizard-energy:mut, enzywizard-mut-integrate:shared], [enzywizard-dock:wt, enzywizard-mut-integrate:shared], [enzywizard-dock:mut, enzywizard-mut-integrate:shared]]
+    required_artifact_groups: [paired_clean, energy_pair, substrate_shared, dock_pair, paired_integrate]
+
+  reused_energy:
+    expected_calls: [{tool: enzywizard-energy, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-energy:single, enzywizard-integrate:single]]
+    required_artifact_groups: [energy_single, single_integrate]
+  reused_flexibility:
+    expected_calls: [{tool: enzywizard-flexibility, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-flexibility:single, enzywizard-integrate:single]]
+    required_artifact_groups: [flexibility_single, single_integrate]
+  reused_disorder:
+    expected_calls: [{tool: enzywizard-disorder, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-disorder:single, enzywizard-integrate:single]]
+    required_artifact_groups: [disorder_single, single_integrate]
+  reused_interaction:
+    expected_calls: [{tool: enzywizard-interaction, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-interaction:single, enzywizard-integrate:single]]
+    required_artifact_groups: [interaction_single, single_integrate]
+  reused_substrate_dock:
+    expected_calls: [{tool: enzywizard-clean, side: single}, {tool: enzywizard-dock, side: single}, {tool: enzywizard-integrate, side: single}]
+    order_constraints: [[enzywizard-clean:single, enzywizard-dock:single], [enzywizard-dock:single, enzywizard-integrate:single]]
+    required_artifact_groups: [single_clean, dock_single, single_integrate]

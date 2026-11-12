@@ -7,9 +7,11 @@ from ..services.planning_service import (
     extract_tool_parameters,
     finalize_tool_plan,
     generate_default_tool_plan,
+    repair_internal_tool_plan,
     select_single_protein_tools,
     select_wildtype_mutant_tools,
 )
+from ..services.planning_service import ToolPlanValidationError
 from ..state import AgentState
 from ..utils.planning_utils import purpose_needs_tool
 from ..utils.tool_plan_utils import audit_tool_plan
@@ -229,6 +231,33 @@ def planning_node(state: AgentState) -> AgentState:
             default_tool_plan,
             parameter_extraction,
         )
+    except ToolPlanValidationError as error:
+        try:
+            final_tool_plan, repair_record = repair_internal_tool_plan(
+                state,
+                planning_result,
+                parameter_extraction,
+                error.validation,
+            )
+            planning_result.plan_repairs.append(repair_record)
+            if final_tool_plan is None:
+                raise ValueError("; ".join(repair_record.validation.error_messages))
+            print(
+                "[INFO] Repaired Agent-managed plan structure and passed "
+                "deterministic validation."
+            )
+        except Exception as repair_error:
+            error_message = (
+                "Tool plan internal repair failed after deterministic validation: "
+                f"{repair_error}"
+            )
+            planning_result.planning_flag = "planning_failed"
+            planning_result.error_messages.append(error_message)
+            state["current_planning_result"] = planning_result
+            state.setdefault("planning_results", []).append(planning_result)
+            state["route"] = planning_result.planning_route
+            print(f"[ERROR] {error_message}")
+            return state
     except Exception as e:
         error_message = f"Tool plan parameter validation failed: {e}"
         planning_result.planning_flag = "planning_failed"

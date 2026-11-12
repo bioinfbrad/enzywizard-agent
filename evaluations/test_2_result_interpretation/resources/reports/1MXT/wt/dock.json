@@ -1,0 +1,17 @@
+{
+  "report_type": "enzywizard_dock",
+  "enzyme_substrate_docking_result": {
+    "enzyme_substrate_complex_name": "docked_cleaned_1MXT-assembly1_Cholesterol",
+    "enzyme_substrate_binding_affinity": -10.018,
+    "docked_substrate_names": "Cholesterol",
+    "docking_box_center_coordinate": [16.506500000000003, 4.876900000000001, 20.213199999999997],
+    "docking_box_size": [20.945800000000002, 21.0862, 28.510399999999997],
+    "docked_substrates": [
+      {
+        "docked_substrate_name": "Cholesterol",
+        "docked_substrate_structure_name": "Cholesterol_1",
+        "docked_substrate_center_coordinate": [20.582862068965518, 0.538655172413793, 19.132275862068962]
+      }
+    ]
+  }
+}

@@ -1,0 +1,136 @@
+schema_version: 1
+category_id: parameters_constraints
+title: Parameters and constraints
+description: Explicit parameter values, exclusions, and scope restrictions that must be preserved in the executable plan.
+expected_case_count: 12
+cases:
+  - case_id: T1-PC01
+    enzyme_id: 1MXT
+    legacy_case_id: T1-W33
+    description: Explicit cholesterol oxidase clean parameters
+    request: Clean only at pH 6.5 and do not add hydrogens.
+    input_profile: 1mxt_single
+    fair_relevance: neutral
+    expected_plan: clean
+    parameter_expectations:
+      - {tool: enzywizard-clean, side: single, parameter: pH, accepted_values: [6.5]}
+      - {tool: enzywizard-clean, side: single, parameter: add_H, accepted_values: [false]}
+    provenance_profile: standard_workflow
+  - case_id: T1-PC02
+    enzyme_id: 1MXT
+    legacy_case_id: T1-W34
+    description: Explicit cholesterol oxidase energy parameter
+    request: Run energy analysis using 25 minimization iterations.
+    input_profile: 1mxt_single
+    fair_relevance: neutral
+    expected_plan: energy
+    parameter_expectations:
+      - {tool: enzywizard-energy, side: single, parameter: minimization_iteration, accepted_values: [25]}
+    provenance_profile: standard_workflow
+  - case_id: T1-PC03
+    enzyme_id: 1MXT
+    legacy_case_id: T1-W41
+    description: Exclude pockets from a cholesterol oxidase profile
+    request: Analyze energy and flexibility, but exclude binding-pocket analysis.
+    input_profile: 1mxt_single
+    fair_relevance: neutral
+    expected_plan: energy_flexibility
+    expected_forbidden_tools: [enzywizard-pocket]
+    provenance_profile: standard_workflow
+  - case_id: T1-PC04
+    enzyme_id: 1MXT
+    legacy_case_id: T1-W42
+    description: Dock cholesterol without interaction analysis
+    request: Prepare and dock cholesterol, but explicitly exclude interaction analysis.
+    input_profile: 1mxt_ligand
+    fair_relevance: relevant
+    expected_plan: dock
+    expected_forbidden_tools: [enzywizard-interaction]
+    provenance_profile: standard_workflow
+
+  - case_id: T1-PC05
+    enzyme_id: 1IU4
+    legacy_case_id: T1-W43
+    description: Restricted transglutaminase dynamics request
+    request: Analyze energy and flexibility only; exclude disorder and pockets.
+    input_profile: 1iu4_single
+    fair_relevance: neutral
+    expected_plan: energy_flexibility
+    expected_forbidden_tools: [enzywizard-disorder, enzywizard-pocket]
+    provenance_profile: standard_workflow
+  - case_id: T1-PC06
+    enzyme_id: 1IU4
+    legacy_case_id: T1-W44
+    description: Prepare the transglutaminase pair without downstream analysis
+    request: Only clean and align wild type and S72N; run no downstream analyses.
+    input_profile: 1iu4_pair
+    fair_relevance: neutral
+    expected_plan: mut_clean
+    expected_forbidden_tools: [enzywizard-energy, enzywizard-flexibility, enzywizard-disorder, enzywizard-pocket, enzywizard-substrate, enzywizard-dock, enzywizard-interaction]
+    provenance_profile: standard_workflow
+  - case_id: T1-PC07
+    enzyme_id: 1IU4
+    legacy_case_id: T1-W55
+    description: Transglutaminase energy and docking without contacts
+    request: Analyze enzyme energy and dock Z-Gln-Gly, but do not run interaction analysis.
+    input_profile: 1iu4_ligand
+    fair_relevance: relevant
+    expected_plan: dock_energy
+    expected_forbidden_tools: [enzywizard-interaction]
+    provenance_profile: standard_workflow
+  - case_id: T1-PC08
+    enzyme_id: 1IU4
+    legacy_case_id: T1-W64
+    description: Transglutaminase structural profile without ligand tools
+    request: Characterize residue properties, hydrophobic clusters, and pockets, but do not prepare or dock any ligand.
+    input_profile: 1iu4_single
+    fair_relevance: relevant
+    expected_plan: structure_profile
+    expected_forbidden_tools: [enzywizard-substrate, enzywizard-dock, enzywizard-interaction]
+    provenance_profile: standard_workflow
+
+  - case_id: T1-PC09
+    enzyme_id: 1TCA
+    legacy_case_id: tool_single_clean
+    description: CALB clean request with explicit nondefault pH
+    request: Clean the supplied enzyme structure at pH 7.4 and add hydrogens.
+    input_profile: 1tca_single
+    fair_relevance: neutral
+    expected_plan: clean
+    parameter_expectations:
+      - {tool: enzywizard-clean, side: single, parameter: pH, accepted_values: [7.4]}
+      - {tool: enzywizard-clean, side: single, parameter: add_H, accepted_values: [true]}
+    provenance_profile: standard_workflow
+  - case_id: T1-PC10
+    enzyme_id: 1TCA
+    legacy_case_id: tool_explicit_parameters
+    description: CALB energy and flexibility with explicit parameters
+    request: Calculate energy with 250 minimization iterations and flexibility with a 12 angstrom cutoff and 12 modes.
+    input_profile: 1tca_single
+    fair_relevance: neutral
+    expected_plan: energy_flexibility
+    parameter_expectations:
+      - {tool: enzywizard-energy, side: single, parameter: minimization_iteration, accepted_values: [250]}
+      - {tool: enzywizard-flexibility, side: single, parameter: cutoff, accepted_values: [12.0]}
+      - {tool: enzywizard-flexibility, side: single, parameter: n_modes, accepted_values: [12]}
+    provenance_profile: standard_workflow
+  - case_id: T1-PC11
+    enzyme_id: 1TCA
+    legacy_case_id: T1-W51
+    description: CALB pockets and internal interactions without ligand processing
+    request: Analyze predicted pockets and internal protein interactions without preparing or docking a substrate.
+    input_profile: 1tca_single
+    fair_relevance: relevant
+    expected_plan: internal_pocket
+    expected_forbidden_tools: [enzywizard-substrate, enzywizard-dock]
+    provenance_profile: standard_workflow
+  - case_id: T1-PC12
+    enzyme_id: 1TCA
+    legacy_case_id: T1-W57
+    description: CALB paired energy and docking without contacts
+    request: Compare energy and 4-nitrophenyl butyrate docking between wild type and G107A without contact analysis.
+    input_profile: 1tca_pair_ligand
+    fair_relevance: relevant
+    expected_plan: mut_dock_energy
+    expected_forbidden_tools: [enzywizard-interaction]
+    provenance_profile: standard_workflow

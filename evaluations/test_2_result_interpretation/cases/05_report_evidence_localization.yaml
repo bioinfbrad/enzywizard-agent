@@ -1,0 +1,16 @@
+schema_version: 1
+category_id: report_evidence_localization
+case_count: 12
+cases:
+  - {case_id: T2-EL-01, enzyme_id: 1MXT, question: "For each main flexibility conclusion about cholesterol oxidase, identify the source report and field.", report_ids: [1mxt_wt_flexibility], required_facts: [link each conclusion to report evidence]}
+  - {case_id: T2-EL-02, enzyme_id: 1MXT, question: "Trace the cholesterol oxidase pocket conclusion to its report, artifact, and relevant field.", report_ids: [1mxt_wt_pocket], required_facts: [provide report-level and field-level provenance]}
+  - {case_id: T2-EL-03, enzyme_id: 1MXT, question: "Identify the source report for each statement in the cholesterol oxidase substrate-docking interpretation.", report_ids: [1mxt_wt_substrate, 1mxt_wt_dock], required_facts: [distinguish substrate and docking sources]}
+  - {case_id: T2-EL-04, enzyme_id: 1MXT, question: "For each WT/T244M disorder comparison claim, identify the WT or MUT source and evidence location.", report_ids: [1mxt_wt_disorder, 1mxt_mut_disorder], required_facts: [preserve side-specific provenance]}
+  - {case_id: T2-EL-05, enzyme_id: 1IU4, question: "Locate the reports and fields supporting the microbial transglutaminase conservation interpretation.", report_ids: [1iu4_wt_conservation], required_facts: [cite the relevant evidence location]}
+  - {case_id: T2-EL-06, enzyme_id: 1IU4, question: "For the integrated microbial transglutaminase structural explanation, identify which report supports each observation.", report_ids: [1iu4_wt_aaprops, 1iu4_wt_hydrocluster, 1iu4_wt_pocket], required_facts: [map observations to source reports]}
+  - {case_id: T2-EL-07, enzyme_id: 1IU4, question: "Trace each WT/S72N conservation comparison claim to the correct WT or MUT report.", report_ids: [1iu4_wt_conservation, 1iu4_mut_conservation], required_facts: [do not swap WT and MUT evidence]}
+  - {case_id: T2-EL-08, enzyme_id: 1IU4, question: "Identify the evidence chain from microbial transglutaminase substrate preparation to modeled interactions.", report_ids: [1iu4_wt_substrate, 1iu4_wt_dock, 1iu4_wt_interaction], required_facts: [preserve source order and report identity]}
+  - {case_id: T2-EL-09, enzyme_id: 1TCA, question: "For each CALB flexibility conclusion, identify the supporting report and field.", report_ids: [1tca_wt_flexibility], required_facts: [link conclusions to evidence]}
+  - {case_id: T2-EL-10, enzyme_id: 1TCA, question: "Trace the CALB WT/G107A energy comparison to the correct WT and MUT reports.", report_ids: [1tca_wt_energy, 1tca_mut_energy], required_facts: [preserve side-specific provenance]}
+  - {case_id: T2-EL-11, enzyme_id: 1TCA, question: "Identify which CALB report and field support each modeled interaction claim for 4-nitrophenyl butyrate.", report_ids: [1tca_wt_interaction], required_facts: [provide field-level evidence where available]}
+  - {case_id: T2-EL-12, enzyme_id: 1TCA, question: "Trace each WT/G107A CALB docking comparison claim to its side-specific report and artifact.", report_ids: [1tca_wt_dock, 1tca_mut_dock], required_facts: [do not merge WT and MUT evidence]}

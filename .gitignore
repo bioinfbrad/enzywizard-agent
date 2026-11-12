@@ -24,3 +24,6 @@ dist/
 /fair_terms_descriptions_completed.txt
 /fair_terms_descriptions_reviewed.txt
 /fair_terms_missing_descriptions.txt
+
+# Local evaluation outputs; benchmark definitions and fixed resources remain tracked.
+/evaluations/*/results/

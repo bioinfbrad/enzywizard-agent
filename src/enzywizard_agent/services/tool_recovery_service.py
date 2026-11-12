@@ -1,14 +1,23 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from pathlib import Path
 
 from ..conf import AgentConfig
+from ..data_models.artifact import Artifact
+from ..data_models.planning import (
+    ReportStagingRule,
+    ToolCall,
+    ToolOutputReference,
+)
 from ..data_models.tool_execution import (
+    ManagedInputRepairRecord,
     RecoveryAction,
     ToolCallExecution,
     ToolFailureDiagnosis,
     WorkflowDecisionAction,
 )
+from ..utils.tool_execution_utils import expand_file_pattern
 
 
 _TRANSIENT_MARKERS = (
@@ -46,7 +55,11 @@ _PATH_MARKERS = (
     "path does not exist",
     "staging pattern matched no files",
     "could not resolve",
+    "expected exactly one artifact_type",
     "missing_structure",
+)
+_MANAGED_WORKSPACE_MARKERS = (
+    "staging would overwrite an existing report",
 )
 _INVALID_INPUT_MARKERS = (
     "invalid input",
@@ -144,6 +157,14 @@ def diagnose_tool_failure(call: ToolCallExecution) -> ToolFailureDiagnosis:
         ),
         (
             "path_or_file",
+            _MANAGED_WORKSPACE_MARKERS,
+            "automatic",
+            ["rebuild_managed_workspace", "stop"],
+            False,
+            "Agent-managed step contents conflict with deterministic report staging.",
+        ),
+        (
+            "path_or_file",
             _PATH_MARKERS,
             "confirmation_required",
             ["locate_artifact", "regenerate_upstream", "request_user_input", "stop"],
@@ -202,6 +223,188 @@ def diagnose_tool_failure(call: ToolCallExecution) -> ToolFailureDiagnosis:
     )
 
 
+def _is_within(path: Path, parent: Path) -> bool:
+    return path == parent or path.is_relative_to(parent)
+
+
+def _artifact_matches_staging_side(
+    artifact: Artifact,
+    rule: ReportStagingRule,
+) -> bool:
+    if rule.side == "single":
+        return artifact.side == "single"
+    if rule.side in {"wt", "mut"}:
+        return artifact.side in {rule.side, "shared"}
+    return artifact.side == "shared"
+
+
+def _artifact_matches_call_side(artifact: Artifact, tool_call: ToolCall) -> bool:
+    if tool_call.side == "single":
+        return artifact.side == "single"
+    if tool_call.side in {"wt", "mut"}:
+        return artifact.side in {tool_call.side, "shared"}
+    return artifact.side == "shared"
+
+
+def prepare_managed_input_repair(
+    tool_call: ToolCall,
+    available_artifacts: list[Artifact],
+    successful_step_indexes: set[int],
+    workdir: Path,
+) -> tuple[ToolCall, list[ManagedInputRepairRecord]] | None:
+    """Safely rebind stale report-staging patterns to registered outputs.
+
+    This deliberately repairs only Agent-managed report staging. It never changes
+    user inputs, scientific parameters, output declarations, or step dependencies.
+    """
+
+    resolved_workdir = workdir.resolve()
+    execution_dir = Path(tool_call.tool_execution_dir).resolve()
+    if not _is_within(execution_dir, resolved_workdir):
+        return None
+
+    repaired_rules: list[ReportStagingRule] = []
+    repairs: list[ManagedInputRepairRecord] = []
+    for index, rule in enumerate(tool_call.staging_rules):
+        destination_dir = Path(rule.destination_dir).resolve()
+        if not _is_within(destination_dir, execution_dir):
+            return None
+        if expand_file_pattern(rule.source_path_pattern):
+            repaired_rules.append(rule)
+            continue
+        if (
+            rule.source_step_index is None
+            or rule.source_step_index not in successful_step_indexes
+        ):
+            return None
+
+        candidates = [
+            artifact
+            for artifact in available_artifacts
+            if artifact.turn_id == tool_call.turn_id
+            and artifact.plan_id == tool_call.plan_id
+            and artifact.metadata.get("step_index") == rule.source_step_index
+            and artifact.artifact_type.endswith("_report_json")
+            and _artifact_matches_staging_side(artifact, rule)
+            and Path(artifact.path).is_file()
+            and _is_within(Path(artifact.path).resolve(), resolved_workdir)
+        ]
+        if len(candidates) != 1:
+            return None
+        candidate = candidates[0]
+        repaired_path = str(Path(candidate.path).resolve())
+        repaired_rules.append(
+            rule.model_copy(update={"source_path_pattern": repaired_path})
+        )
+        repairs.append(
+            ManagedInputRepairRecord(
+                repair_type="rebind_staging_source",
+                staging_rule_index=index,
+                source_step_index=rule.source_step_index,
+                artifact_type=candidate.artifact_type,
+                previous_source_path_pattern=rule.source_path_pattern,
+                repaired_source_path=repaired_path,
+            )
+        )
+
+    repaired_arguments = dict(tool_call.arguments)
+    for argument_name, value in tool_call.arguments.items():
+        if not isinstance(value, ToolOutputReference):
+            continue
+        current_matches = [
+            artifact
+            for artifact in available_artifacts
+            if artifact.turn_id == tool_call.turn_id
+            and artifact.plan_id == tool_call.plan_id
+            and artifact.metadata.get("step_index") == value.source_step_index
+            and artifact.artifact_type == value.artifact_type
+            and _artifact_matches_call_side(artifact, tool_call)
+            and Path(artifact.path).is_file()
+            and _is_within(Path(artifact.path).resolve(), resolved_workdir)
+        ]
+        if len(current_matches) == 1:
+            continue
+        candidates = [
+            artifact
+            for artifact in available_artifacts
+            if artifact.turn_id == tool_call.turn_id
+            and artifact.plan_id == tool_call.plan_id
+            and isinstance(artifact.metadata.get("step_index"), int)
+            and artifact.metadata["step_index"] in successful_step_indexes
+            and artifact.metadata["step_index"] < tool_call.step_index
+            and artifact.artifact_type == value.artifact_type
+            and _artifact_matches_call_side(artifact, tool_call)
+            and Path(artifact.path).is_file()
+            and _is_within(Path(artifact.path).resolve(), resolved_workdir)
+        ]
+        if len(candidates) != 1:
+            return None
+        candidate = candidates[0]
+        repaired_source_step = int(candidate.metadata["step_index"])
+        repaired_arguments[argument_name] = value.model_copy(
+            update={"source_step_index": repaired_source_step}
+        )
+        repairs.append(
+            ManagedInputRepairRecord(
+                repair_type="rebind_output_reference",
+                argument_name=argument_name,
+                source_step_index=repaired_source_step,
+                artifact_type=candidate.artifact_type,
+                previous_source_step_index=value.source_step_index,
+                repaired_source_path=str(Path(candidate.path).resolve()),
+            )
+        )
+
+    if not repairs:
+        return None
+    return (
+        tool_call.model_copy(
+            update={
+                "staging_rules": repaired_rules,
+                "arguments": repaired_arguments,
+            }
+        ),
+        repairs,
+    )
+
+
+def authorize_managed_input_repair(
+    diagnosis: ToolFailureDiagnosis,
+    repair: tuple[ToolCall, list[ManagedInputRepairRecord]] | None,
+) -> ToolFailureDiagnosis:
+    """Permit deterministic repair only for a verified preparation-path failure."""
+
+    if (
+        repair is None
+        or diagnosis.category != "path_or_file"
+        or diagnosis.failure_stage != "preparation"
+        or diagnosis.scientific_change_required
+        or not any(
+            marker in item.casefold()
+            for item in diagnosis.evidence
+            for marker in (
+                "staging pattern matched no files",
+                "expected exactly one artifact_type",
+            )
+        )
+    ):
+        return diagnosis
+    return ToolFailureDiagnosis.model_validate(
+        {
+            **diagnosis.model_dump(mode="python"),
+            "recoverability": "automatic",
+            "reason": (
+                diagnosis.reason
+                + " A unique registered upstream artifact can safely replace the "
+                "stale Agent-managed input reference."
+            ),
+            "evidence": diagnosis.evidence
+            + ["verified unique registered upstream artifact for managed input"],
+            "allowed_actions": ["repair_managed_inputs", "stop"],
+        }
+    )
+
+
 def select_recovery_decision(
     diagnosis: ToolFailureDiagnosis,
     config: AgentConfig | None,
@@ -213,11 +416,30 @@ def select_recovery_decision(
         enabled = config is not None and config.tool_recovery_mode == "safe"
         limit = config.max_tool_recovery_attempts if config is not None else 0
         if enabled and completed_recovery_attempts < limit:
+            if "repair_managed_inputs" in diagnosis.allowed_actions:
+                action: RecoveryAction = "repair_managed_inputs"
+            elif "rebuild_managed_workspace" in diagnosis.allowed_actions:
+                action = "rebuild_managed_workspace"
+            else:
+                action = "retry_same_call"
             return (
                 "retry",
-                "retry_same_call",
+                action,
                 False,
-                "A bounded same-call retry is permitted by the deterministic policy.",
+                (
+                    "A bounded Agent-managed input repair and current-step retry is "
+                    "permitted by the deterministic policy."
+                    if action == "repair_managed_inputs"
+                    else (
+                        "A bounded cleanup and rebuild of the current Agent-managed "
+                        "step workspace is permitted by the deterministic policy."
+                        if action == "rebuild_managed_workspace"
+                        else (
+                            "A bounded same-call retry is permitted by the deterministic "
+                            "policy."
+                        )
+                    )
+                ),
             )
         reason = (
             "Safe automatic recovery is disabled."

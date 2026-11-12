@@ -54,6 +54,8 @@ FailureRecoverability = Literal[
 
 RecoveryAction = Literal[
     "retry_same_call",
+    "repair_managed_inputs",
+    "rebuild_managed_workspace",
     "locate_artifact",
     "regenerate_upstream",
     "adjust_runtime_resources",
@@ -115,8 +117,14 @@ class ToolFailureDiagnosis(BaseModel):
             raise ValueError(
                 "failure diagnosis requires a reason, evidence, and allowed actions"
             )
-        if self.recoverability == "automatic" and "retry_same_call" not in self.allowed_actions:
-            raise ValueError("automatic recovery requires retry_same_call")
+        if self.recoverability == "automatic" and not {
+            "retry_same_call",
+            "repair_managed_inputs",
+            "rebuild_managed_workspace",
+        }.intersection(self.allowed_actions):
+            raise ValueError(
+                "automatic recovery requires a bounded executable recovery action"
+            )
         if self.scientific_change_required and self.recoverability != "confirmation_required":
             raise ValueError(
                 "scientific changes must require explicit user confirmation"
@@ -198,6 +206,42 @@ class AIFailureAssessmentRecord(BaseModel):
         return self
 
 
+class ManagedInputRepairRecord(BaseModel):
+    """One deterministic repair to an Agent-managed input reference."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    repair_type: Literal[
+        "rebind_staging_source",
+        "rebind_output_reference",
+    ]
+    staging_rule_index: int | None = None
+    argument_name: str | None = None
+    source_step_index: int
+    artifact_type: str
+    previous_source_path_pattern: str | None = None
+    repaired_source_path: str | None = None
+    previous_source_step_index: int | None = None
+
+    @model_validator(mode="after")
+    def validate_repair(self) -> "ManagedInputRepairRecord":
+        if self.source_step_index < 1:
+            raise ValueError("managed-input repairs require a valid source step")
+        if self.repair_type == "rebind_staging_source":
+            if self.staging_rule_index is None or self.staging_rule_index < 0:
+                raise ValueError("staging repair requires a valid rule index")
+            if not self.previous_source_path_pattern or not self.repaired_source_path:
+                raise ValueError("staging repair requires previous and repaired paths")
+        elif self.repair_type == "rebind_output_reference":
+            if not self.argument_name or self.previous_source_step_index is None:
+                raise ValueError(
+                    "output-reference repair requires an argument and prior source step"
+                )
+            if not self.repaired_source_path:
+                raise ValueError("output-reference repair requires a resolved artifact")
+        return self
+
+
 class RecoveryAttemptRecord(BaseModel):
     """One bounded recovery action and its observed result."""
 
@@ -214,6 +258,7 @@ class RecoveryAttemptRecord(BaseModel):
     stdout_file: str | None
     stderr_file: str | None
     duration_seconds: float
+    managed_input_repairs: list[ManagedInputRepairRecord] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_attempt(self) -> "RecoveryAttemptRecord":
@@ -227,6 +272,14 @@ class RecoveryAttemptRecord(BaseModel):
             raise ValueError("failed recovery attempts require a result error")
         if self.execution_status == "succeeded" and self.result_error_message is not None:
             raise ValueError("successful recovery attempts cannot contain a result error")
+        if self.action == "repair_managed_inputs" and not self.managed_input_repairs:
+            raise ValueError(
+                "managed-input recovery attempts require structured repair records"
+            )
+        if self.action != "repair_managed_inputs" and self.managed_input_repairs:
+            raise ValueError(
+                "structured managed-input repairs require repair_managed_inputs"
+            )
         return self
 
 

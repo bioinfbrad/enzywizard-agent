@@ -1,0 +1,18 @@
+# STOCKHOLM 1.0
+#=GF ID wt_cleaned_1TCA-assembly1-i2
+#=GF AU jackhmmer (HMMER 3.4)
+
+#=GS sp|P41365|LIPB_PSEA2/26-342 DE [subseq from] Lipase B OS=Pseudozyma antarctica OX=84753 PE=1 SV=1
+
+wt_cleaned_1TCA-assembly1           LPSGSDPAFSQPKSVLDAGLTCQGASPSSVSKPILLVPGTGTTGPQSFDSNWIPLSTQLGYTPCWISPPPFMLNDTQVNTEYMVNAITALYAGSGNNKLPVLTWSQGGLVAQWGLTFFPSIRSKVDRLMAFAPDYKGTVLAGPLDALAVSAPSVWQQTTGSALTTALRNAGGLTQIVPTTNLYSATDEIVQPQVSNSPLD
+sp|P41365|LIPB_PSEA2/26-342         LPSGSDPAFSQPKSVLDAGLTCQGASPSSVSKPILLVPGTGTTGPQSFDSNWIPLSTQLGYTPCWISPPPFMLNDTQVNTEYMVNAITALYAGSGNNKLPVLTWSQGGLVAQWGLTFFPSIRSKVDRLMAFAPDYKGTVLAGPLDALAVSAPSVWQQTTGSALTTALRNAGGLTQIVPTTNLYSATDEIVQPQVSNSPLD
+#=GR sp|P41365|LIPB_PSEA2/26-342 PP 8*******************************************************************************************************************************************************************************************************
+#=GC PP_cons                        8*******************************************************************************************************************************************************************************************************
+#=GC RF                             xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+wt_cleaned_1TCA-assembly1           SSYLFNGKNVQAQAVCGPLFVIDHAGSLTSQFSYVVGRSALRSTTGQARSADYGITDCNPLPANDLTPEQKVAAAALLAPAAAAIVAGPKQNCEPDLMPYARPFAVGKRTCSGIVTP
+sp|P41365|LIPB_PSEA2/26-342         SSYLFNGKNVQAQAVCGPLFVIDHAGSLTSQFSYVVGRSALRSTTGQARSADYGITDCNPLPANDLTPEQKVAAAALLAPAAAAIVAGPKQNCEPDLMPYARPFAVGKRTCSGIVTP
+#=GR sp|P41365|LIPB_PSEA2/26-342 PP ********************************************************************************************************************9
+#=GC PP_cons                        ********************************************************************************************************************9
+#=GC RF                             xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+from itertools import combinations
 from pathlib import Path
 from statistics import fmean
 from typing import Any, Iterable
@@ -10,6 +11,7 @@ from ..data_models.analysis import (
     AnalysisArtifactReference,
     AnalysisEvidence,
     AnalysisFinding,
+    InferenceLevel,
     ReportSummary,
 )
 from ..data_models.artifact import Artifact
@@ -18,6 +20,8 @@ from ..data_models.artifact import Artifact
 # 报告读取上限防止异常文件耗尽 CLI 进程内存。正常 embedding 报告远低于此值。
 MAX_REPORT_BYTES = 100 * 1024 * 1024
 MAX_METRICS_PER_REPORT = 60
+MAX_FIELD_EVIDENCE_PER_REPORT = 8
+MAX_GENERAL_REPORT_COMPARISONS = 12
 
 REPORT_ARTIFACT_TYPES = {
     "clean_report_json",
@@ -136,6 +140,8 @@ def _normalize_scalar(value: Any) -> str | int | float | bool | None:
 def _flatten_scalar_mapping(
     value: Any,
     output: dict[str, Any],
+    metric_paths: dict[str, str],
+    metric_inference_levels: dict[str, InferenceLevel],
     prefix: str = "",
 ) -> None:
     """递归提取对象中的标量；数组由专门规则压缩，避免上下文爆炸。"""
@@ -145,7 +151,13 @@ def _flatten_scalar_mapping(
     if isinstance(value, dict):
         for key, child in value.items():
             child_prefix = f"{prefix}.{key}" if prefix else key
-            _flatten_scalar_mapping(child, output, child_prefix)
+            _flatten_scalar_mapping(
+                child,
+                output,
+                metric_paths,
+                metric_inference_levels,
+                child_prefix,
+            )
             if len(output) >= MAX_METRICS_PER_REPORT:
                 break
         return
@@ -155,15 +167,23 @@ def _flatten_scalar_mapping(
     if normalized is not None:
         # 末级字段名通常已经在 schema 中全局唯一；冲突时保留完整路径。
         short_key = prefix.rsplit(".", 1)[-1]
-        output[short_key if short_key not in output else prefix] = normalized
+        metric_key = short_key if short_key not in output else prefix
+        output[metric_key] = normalized
+        metric_paths[metric_key] = f"$.{prefix}"
+        metric_inference_levels[metric_key] = "direct"
 
 
 def _summarize_record_array(
     records: list[Any],
     metrics: dict[str, Any],
+    metric_paths: dict[str, str],
+    metric_inference_levels: dict[str, InferenceLevel],
     prefix: str,
 ) -> None:
-    metrics[f"{prefix}_count"] = len(records)
+    count_key = f"{prefix}_count"
+    metrics[count_key] = len(records)
+    metric_paths[count_key] = f"$.{prefix}"
+    metric_inference_levels[count_key] = "calculated"
     dict_records = [item for item in records if isinstance(item, dict)]
     if not dict_records:
         return
@@ -178,9 +198,16 @@ def _summarize_record_array(
 
     for key in numeric_keys[:6]:
         values = [float(item[key]) for item in dict_records]
-        metrics[f"{key}_mean"] = round(fmean(values), 6)
-        metrics[f"{key}_min"] = round(min(values), 6)
-        metrics[f"{key}_max"] = round(max(values), 6)
+        source_path = f"$.{prefix}[*].{key}"
+        for suffix, metric_value in (
+            ("mean", round(fmean(values), 6)),
+            ("min", round(min(values), 6)),
+            ("max", round(max(values), 6)),
+        ):
+            metric_key = f"{key}_{suffix}"
+            metrics[metric_key] = metric_value
+            metric_paths[metric_key] = source_path
+            metric_inference_levels[metric_key] = "calculated"
 
 
 def _prioritize_metrics(report_type: str, metrics: dict[str, Any]) -> dict[str, Any]:
@@ -204,6 +231,8 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
     path = Path(artifact.path)
     warnings: list[str] = []
     metrics: dict[str, Any] = {}
+    metric_paths: dict[str, str] = {}
+    metric_inference_levels: dict[str, InferenceLevel] = {}
     report_type = "unknown"
 
     if not path.is_file():
@@ -225,9 +254,21 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
                 if key == "report_type":
                     continue
                 if isinstance(value, dict):
-                    _flatten_scalar_mapping(value, metrics, key)
+                    _flatten_scalar_mapping(
+                        value,
+                        metrics,
+                        metric_paths,
+                        metric_inference_levels,
+                        key,
+                    )
                 elif isinstance(value, list):
-                    _summarize_record_array(value, metrics, key)
+                    _summarize_record_array(
+                        value,
+                        metrics,
+                        metric_paths,
+                        metric_inference_levels,
+                        key,
+                    )
 
             # embedding 的向量维度具有意义，但绝不把向量本身送入模型。
             embeddings = data.get("sequence_embeddings")
@@ -240,6 +281,12 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
                     )
                     if vector is not None:
                         metrics["embedding_dimension"] = len(vector)
+                        metric_paths["embedding_dimension"] = (
+                            "$.sequence_embeddings[0]"
+                        )
+                        metric_inference_levels["embedding_dimension"] = (
+                            "calculated"
+                        )
 
             # integrated_graph 是节点数组；其长度比完整图内容更适合作为摘要。
             for graph_key in (
@@ -249,11 +296,22 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
             ):
                 graph = data.get(graph_key)
                 if isinstance(graph, list):
-                    metrics[f"{graph_key}_node_count"] = len(graph)
+                    metric_key = f"{graph_key}_node_count"
+                    metrics[metric_key] = len(graph)
+                    metric_paths[metric_key] = f"$.{graph_key}"
+                    metric_inference_levels[metric_key] = "calculated"
         except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
             warnings.append(f"Report parsing failed: {exc}")
 
     metrics = _prioritize_metrics(report_type, metrics)
+    metric_paths = {
+        key: metric_paths.get(key, "$")
+        for key in metrics
+    }
+    metric_inference_levels = {
+        key: metric_inference_levels.get(key, "direct")
+        for key in metrics
+    }
     highlights = [
         f"{key}={value}"
         for key, value in list(metrics.items())[:8]
@@ -270,6 +328,8 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
         side=artifact.side,
         path=artifact.path,
         key_metrics=metrics,
+        metric_paths=metric_paths,
+        metric_inference_levels=metric_inference_levels,
         highlights=highlights,
         warnings=warnings,
     )
@@ -277,6 +337,8 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
 
 def build_report_evidence(
     summaries: Iterable[ReportSummary],
+    *,
+    enable_general_comparison: bool = False,
 ) -> tuple[list[AnalysisEvidence], list[AnalysisFinding]]:
     """为报告摘要和 WT/MUT 数值差异建立可验证证据链。"""
 
@@ -284,11 +346,29 @@ def build_report_evidence(
     findings: list[AnalysisFinding] = []
     summaries = list(summaries)
     report_evidence_ids: dict[int, str] = {}
+    metric_evidence_ids: dict[tuple[int, str], str] = {}
+
+    def metric_provenance(
+        key: str, source_summaries: Iterable[ReportSummary]
+    ) -> dict[str, list[str]]:
+        sources = list(source_summaries)
+        return {
+            "source_metric_evidence_ids": [
+                evidence_id
+                for summary in sources
+                if (evidence_id := metric_evidence_ids.get((id(summary), key)))
+                is not None
+            ],
+            "source_field_paths": [
+                summary.metric_paths.get(key, "$") for summary in sources
+            ],
+        }
 
     for index, summary in enumerate(summaries, start=1):
         evidence_id = f"report-{index}"
         report_evidence_ids[id(summary)] = evidence_id
         value_summary = "; ".join(summary.highlights) or "No scalar metrics extracted"
+        summary_metric_evidence_ids: list[str] = []
         evidence.append(
             AnalysisEvidence(
                 evidence_id=evidence_id,
@@ -307,13 +387,40 @@ def build_report_evidence(
                 value_summary=value_summary,
             )
         )
+        for metric_index, (key, value) in enumerate(
+            list(summary.key_metrics.items())[:MAX_FIELD_EVIDENCE_PER_REPORT],
+            start=1,
+        ):
+            metric_evidence_id = f"{evidence_id}-metric-{metric_index}"
+            summary_metric_evidence_ids.append(metric_evidence_id)
+            metric_evidence_ids[(id(summary), key)] = metric_evidence_id
+            inference_level = summary.metric_inference_levels.get(key, "direct")
+            evidence.append(
+                AnalysisEvidence(
+                    evidence_id=metric_evidence_id,
+                    source_kind="report",
+                    inference_level=inference_level,
+                    turn_id=summary.turn_id,
+                    plan_id=summary.plan_id,
+                    artifact_type=summary.artifact_type,
+                    source_tool=summary.source_tool,
+                    side=summary.side,
+                    path=summary.path,
+                    field_path=summary.metric_paths.get(key, "$"),
+                    value_summary=f"{key}={value}",
+                    source_evidence_ids=(
+                        [evidence_id] if inference_level == "calculated" else []
+                    ),
+                    metadata={"role": "report_metric", "metric_name": key},
+                )
+            )
         findings.append(
             AnalysisFinding(
                 title=f"{summary.source_tool} ({summary.side})",
                 statement=value_summary,
                 finding_kind="warning" if summary.warnings else "result",
                 inference_level="direct",
-                evidence_ids=[evidence_id],
+                evidence_ids=summary_metric_evidence_ids or [evidence_id],
             )
         )
 
@@ -388,6 +495,10 @@ def build_report_evidence(
                                 report_evidence_ids[id(individual_summary)],
                                 report_evidence_ids[id(integrated_summary)],
                             ],
+                            metadata=metric_provenance(
+                                key,
+                                [individual_summary, integrated_summary],
+                            ),
                         )
                     )
                     findings.append(
@@ -457,6 +568,9 @@ def build_report_evidence(
                         report_evidence_ids[id(pair["wt"])],
                         report_evidence_ids[id(pair["mut"])],
                     ],
+                    metadata=metric_provenance(
+                        key, [pair["wt"], pair["mut"]]
+                    ),
                 )
             )
             findings.append(
@@ -468,6 +582,102 @@ def build_report_evidence(
                     evidence_ids=[evidence_id],
                 )
             )
+
+    if not enable_general_comparison:
+        return evidence, findings
+
+    # Conservatively compare repeated reports of the same type and side.  This
+    # supports current-vs-history and cross-run analysis without equating unlike
+    # scientific metrics.  Existing WT/MUT comparison behavior above is unchanged.
+    grouped_repeated: dict[
+        tuple[str, str, str, str], list[ReportSummary]
+    ] = {}
+    for summary in summaries:
+        grouped_repeated.setdefault(
+            (
+                summary.report_type,
+                summary.source_tool,
+                summary.artifact_type,
+                summary.side,
+            ),
+            [],
+        ).append(summary)
+
+    general_comparison_count = 0
+    for repeated in grouped_repeated.values():
+        if len(repeated) < 2:
+            continue
+        ordered = sorted(
+            repeated,
+            key=lambda item: (item.turn_id, item.plan_id, item.path),
+        )
+        for earlier, later in combinations(ordered, 2):
+            # Multiple registered paths from one plan can be copies of the same
+            # logical report. Compare distinct runs only.
+            if (earlier.turn_id, earlier.plan_id) == (
+                later.turn_id,
+                later.plan_id,
+            ):
+                continue
+            shared_keys = [
+                key
+                for key, value in earlier.key_metrics.items()
+                if key in later.key_metrics
+                and isinstance(value, (int, float))
+                and not isinstance(value, bool)
+                and isinstance(later.key_metrics[key], (int, float))
+                and not isinstance(later.key_metrics[key], bool)
+            ]
+            for key in shared_keys[:5]:
+                difference = round(
+                    float(later.key_metrics[key])
+                    - float(earlier.key_metrics[key]),
+                    6,
+                )
+                evidence_id = f"comparison-{comparison_index}"
+                comparison_index += 1
+                general_comparison_count += 1
+                statement = (
+                    f"{key}: turn {earlier.turn_id}/plan {earlier.plan_id}="
+                    f"{earlier.key_metrics[key]}, turn {later.turn_id}/plan "
+                    f"{later.plan_id}={later.key_metrics[key]}, "
+                    f"later-earlier={difference}"
+                )
+                evidence.append(
+                    AnalysisEvidence(
+                        evidence_id=evidence_id,
+                        source_kind="report",
+                        inference_level="calculated",
+                        turn_id=later.turn_id,
+                        plan_id=later.plan_id,
+                        artifact_type=later.artifact_type,
+                        source_tool=later.source_tool,
+                        side=later.side,
+                        path=None,
+                        field_path=key,
+                        value_summary=statement,
+                        source_evidence_ids=[
+                            report_evidence_ids[id(earlier)],
+                            report_evidence_ids[id(later)],
+                        ],
+                        metadata=metric_provenance(key, [earlier, later]),
+                    )
+                )
+                findings.append(
+                    AnalysisFinding(
+                        title=f"Cross-run report comparison: {key}",
+                        statement=statement,
+                        finding_kind="comparison",
+                        inference_level="calculated",
+                        evidence_ids=[evidence_id],
+                    )
+                )
+                if general_comparison_count >= MAX_GENERAL_REPORT_COMPARISONS:
+                    break
+            if general_comparison_count >= MAX_GENERAL_REPORT_COMPARISONS:
+                break
+        if general_comparison_count >= MAX_GENERAL_REPORT_COMPARISONS:
+            break
     return evidence, findings
 
 

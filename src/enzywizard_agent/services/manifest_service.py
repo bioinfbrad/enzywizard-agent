@@ -356,6 +356,10 @@ def _plan_records(state: AgentState, session_dir: Path) -> list[dict[str, Any]]:
                     if planning_result.plan_validation is not None
                     else None
                 ),
+                "repairs": [
+                    repair.model_dump(mode="json")
+                    for repair in planning_result.plan_repairs
+                ],
                 "calls": [
                     {
                         "step_index": call.step_index,

@@ -1,0 +1,3848 @@
+{
+  "schema_version": 1,
+  "generation_policy": "Immutable source pool of prioritized structured metrics from each fixed Test 2 report. Each case selects a compact question-relevant subset through the benchmark key-fact policy.",
+  "reports": {
+    "1mxt_wt_energy": {
+      "report_type": "enzywizard_energy",
+      "source_tool": "enzywizard-energy",
+      "artifact_type": "energy_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_energy:metric:1",
+          "metric_name": "total_potential_energy",
+          "field_path": "$.energy_terms.total_potential_energy",
+          "expected_value": -40480.505129,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total energy",
+            "potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_energy:metric:2",
+          "metric_name": "harmonic_bond_potential_energy",
+          "field_path": "$.energy_terms.harmonic_bond_potential_energy",
+          "expected_value": 2213.150359,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_energy:metric:3",
+          "metric_name": "harmonic_angle_potential_energy",
+          "field_path": "$.energy_terms.harmonic_angle_potential_energy",
+          "expected_value": 5413.201509,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic angle potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_energy:metric:4",
+          "metric_name": "custom_bond_potential_energy",
+          "field_path": "$.energy_terms.custom_bond_potential_energy",
+          "expected_value": 5575.725931,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_energy:metric:5",
+          "metric_name": "custom_torsion_potential_energy",
+          "field_path": "$.energy_terms.custom_torsion_potential_energy",
+          "expected_value": 248.821617,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom torsion potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_energy:metric:6",
+          "metric_name": "custom_nonbonded_potential_energy",
+          "field_path": "$.energy_terms.custom_nonbonded_potential_energy",
+          "expected_value": -16139.894918,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_energy:metric:7",
+          "metric_name": "nonbonded_potential_energy",
+          "field_path": "$.energy_terms.nonbonded_potential_energy",
+          "expected_value": -54615.043567,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_energy:metric:8",
+          "metric_name": "periodic_torsion_potential_energy",
+          "field_path": "$.energy_terms.periodic_torsion_potential_energy",
+          "expected_value": 17904.638289,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "periodic torsion potential energy"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_flexibility": {
+      "report_type": "enzywizard_flexibility",
+      "source_tool": "enzywizard-flexibility",
+      "artifact_type": "flexibility_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_flexibility:metric:1",
+          "metric_name": "residue_root_mean_square_fluctuation_mean",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.125163,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "mean RMSF",
+            "average RMSF"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_flexibility:metric:2",
+          "metric_name": "residue_root_mean_square_fluctuation_max",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.979264,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "maximum RMSF",
+            "max RMSF"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_flexibility:metric:3",
+          "metric_name": "protein_flexibility_count",
+          "field_path": "$.protein_flexibility",
+          "expected_value": 499,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "protein flexibility count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_flexibility:metric:4",
+          "metric_name": "residue_root_mean_square_fluctuation_min",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.049118,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue root mean square fluctuation min"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_disorder": {
+      "report_type": "enzywizard_disorder",
+      "source_tool": "enzywizard-disorder",
+      "artifact_type": "disorder_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_disorder:metric:1",
+          "metric_name": "disordered_region_count",
+          "field_path": "$.disordered_region_statistics.disordered_region_count",
+          "expected_value": 14,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered-region count",
+            "number of disordered regions"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_disorder:metric:2",
+          "metric_name": "max_disordered_region_length",
+          "field_path": "$.disordered_region_statistics.max_disordered_region_length",
+          "expected_value": 63,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "max disordered region length"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_disorder:metric:3",
+          "metric_name": "total_disordered_region_length",
+          "field_path": "$.disordered_region_statistics.total_disordered_region_length",
+          "expected_value": 348,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total disordered region length"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_disorder:metric:4",
+          "metric_name": "disordered_regions_count",
+          "field_path": "$.disordered_regions",
+          "expected_value": 14,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered regions count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_disorder:metric:5",
+          "metric_name": "disordered_region_length_mean",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 24.857143,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_disorder:metric:6",
+          "metric_name": "disordered_region_length_min",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 10.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_disorder:metric:7",
+          "metric_name": "disordered_region_length_max",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 63.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length max"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_aaprops": {
+      "report_type": "enzywizard_aaprops",
+      "source_tool": "enzywizard-aaprops",
+      "artifact_type": "aaprops_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_aaprops:metric:1",
+          "metric_name": "amino_acid_residue_properties_count",
+          "field_path": "$.amino_acid_residue_properties",
+          "expected_value": 499,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "amino acid residue properties count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_aaprops:metric:2",
+          "metric_name": "residue_relative_solvent_accessibility_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 0.227888,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_aaprops:metric:3",
+          "metric_name": "residue_relative_solvent_accessibility_min",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 0.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_aaprops:metric:4",
+          "metric_name": "residue_relative_solvent_accessibility_max",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 1.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility max"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_aaprops:metric:5",
+          "metric_name": "residue_backbone_phi_angle_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": -75.308417,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_aaprops:metric:6",
+          "metric_name": "residue_backbone_phi_angle_min",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": -167.3,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_aaprops:metric:7",
+          "metric_name": "residue_backbone_phi_angle_max",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": 360.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle max"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_aaprops:metric:8",
+          "metric_name": "residue_backbone_psi_angle_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_psi_angle",
+          "expected_value": 47.323447,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone psi angle mean"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_hydrocluster": {
+      "report_type": "enzywizard_hydrocluster",
+      "source_tool": "enzywizard-hydrocluster",
+      "artifact_type": "hydrocluster_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_hydrocluster:metric:1",
+          "metric_name": "hydrophobic_cluster_count",
+          "field_path": "$.hydrophobic_cluster_statistics.hydrophobic_cluster_count",
+          "expected_value": 11,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic-cluster count",
+            "number of hydrophobic clusters"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_hydrocluster:metric:2",
+          "metric_name": "max_hydrophobic_cluster_area",
+          "field_path": "$.hydrophobic_cluster_statistics.max_hydrophobic_cluster_area",
+          "expected_value": 5505.057049,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "max hydrophobic cluster area"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_hydrocluster:metric:3",
+          "metric_name": "total_hydrophobic_cluster_area",
+          "field_path": "$.hydrophobic_cluster_statistics.total_hydrophobic_cluster_area",
+          "expected_value": 9104.32137,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total hydrophobic cluster area"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_hydrocluster:metric:4",
+          "metric_name": "hydrophobic_clusters_count",
+          "field_path": "$.hydrophobic_clusters",
+          "expected_value": 11,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic clusters count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_hydrocluster:metric:5",
+          "metric_name": "hydrophobic_cluster_area_mean",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 827.665579,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_hydrocluster:metric:6",
+          "metric_name": "hydrophobic_cluster_area_min",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 42.331249,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_hydrocluster:metric:7",
+          "metric_name": "hydrophobic_cluster_area_max",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 5505.057049,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area max"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_pocket": {
+      "report_type": "enzywizard_pocket",
+      "source_tool": "enzywizard-pocket",
+      "artifact_type": "pocket_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_pocket:metric:1",
+          "metric_name": "binding_pocket_count",
+          "field_path": "$.binding_pocket_statistics.binding_pocket_count",
+          "expected_value": 2,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "pocket count",
+            "number of predicted pockets"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_pocket:metric:2",
+          "metric_name": "max_binding_pocket_volume",
+          "field_path": "$.binding_pocket_statistics.max_binding_pocket_volume",
+          "expected_value": 1722.573197,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "maximum pocket volume",
+            "largest pocket volume"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_pocket:metric:3",
+          "metric_name": "total_binding_pocket_volume",
+          "field_path": "$.binding_pocket_statistics.total_binding_pocket_volume",
+          "expected_value": 2064.286817,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total binding pocket volume"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_pocket:metric:4",
+          "metric_name": "binding_pockets_count",
+          "field_path": "$.binding_pockets",
+          "expected_value": 2,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pockets count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_pocket:metric:5",
+          "metric_name": "binding_pocket_volume_mean",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 1032.143409,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_pocket:metric:6",
+          "metric_name": "binding_pocket_volume_min",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 341.71362,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_pocket:metric:7",
+          "metric_name": "binding_pocket_volume_max",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 1722.573197,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume max"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_conservation": {
+      "report_type": "enzywizard_conservation",
+      "source_tool": "enzywizard-conservation",
+      "artifact_type": "conservation_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_conservation:metric:1",
+          "metric_name": "sequence_conservation_scores_count",
+          "field_path": "$.sequence_conservation_scores",
+          "expected_value": 499,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "conservation-score count",
+            "scored residue count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_conservation:metric:2",
+          "metric_name": "hmm_profile_raw_score_mean",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 2.098463,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_conservation:metric:3",
+          "metric_name": "hmm_profile_raw_score_min",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 0.01031,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_conservation:metric:4",
+          "metric_name": "hmm_profile_raw_score_max",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 4.14916,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score max"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_conservation:metric:5",
+          "metric_name": "normalized_emission_probability_mean",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.164679,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_conservation:metric:6",
+          "metric_name": "normalized_emission_probability_min",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.015778,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_conservation:metric:7",
+          "metric_name": "normalized_emission_probability_max",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.98974,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability max"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_conservation:metric:8",
+          "metric_name": "normalized_shannon_information_content_mean",
+          "field_path": "$.sequence_conservation_scores[*].normalized_shannon_information_content",
+          "expected_value": 0.169098,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized shannon information content mean"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_embedding": {
+      "report_type": "enzywizard_embedding",
+      "source_tool": "enzywizard-embedding",
+      "artifact_type": "embedding_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_embedding:metric:1",
+          "metric_name": "sequence_embeddings_count",
+          "field_path": "$.sequence_embeddings",
+          "expected_value": 499,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "embedded residue count",
+            "sequence embedding count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_embedding:metric:2",
+          "metric_name": "embedding_dimension",
+          "field_path": "$.sequence_embeddings[0]",
+          "expected_value": 320,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "embedding dimensions",
+            "representation dimension"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_substrate": {
+      "report_type": "enzywizard_substrate",
+      "source_tool": "enzywizard-substrate",
+      "artifact_type": "substrate_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_substrate:metric:1",
+          "metric_name": "substrates_count",
+          "field_path": "$.substrates",
+          "expected_value": 1,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate count",
+            "prepared substrate count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_substrate:metric:2",
+          "metric_name": "substrate_molecular_weight_mean",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 386.664,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_substrate:metric:3",
+          "metric_name": "substrate_molecular_weight_min",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 386.664,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_substrate:metric:4",
+          "metric_name": "substrate_molecular_weight_max",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 386.664,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight max"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_substrate:metric:5",
+          "metric_name": "substrate_logp_mean",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": 7.3887,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_substrate:metric:6",
+          "metric_name": "substrate_logp_min",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": 7.3887,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_substrate:metric:7",
+          "metric_name": "substrate_logp_max",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": 7.3887,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp max"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_substrate:metric:8",
+          "metric_name": "substrate_tpsa_mean",
+          "field_path": "$.substrates[*].substrate_tpsa",
+          "expected_value": 20.23,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate tpsa mean"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_dock": {
+      "report_type": "enzywizard_dock",
+      "source_tool": "enzywizard-dock",
+      "artifact_type": "dock_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_dock:metric:1",
+          "metric_name": "enzyme_substrate_binding_affinity",
+          "field_path": "$.enzyme_substrate_docking_result.enzyme_substrate_binding_affinity",
+          "expected_value": -10.018,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "docking affinity",
+            "predicted binding affinity"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_dock:metric:2",
+          "metric_name": "enzyme_substrate_complex_name",
+          "field_path": "$.enzyme_substrate_docking_result.enzyme_substrate_complex_name",
+          "expected_value": "docked_cleaned_1MXT-assembly1_Cholesterol",
+          "inference_level": "direct",
+          "numeric_abs_tolerance": null,
+          "numeric_rel_tolerance": null,
+          "accepted_aliases": [
+            "enzyme substrate complex name"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_dock:metric:3",
+          "metric_name": "docked_substrate_names",
+          "field_path": "$.enzyme_substrate_docking_result.docked_substrate_names",
+          "expected_value": "Cholesterol",
+          "inference_level": "direct",
+          "numeric_abs_tolerance": null,
+          "numeric_rel_tolerance": null,
+          "accepted_aliases": [
+            "docked substrate names"
+          ]
+        }
+      ]
+    },
+    "1mxt_wt_interaction": {
+      "report_type": "enzywizard_interaction",
+      "source_tool": "enzywizard-interaction",
+      "artifact_type": "interaction_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_wt_interaction:metric:1",
+          "metric_name": "hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 398,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrogen bonds",
+            "H-bond count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_interaction:metric:2",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 398,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.hydrogen bond count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_interaction:metric:3",
+          "metric_name": "molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.enzyme substrate interaction statistics.hydrogen bond count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_interaction:metric:4",
+          "metric_name": "ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.ionic_bond_count",
+          "expected_value": 14,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "ionic bonds",
+            "salt-bridge count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_interaction:metric:5",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.ionic_bond_count",
+          "expected_value": 14,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.ionic bond count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_interaction:metric:6",
+          "metric_name": "molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.enzyme substrate interaction statistics.ionic bond count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_interaction:metric:7",
+          "metric_name": "van_der_waals_contact_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.van_der_waals_contact_count",
+          "expected_value": 355,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "van der Waals contacts",
+            "VDW contact count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_wt_interaction:metric:8",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.van_der_waals_contact_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.van_der_waals_contact_count",
+          "expected_value": 348,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.van der waals contact count"
+          ]
+        }
+      ]
+    },
+    "1mxt_mut_clean": {
+      "report_type": "enzywizard_mut_clean",
+      "source_tool": "enzywizard-mut-clean",
+      "artifact_type": "mut_clean_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_mut_clean:metric:1",
+          "metric_name": "wild_type_residue_mapping_old_to_new_count",
+          "field_path": "$.wild_type_residue_mapping_old_to_new",
+          "expected_value": 499,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "wild type residue mapping old to new count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_clean:metric:2",
+          "metric_name": "removed_heterogen_count",
+          "field_path": "$.wild_type_clean_statistics.removed_heterogen_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "removed heterogen count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_clean:metric:3",
+          "metric_name": "standardized_residue_name_count",
+          "field_path": "$.wild_type_clean_statistics.standardized_residue_name_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "standardized residue name count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_clean:metric:4",
+          "metric_name": "repaired_residue_count",
+          "field_path": "$.wild_type_clean_statistics.repaired_residue_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "repaired residue count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_clean:metric:5",
+          "metric_name": "added_heavy_atom_count",
+          "field_path": "$.wild_type_clean_statistics.added_heavy_atom_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "added heavy atom count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_clean:metric:6",
+          "metric_name": "added_hydrogen_atom_count",
+          "field_path": "$.wild_type_clean_statistics.added_hydrogen_atom_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "added hydrogen atom count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_clean:metric:7",
+          "metric_name": "retained_residue_count",
+          "field_path": "$.wild_type_clean_statistics.retained_residue_count",
+          "expected_value": 499,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "retained residue count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_clean:metric:8",
+          "metric_name": "mutant_residue_mapping_old_to_new_count",
+          "field_path": "$.mutant_residue_mapping_old_to_new",
+          "expected_value": 499,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "mutant residue mapping old to new count"
+          ]
+        }
+      ]
+    },
+    "1mxt_mut_energy": {
+      "report_type": "enzywizard_energy",
+      "source_tool": "enzywizard-energy",
+      "artifact_type": "energy_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_mut_energy:metric:1",
+          "metric_name": "total_potential_energy",
+          "field_path": "$.energy_terms.total_potential_energy",
+          "expected_value": -41686.056136,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total energy",
+            "potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_energy:metric:2",
+          "metric_name": "harmonic_bond_potential_energy",
+          "field_path": "$.energy_terms.harmonic_bond_potential_energy",
+          "expected_value": 2145.738104,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_energy:metric:3",
+          "metric_name": "harmonic_angle_potential_energy",
+          "field_path": "$.energy_terms.harmonic_angle_potential_energy",
+          "expected_value": 5261.371888,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic angle potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_energy:metric:4",
+          "metric_name": "custom_bond_potential_energy",
+          "field_path": "$.energy_terms.custom_bond_potential_energy",
+          "expected_value": 5472.165904,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_energy:metric:5",
+          "metric_name": "custom_torsion_potential_energy",
+          "field_path": "$.energy_terms.custom_torsion_potential_energy",
+          "expected_value": 232.651539,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom torsion potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_energy:metric:6",
+          "metric_name": "custom_nonbonded_potential_energy",
+          "field_path": "$.energy_terms.custom_nonbonded_potential_energy",
+          "expected_value": -16138.204166,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_energy:metric:7",
+          "metric_name": "nonbonded_potential_energy",
+          "field_path": "$.energy_terms.nonbonded_potential_energy",
+          "expected_value": -55643.199614,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_energy:metric:8",
+          "metric_name": "periodic_torsion_potential_energy",
+          "field_path": "$.energy_terms.periodic_torsion_potential_energy",
+          "expected_value": 18097.473515,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "periodic torsion potential energy"
+          ]
+        }
+      ]
+    },
+    "1mxt_mut_flexibility": {
+      "report_type": "enzywizard_flexibility",
+      "source_tool": "enzywizard-flexibility",
+      "artifact_type": "flexibility_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_mut_flexibility:metric:1",
+          "metric_name": "residue_root_mean_square_fluctuation_mean",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.125706,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "mean RMSF",
+            "average RMSF"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_flexibility:metric:2",
+          "metric_name": "residue_root_mean_square_fluctuation_max",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 1.059081,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "maximum RMSF",
+            "max RMSF"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_flexibility:metric:3",
+          "metric_name": "protein_flexibility_count",
+          "field_path": "$.protein_flexibility",
+          "expected_value": 499,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "protein flexibility count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_flexibility:metric:4",
+          "metric_name": "residue_root_mean_square_fluctuation_min",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.048847,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue root mean square fluctuation min"
+          ]
+        }
+      ]
+    },
+    "1mxt_mut_disorder": {
+      "report_type": "enzywizard_disorder",
+      "source_tool": "enzywizard-disorder",
+      "artifact_type": "disorder_report_json",
+      "facts": [
+        {
+          "fact_id": "1mxt_mut_disorder:metric:1",
+          "metric_name": "disordered_region_count",
+          "field_path": "$.disordered_region_statistics.disordered_region_count",
+          "expected_value": 14,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered-region count",
+            "number of disordered regions"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_disorder:metric:2",
+          "metric_name": "max_disordered_region_length",
+          "field_path": "$.disordered_region_statistics.max_disordered_region_length",
+          "expected_value": 63,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "max disordered region length"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_disorder:metric:3",
+          "metric_name": "total_disordered_region_length",
+          "field_path": "$.disordered_region_statistics.total_disordered_region_length",
+          "expected_value": 348,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total disordered region length"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_disorder:metric:4",
+          "metric_name": "disordered_regions_count",
+          "field_path": "$.disordered_regions",
+          "expected_value": 14,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered regions count"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_disorder:metric:5",
+          "metric_name": "disordered_region_length_mean",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 24.857143,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length mean"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_disorder:metric:6",
+          "metric_name": "disordered_region_length_min",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 10.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length min"
+          ]
+        },
+        {
+          "fact_id": "1mxt_mut_disorder:metric:7",
+          "metric_name": "disordered_region_length_max",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 63.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length max"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_energy": {
+      "report_type": "enzywizard_energy",
+      "source_tool": "enzywizard-energy",
+      "artifact_type": "energy_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_energy:metric:1",
+          "metric_name": "total_potential_energy",
+          "field_path": "$.energy_terms.total_potential_energy",
+          "expected_value": -37650.848491,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total energy",
+            "potential energy"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_energy:metric:2",
+          "metric_name": "harmonic_bond_potential_energy",
+          "field_path": "$.energy_terms.harmonic_bond_potential_energy",
+          "expected_value": 1751.913439,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_energy:metric:3",
+          "metric_name": "harmonic_angle_potential_energy",
+          "field_path": "$.energy_terms.harmonic_angle_potential_energy",
+          "expected_value": 4545.379951,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic angle potential energy"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_energy:metric:4",
+          "metric_name": "custom_bond_potential_energy",
+          "field_path": "$.energy_terms.custom_bond_potential_energy",
+          "expected_value": 4370.133311,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_energy:metric:5",
+          "metric_name": "custom_torsion_potential_energy",
+          "field_path": "$.energy_terms.custom_torsion_potential_energy",
+          "expected_value": 306.777545,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom torsion potential energy"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_energy:metric:6",
+          "metric_name": "custom_nonbonded_potential_energy",
+          "field_path": "$.energy_terms.custom_nonbonded_potential_energy",
+          "expected_value": -10148.313236,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_energy:metric:7",
+          "metric_name": "nonbonded_potential_energy",
+          "field_path": "$.energy_terms.nonbonded_potential_energy",
+          "expected_value": -51997.277285,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_energy:metric:8",
+          "metric_name": "periodic_torsion_potential_energy",
+          "field_path": "$.energy_terms.periodic_torsion_potential_energy",
+          "expected_value": 13968.223399,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "periodic torsion potential energy"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_flexibility": {
+      "report_type": "enzywizard_flexibility",
+      "source_tool": "enzywizard-flexibility",
+      "artifact_type": "flexibility_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_flexibility:metric:1",
+          "metric_name": "residue_root_mean_square_fluctuation_mean",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.19771,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "mean RMSF",
+            "average RMSF"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_flexibility:metric:2",
+          "metric_name": "residue_root_mean_square_fluctuation_max",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 1.474876,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "maximum RMSF",
+            "max RMSF"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_flexibility:metric:3",
+          "metric_name": "protein_flexibility_count",
+          "field_path": "$.protein_flexibility",
+          "expected_value": 331,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "protein flexibility count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_flexibility:metric:4",
+          "metric_name": "residue_root_mean_square_fluctuation_min",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.060281,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue root mean square fluctuation min"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_disorder": {
+      "report_type": "enzywizard_disorder",
+      "source_tool": "enzywizard-disorder",
+      "artifact_type": "disorder_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_disorder:metric:1",
+          "metric_name": "disordered_region_count",
+          "field_path": "$.disordered_region_statistics.disordered_region_count",
+          "expected_value": 4,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered-region count",
+            "number of disordered regions"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_disorder:metric:2",
+          "metric_name": "max_disordered_region_length",
+          "field_path": "$.disordered_region_statistics.max_disordered_region_length",
+          "expected_value": 157,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "max disordered region length"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_disorder:metric:3",
+          "metric_name": "total_disordered_region_length",
+          "field_path": "$.disordered_region_statistics.total_disordered_region_length",
+          "expected_value": 318,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total disordered region length"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_disorder:metric:4",
+          "metric_name": "disordered_regions_count",
+          "field_path": "$.disordered_regions",
+          "expected_value": 4,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered regions count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_disorder:metric:5",
+          "metric_name": "disordered_region_length_mean",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 79.5,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_disorder:metric:6",
+          "metric_name": "disordered_region_length_min",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 17.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_disorder:metric:7",
+          "metric_name": "disordered_region_length_max",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 157.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length max"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_aaprops": {
+      "report_type": "enzywizard_aaprops",
+      "source_tool": "enzywizard-aaprops",
+      "artifact_type": "aaprops_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_aaprops:metric:1",
+          "metric_name": "amino_acid_residue_properties_count",
+          "field_path": "$.amino_acid_residue_properties",
+          "expected_value": 331,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "amino acid residue properties count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_aaprops:metric:2",
+          "metric_name": "residue_relative_solvent_accessibility_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 0.276997,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_aaprops:metric:3",
+          "metric_name": "residue_relative_solvent_accessibility_min",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 0.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_aaprops:metric:4",
+          "metric_name": "residue_relative_solvent_accessibility_max",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 1.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility max"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_aaprops:metric:5",
+          "metric_name": "residue_backbone_phi_angle_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": -69.885801,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_aaprops:metric:6",
+          "metric_name": "residue_backbone_phi_angle_min",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": -173.6,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_aaprops:metric:7",
+          "metric_name": "residue_backbone_phi_angle_max",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": 360.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle max"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_aaprops:metric:8",
+          "metric_name": "residue_backbone_psi_angle_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_psi_angle",
+          "expected_value": 38.706949,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone psi angle mean"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_hydrocluster": {
+      "report_type": "enzywizard_hydrocluster",
+      "source_tool": "enzywizard-hydrocluster",
+      "artifact_type": "hydrocluster_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_hydrocluster:metric:1",
+          "metric_name": "hydrophobic_cluster_count",
+          "field_path": "$.hydrophobic_cluster_statistics.hydrophobic_cluster_count",
+          "expected_value": 6,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic-cluster count",
+            "number of hydrophobic clusters"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_hydrocluster:metric:2",
+          "metric_name": "max_hydrophobic_cluster_area",
+          "field_path": "$.hydrophobic_cluster_statistics.max_hydrophobic_cluster_area",
+          "expected_value": 793.433884,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "max hydrophobic cluster area"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_hydrocluster:metric:3",
+          "metric_name": "total_hydrophobic_cluster_area",
+          "field_path": "$.hydrophobic_cluster_statistics.total_hydrophobic_cluster_area",
+          "expected_value": 1583.764953,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total hydrophobic cluster area"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_hydrocluster:metric:4",
+          "metric_name": "hydrophobic_clusters_count",
+          "field_path": "$.hydrophobic_clusters",
+          "expected_value": 6,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic clusters count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_hydrocluster:metric:5",
+          "metric_name": "hydrophobic_cluster_area_mean",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 263.960826,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_hydrocluster:metric:6",
+          "metric_name": "hydrophobic_cluster_area_min",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 40.779842,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_hydrocluster:metric:7",
+          "metric_name": "hydrophobic_cluster_area_max",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 793.433884,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area max"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_pocket": {
+      "report_type": "enzywizard_pocket",
+      "source_tool": "enzywizard-pocket",
+      "artifact_type": "pocket_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_pocket:metric:1",
+          "metric_name": "binding_pocket_count",
+          "field_path": "$.binding_pocket_statistics.binding_pocket_count",
+          "expected_value": 7,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "pocket count",
+            "number of predicted pockets"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_pocket:metric:2",
+          "metric_name": "max_binding_pocket_volume",
+          "field_path": "$.binding_pocket_statistics.max_binding_pocket_volume",
+          "expected_value": 411.536516,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "maximum pocket volume",
+            "largest pocket volume"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_pocket:metric:3",
+          "metric_name": "total_binding_pocket_volume",
+          "field_path": "$.binding_pocket_statistics.total_binding_pocket_volume",
+          "expected_value": 2067.662079,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total binding pocket volume"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_pocket:metric:4",
+          "metric_name": "binding_pockets_count",
+          "field_path": "$.binding_pockets",
+          "expected_value": 7,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pockets count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_pocket:metric:5",
+          "metric_name": "binding_pocket_volume_mean",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 295.380297,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_pocket:metric:6",
+          "metric_name": "binding_pocket_volume_min",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 201.782693,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_pocket:metric:7",
+          "metric_name": "binding_pocket_volume_max",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 411.536516,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume max"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_conservation": {
+      "report_type": "enzywizard_conservation",
+      "source_tool": "enzywizard-conservation",
+      "artifact_type": "conservation_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_conservation:metric:1",
+          "metric_name": "sequence_conservation_scores_count",
+          "field_path": "$.sequence_conservation_scores",
+          "expected_value": 331,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "conservation-score count",
+            "scored residue count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_conservation:metric:2",
+          "metric_name": "hmm_profile_raw_score_mean",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 1.231489,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_conservation:metric:3",
+          "metric_name": "hmm_profile_raw_score_min",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 0.85068,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_conservation:metric:4",
+          "metric_name": "hmm_profile_raw_score_max",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 2.36479,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score max"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_conservation:metric:5",
+          "metric_name": "normalized_emission_probability_mean",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.30209,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_conservation:metric:6",
+          "metric_name": "normalized_emission_probability_min",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.093969,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_conservation:metric:7",
+          "metric_name": "normalized_emission_probability_max",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.427125,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability max"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_conservation:metric:8",
+          "metric_name": "normalized_shannon_information_content_mean",
+          "field_path": "$.sequence_conservation_scores[*].normalized_shannon_information_content",
+          "expected_value": 0.162107,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized shannon information content mean"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_embedding": {
+      "report_type": "enzywizard_embedding",
+      "source_tool": "enzywizard-embedding",
+      "artifact_type": "embedding_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_embedding:metric:1",
+          "metric_name": "sequence_embeddings_count",
+          "field_path": "$.sequence_embeddings",
+          "expected_value": 331,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "embedded residue count",
+            "sequence embedding count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_embedding:metric:2",
+          "metric_name": "embedding_dimension",
+          "field_path": "$.sequence_embeddings[0]",
+          "expected_value": 320,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "embedding dimensions",
+            "representation dimension"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_substrate": {
+      "report_type": "enzywizard_substrate",
+      "source_tool": "enzywizard-substrate",
+      "artifact_type": "substrate_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_substrate:metric:1",
+          "metric_name": "substrates_count",
+          "field_path": "$.substrates",
+          "expected_value": 1,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate count",
+            "prepared substrate count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_substrate:metric:2",
+          "metric_name": "substrate_molecular_weight_mean",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 337.332,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_substrate:metric:3",
+          "metric_name": "substrate_molecular_weight_min",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 337.332,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_substrate:metric:4",
+          "metric_name": "substrate_molecular_weight_max",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 337.332,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight max"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_substrate:metric:5",
+          "metric_name": "substrate_logp_mean",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": -0.2523,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_substrate:metric:6",
+          "metric_name": "substrate_logp_min",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": -0.2523,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_substrate:metric:7",
+          "metric_name": "substrate_logp_max",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": -0.2523,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp max"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_substrate:metric:8",
+          "metric_name": "substrate_tpsa_mean",
+          "field_path": "$.substrates[*].substrate_tpsa",
+          "expected_value": 147.82,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate tpsa mean"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_dock": {
+      "report_type": "enzywizard_dock",
+      "source_tool": "enzywizard-dock",
+      "artifact_type": "dock_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_dock:metric:1",
+          "metric_name": "enzyme_substrate_binding_affinity",
+          "field_path": "$.enzyme_substrate_docking_result.enzyme_substrate_binding_affinity",
+          "expected_value": -6.188,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "docking affinity",
+            "predicted binding affinity"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_dock:metric:2",
+          "metric_name": "enzyme_substrate_complex_name",
+          "field_path": "$.enzyme_substrate_docking_result.enzyme_substrate_complex_name",
+          "expected_value": "docked_cleaned_1IU4-assembly1_Z-Gln-Gly",
+          "inference_level": "direct",
+          "numeric_abs_tolerance": null,
+          "numeric_rel_tolerance": null,
+          "accepted_aliases": [
+            "enzyme substrate complex name"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_dock:metric:3",
+          "metric_name": "docked_substrate_names",
+          "field_path": "$.enzyme_substrate_docking_result.docked_substrate_names",
+          "expected_value": "Z-Gln-Gly",
+          "inference_level": "direct",
+          "numeric_abs_tolerance": null,
+          "numeric_rel_tolerance": null,
+          "accepted_aliases": [
+            "docked substrate names"
+          ]
+        }
+      ]
+    },
+    "1iu4_wt_interaction": {
+      "report_type": "enzywizard_interaction",
+      "source_tool": "enzywizard-interaction",
+      "artifact_type": "interaction_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_wt_interaction:metric:1",
+          "metric_name": "hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 279,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrogen bonds",
+            "H-bond count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_interaction:metric:2",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 275,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.hydrogen bond count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_interaction:metric:3",
+          "metric_name": "molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 4,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.enzyme substrate interaction statistics.hydrogen bond count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_interaction:metric:4",
+          "metric_name": "ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.ionic_bond_count",
+          "expected_value": 13,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "ionic bonds",
+            "salt-bridge count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_interaction:metric:5",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.ionic_bond_count",
+          "expected_value": 13,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.ionic bond count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_interaction:metric:6",
+          "metric_name": "molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.enzyme substrate interaction statistics.ionic bond count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_interaction:metric:7",
+          "metric_name": "van_der_waals_contact_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.van_der_waals_contact_count",
+          "expected_value": 293,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "van der Waals contacts",
+            "VDW contact count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_wt_interaction:metric:8",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.van_der_waals_contact_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.van_der_waals_contact_count",
+          "expected_value": 288,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.van der waals contact count"
+          ]
+        }
+      ]
+    },
+    "1iu4_mut_clean": {
+      "report_type": "enzywizard_mut_clean",
+      "source_tool": "enzywizard-mut-clean",
+      "artifact_type": "mut_clean_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_mut_clean:metric:1",
+          "metric_name": "wild_type_residue_mapping_old_to_new_count",
+          "field_path": "$.wild_type_residue_mapping_old_to_new",
+          "expected_value": 331,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "wild type residue mapping old to new count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_clean:metric:2",
+          "metric_name": "removed_heterogen_count",
+          "field_path": "$.wild_type_clean_statistics.removed_heterogen_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "removed heterogen count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_clean:metric:3",
+          "metric_name": "standardized_residue_name_count",
+          "field_path": "$.wild_type_clean_statistics.standardized_residue_name_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "standardized residue name count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_clean:metric:4",
+          "metric_name": "repaired_residue_count",
+          "field_path": "$.wild_type_clean_statistics.repaired_residue_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "repaired residue count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_clean:metric:5",
+          "metric_name": "added_heavy_atom_count",
+          "field_path": "$.wild_type_clean_statistics.added_heavy_atom_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "added heavy atom count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_clean:metric:6",
+          "metric_name": "added_hydrogen_atom_count",
+          "field_path": "$.wild_type_clean_statistics.added_hydrogen_atom_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "added hydrogen atom count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_clean:metric:7",
+          "metric_name": "retained_residue_count",
+          "field_path": "$.wild_type_clean_statistics.retained_residue_count",
+          "expected_value": 331,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "retained residue count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_clean:metric:8",
+          "metric_name": "mutant_residue_mapping_old_to_new_count",
+          "field_path": "$.mutant_residue_mapping_old_to_new",
+          "expected_value": 331,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "mutant residue mapping old to new count"
+          ]
+        }
+      ]
+    },
+    "1iu4_mut_conservation": {
+      "report_type": "enzywizard_conservation",
+      "source_tool": "enzywizard-conservation",
+      "artifact_type": "conservation_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_mut_conservation:metric:1",
+          "metric_name": "sequence_conservation_scores_count",
+          "field_path": "$.sequence_conservation_scores",
+          "expected_value": 331,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "conservation-score count",
+            "scored residue count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_conservation:metric:2",
+          "metric_name": "hmm_profile_raw_score_mean",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 1.234756,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_conservation:metric:3",
+          "metric_name": "hmm_profile_raw_score_min",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 0.85068,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_conservation:metric:4",
+          "metric_name": "hmm_profile_raw_score_max",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 2.36431,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score max"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_conservation:metric:5",
+          "metric_name": "normalized_emission_probability_mean",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.301496,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability mean"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_conservation:metric:6",
+          "metric_name": "normalized_emission_probability_min",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.094014,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability min"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_conservation:metric:7",
+          "metric_name": "normalized_emission_probability_max",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.427125,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability max"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_conservation:metric:8",
+          "metric_name": "normalized_shannon_information_content_mean",
+          "field_path": "$.sequence_conservation_scores[*].normalized_shannon_information_content",
+          "expected_value": 0.161952,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized shannon information content mean"
+          ]
+        }
+      ]
+    },
+    "1iu4_mut_embedding": {
+      "report_type": "enzywizard_embedding",
+      "source_tool": "enzywizard-embedding",
+      "artifact_type": "embedding_report_json",
+      "facts": [
+        {
+          "fact_id": "1iu4_mut_embedding:metric:1",
+          "metric_name": "sequence_embeddings_count",
+          "field_path": "$.sequence_embeddings",
+          "expected_value": 331,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "embedded residue count",
+            "sequence embedding count"
+          ]
+        },
+        {
+          "fact_id": "1iu4_mut_embedding:metric:2",
+          "metric_name": "embedding_dimension",
+          "field_path": "$.sequence_embeddings[0]",
+          "expected_value": 320,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "embedding dimensions",
+            "representation dimension"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_energy": {
+      "report_type": "enzywizard_energy",
+      "source_tool": "enzywizard-energy",
+      "artifact_type": "energy_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_energy:metric:1",
+          "metric_name": "total_potential_energy",
+          "field_path": "$.energy_terms.total_potential_energy",
+          "expected_value": -7803.996952,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total energy",
+            "potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_energy:metric:2",
+          "metric_name": "harmonic_bond_potential_energy",
+          "field_path": "$.energy_terms.harmonic_bond_potential_energy",
+          "expected_value": 1137.382692,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_energy:metric:3",
+          "metric_name": "harmonic_angle_potential_energy",
+          "field_path": "$.energy_terms.harmonic_angle_potential_energy",
+          "expected_value": 3484.500523,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic angle potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_energy:metric:4",
+          "metric_name": "custom_bond_potential_energy",
+          "field_path": "$.energy_terms.custom_bond_potential_energy",
+          "expected_value": 3425.982757,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_energy:metric:5",
+          "metric_name": "custom_torsion_potential_energy",
+          "field_path": "$.energy_terms.custom_torsion_potential_energy",
+          "expected_value": 139.005134,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom torsion potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_energy:metric:6",
+          "metric_name": "custom_nonbonded_potential_energy",
+          "field_path": "$.energy_terms.custom_nonbonded_potential_energy",
+          "expected_value": -9864.223205,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_energy:metric:7",
+          "metric_name": "nonbonded_potential_energy",
+          "field_path": "$.energy_terms.nonbonded_potential_energy",
+          "expected_value": -17029.859933,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_energy:metric:8",
+          "metric_name": "periodic_torsion_potential_energy",
+          "field_path": "$.energy_terms.periodic_torsion_potential_energy",
+          "expected_value": 11180.238464,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "periodic torsion potential energy"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_flexibility": {
+      "report_type": "enzywizard_flexibility",
+      "source_tool": "enzywizard-flexibility",
+      "artifact_type": "flexibility_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_flexibility:metric:1",
+          "metric_name": "residue_root_mean_square_fluctuation_mean",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.127488,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "mean RMSF",
+            "average RMSF"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_flexibility:metric:2",
+          "metric_name": "residue_root_mean_square_fluctuation_max",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.566293,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "maximum RMSF",
+            "max RMSF"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_flexibility:metric:3",
+          "metric_name": "protein_flexibility_count",
+          "field_path": "$.protein_flexibility",
+          "expected_value": 317,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "protein flexibility count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_flexibility:metric:4",
+          "metric_name": "residue_root_mean_square_fluctuation_min",
+          "field_path": "$.protein_flexibility[*].residue_root_mean_square_fluctuation",
+          "expected_value": 0.04841,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue root mean square fluctuation min"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_disorder": {
+      "report_type": "enzywizard_disorder",
+      "source_tool": "enzywizard-disorder",
+      "artifact_type": "disorder_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_disorder:metric:1",
+          "metric_name": "disordered_region_count",
+          "field_path": "$.disordered_region_statistics.disordered_region_count",
+          "expected_value": 13,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered-region count",
+            "number of disordered regions"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_disorder:metric:2",
+          "metric_name": "max_disordered_region_length",
+          "field_path": "$.disordered_region_statistics.max_disordered_region_length",
+          "expected_value": 36,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "max disordered region length"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_disorder:metric:3",
+          "metric_name": "total_disordered_region_length",
+          "field_path": "$.disordered_region_statistics.total_disordered_region_length",
+          "expected_value": 219,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total disordered region length"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_disorder:metric:4",
+          "metric_name": "disordered_regions_count",
+          "field_path": "$.disordered_regions",
+          "expected_value": 13,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered regions count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_disorder:metric:5",
+          "metric_name": "disordered_region_length_mean",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 16.846154,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_disorder:metric:6",
+          "metric_name": "disordered_region_length_min",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 5.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_disorder:metric:7",
+          "metric_name": "disordered_region_length_max",
+          "field_path": "$.disordered_regions[*].disordered_region_length",
+          "expected_value": 36.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "disordered region length max"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_aaprops": {
+      "report_type": "enzywizard_aaprops",
+      "source_tool": "enzywizard-aaprops",
+      "artifact_type": "aaprops_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_aaprops:metric:1",
+          "metric_name": "amino_acid_residue_properties_count",
+          "field_path": "$.amino_acid_residue_properties",
+          "expected_value": 317,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "amino acid residue properties count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_aaprops:metric:2",
+          "metric_name": "residue_relative_solvent_accessibility_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 0.256941,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_aaprops:metric:3",
+          "metric_name": "residue_relative_solvent_accessibility_min",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 0.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_aaprops:metric:4",
+          "metric_name": "residue_relative_solvent_accessibility_max",
+          "field_path": "$.amino_acid_residue_properties[*].residue_relative_solvent_accessibility",
+          "expected_value": 1.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue relative solvent accessibility max"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_aaprops:metric:5",
+          "metric_name": "residue_backbone_phi_angle_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": -71.625868,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_aaprops:metric:6",
+          "metric_name": "residue_backbone_phi_angle_min",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": -166.4,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_aaprops:metric:7",
+          "metric_name": "residue_backbone_phi_angle_max",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_phi_angle",
+          "expected_value": 360.0,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone phi angle max"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_aaprops:metric:8",
+          "metric_name": "residue_backbone_psi_angle_mean",
+          "field_path": "$.amino_acid_residue_properties[*].residue_backbone_psi_angle",
+          "expected_value": 35.651735,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "residue backbone psi angle mean"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_hydrocluster": {
+      "report_type": "enzywizard_hydrocluster",
+      "source_tool": "enzywizard-hydrocluster",
+      "artifact_type": "hydrocluster_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_hydrocluster:metric:1",
+          "metric_name": "hydrophobic_cluster_count",
+          "field_path": "$.hydrophobic_cluster_statistics.hydrophobic_cluster_count",
+          "expected_value": 9,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic-cluster count",
+            "number of hydrophobic clusters"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_hydrocluster:metric:2",
+          "metric_name": "max_hydrophobic_cluster_area",
+          "field_path": "$.hydrophobic_cluster_statistics.max_hydrophobic_cluster_area",
+          "expected_value": 2363.901062,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "max hydrophobic cluster area"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_hydrocluster:metric:3",
+          "metric_name": "total_hydrophobic_cluster_area",
+          "field_path": "$.hydrophobic_cluster_statistics.total_hydrophobic_cluster_area",
+          "expected_value": 4251.076905,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total hydrophobic cluster area"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_hydrocluster:metric:4",
+          "metric_name": "hydrophobic_clusters_count",
+          "field_path": "$.hydrophobic_clusters",
+          "expected_value": 9,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic clusters count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_hydrocluster:metric:5",
+          "metric_name": "hydrophobic_cluster_area_mean",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 472.341878,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_hydrocluster:metric:6",
+          "metric_name": "hydrophobic_cluster_area_min",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 48.315248,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_hydrocluster:metric:7",
+          "metric_name": "hydrophobic_cluster_area_max",
+          "field_path": "$.hydrophobic_clusters[*].hydrophobic_cluster_area",
+          "expected_value": 2363.901062,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrophobic cluster area max"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_pocket": {
+      "report_type": "enzywizard_pocket",
+      "source_tool": "enzywizard-pocket",
+      "artifact_type": "pocket_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_pocket:metric:1",
+          "metric_name": "binding_pocket_count",
+          "field_path": "$.binding_pocket_statistics.binding_pocket_count",
+          "expected_value": 1,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "pocket count",
+            "number of predicted pockets"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_pocket:metric:2",
+          "metric_name": "max_binding_pocket_volume",
+          "field_path": "$.binding_pocket_statistics.max_binding_pocket_volume",
+          "expected_value": 436.327049,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "maximum pocket volume",
+            "largest pocket volume"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_pocket:metric:3",
+          "metric_name": "total_binding_pocket_volume",
+          "field_path": "$.binding_pocket_statistics.total_binding_pocket_volume",
+          "expected_value": 436.327049,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total binding pocket volume"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_pocket:metric:4",
+          "metric_name": "binding_pockets_count",
+          "field_path": "$.binding_pockets",
+          "expected_value": 1,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pockets count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_pocket:metric:5",
+          "metric_name": "binding_pocket_volume_mean",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 436.327049,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_pocket:metric:6",
+          "metric_name": "binding_pocket_volume_min",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 436.327049,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_pocket:metric:7",
+          "metric_name": "binding_pocket_volume_max",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 436.327049,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume max"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_conservation": {
+      "report_type": "enzywizard_conservation",
+      "source_tool": "enzywizard-conservation",
+      "artifact_type": "conservation_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_conservation:metric:1",
+          "metric_name": "sequence_conservation_scores_count",
+          "field_path": "$.sequence_conservation_scores",
+          "expected_value": 317,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "conservation-score count",
+            "scored residue count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_conservation:metric:2",
+          "metric_name": "hmm_profile_raw_score_mean",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 1.136106,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_conservation:metric:3",
+          "metric_name": "hmm_profile_raw_score_min",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 0.8695,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_conservation:metric:4",
+          "metric_name": "hmm_profile_raw_score_max",
+          "field_path": "$.sequence_conservation_scores[*].hmm_profile_raw_score",
+          "expected_value": 1.54701,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hmm profile raw score max"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_conservation:metric:5",
+          "metric_name": "normalized_emission_probability_mean",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.324497,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_conservation:metric:6",
+          "metric_name": "normalized_emission_probability_min",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.212884,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_conservation:metric:7",
+          "metric_name": "normalized_emission_probability_max",
+          "field_path": "$.sequence_conservation_scores[*].normalized_emission_probability",
+          "expected_value": 0.419161,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized emission probability max"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_conservation:metric:8",
+          "metric_name": "normalized_shannon_information_content_mean",
+          "field_path": "$.sequence_conservation_scores[*].normalized_shannon_information_content",
+          "expected_value": 0.171665,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "normalized shannon information content mean"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_embedding": {
+      "report_type": "enzywizard_embedding",
+      "source_tool": "enzywizard-embedding",
+      "artifact_type": "embedding_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_embedding:metric:1",
+          "metric_name": "sequence_embeddings_count",
+          "field_path": "$.sequence_embeddings",
+          "expected_value": 317,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "embedded residue count",
+            "sequence embedding count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_embedding:metric:2",
+          "metric_name": "embedding_dimension",
+          "field_path": "$.sequence_embeddings[0]",
+          "expected_value": 320,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "embedding dimensions",
+            "representation dimension"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_substrate": {
+      "report_type": "enzywizard_substrate",
+      "source_tool": "enzywizard-substrate",
+      "artifact_type": "substrate_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_substrate:metric:1",
+          "metric_name": "substrates_count",
+          "field_path": "$.substrates",
+          "expected_value": 1,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate count",
+            "prepared substrate count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_substrate:metric:2",
+          "metric_name": "substrate_molecular_weight_mean",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 209.201,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_substrate:metric:3",
+          "metric_name": "substrate_molecular_weight_min",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 209.201,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_substrate:metric:4",
+          "metric_name": "substrate_molecular_weight_max",
+          "field_path": "$.substrates[*].substrate_molecular_weight",
+          "expected_value": 209.201,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate molecular weight max"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_substrate:metric:5",
+          "metric_name": "substrate_logp_mean",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": 2.3003,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_substrate:metric:6",
+          "metric_name": "substrate_logp_min",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": 2.3003,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp min"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_substrate:metric:7",
+          "metric_name": "substrate_logp_max",
+          "field_path": "$.substrates[*].substrate_logp",
+          "expected_value": 2.3003,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate logp max"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_substrate:metric:8",
+          "metric_name": "substrate_tpsa_mean",
+          "field_path": "$.substrates[*].substrate_tpsa",
+          "expected_value": 69.44,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "substrate tpsa mean"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_dock": {
+      "report_type": "enzywizard_dock",
+      "source_tool": "enzywizard-dock",
+      "artifact_type": "dock_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_dock:metric:1",
+          "metric_name": "enzyme_substrate_binding_affinity",
+          "field_path": "$.enzyme_substrate_docking_result.enzyme_substrate_binding_affinity",
+          "expected_value": -6.4,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "docking affinity",
+            "predicted binding affinity"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_dock:metric:2",
+          "metric_name": "enzyme_substrate_complex_name",
+          "field_path": "$.enzyme_substrate_docking_result.enzyme_substrate_complex_name",
+          "expected_value": "docked_cleaned_1TCA-assembly1_4-nitrophenyl_butyrate",
+          "inference_level": "direct",
+          "numeric_abs_tolerance": null,
+          "numeric_rel_tolerance": null,
+          "accepted_aliases": [
+            "enzyme substrate complex name"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_dock:metric:3",
+          "metric_name": "docked_substrate_names",
+          "field_path": "$.enzyme_substrate_docking_result.docked_substrate_names",
+          "expected_value": "4-nitrophenyl butyrate",
+          "inference_level": "direct",
+          "numeric_abs_tolerance": null,
+          "numeric_rel_tolerance": null,
+          "accepted_aliases": [
+            "docked substrate names"
+          ]
+        }
+      ]
+    },
+    "1tca_wt_interaction": {
+      "report_type": "enzywizard_interaction",
+      "source_tool": "enzywizard-interaction",
+      "artifact_type": "interaction_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_wt_interaction:metric:1",
+          "metric_name": "hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 267,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrogen bonds",
+            "H-bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_interaction:metric:2",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 267,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.hydrogen bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_interaction:metric:3",
+          "metric_name": "molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.enzyme substrate interaction statistics.hydrogen bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_interaction:metric:4",
+          "metric_name": "ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.ionic_bond_count",
+          "expected_value": 2,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "ionic bonds",
+            "salt-bridge count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_interaction:metric:5",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.ionic_bond_count",
+          "expected_value": 2,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.ionic bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_interaction:metric:6",
+          "metric_name": "molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.enzyme substrate interaction statistics.ionic bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_interaction:metric:7",
+          "metric_name": "van_der_waals_contact_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.van_der_waals_contact_count",
+          "expected_value": 241,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "van der Waals contacts",
+            "VDW contact count"
+          ]
+        },
+        {
+          "fact_id": "1tca_wt_interaction:metric:8",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.van_der_waals_contact_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.van_der_waals_contact_count",
+          "expected_value": 237,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.van der waals contact count"
+          ]
+        }
+      ]
+    },
+    "1tca_mut_clean": {
+      "report_type": "enzywizard_mut_clean",
+      "source_tool": "enzywizard-mut-clean",
+      "artifact_type": "mut_clean_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_mut_clean:metric:1",
+          "metric_name": "wild_type_residue_mapping_old_to_new_count",
+          "field_path": "$.wild_type_residue_mapping_old_to_new",
+          "expected_value": 317,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "wild type residue mapping old to new count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_clean:metric:2",
+          "metric_name": "removed_heterogen_count",
+          "field_path": "$.wild_type_clean_statistics.removed_heterogen_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "removed heterogen count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_clean:metric:3",
+          "metric_name": "standardized_residue_name_count",
+          "field_path": "$.wild_type_clean_statistics.standardized_residue_name_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "standardized residue name count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_clean:metric:4",
+          "metric_name": "repaired_residue_count",
+          "field_path": "$.wild_type_clean_statistics.repaired_residue_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "repaired residue count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_clean:metric:5",
+          "metric_name": "added_heavy_atom_count",
+          "field_path": "$.wild_type_clean_statistics.added_heavy_atom_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "added heavy atom count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_clean:metric:6",
+          "metric_name": "added_hydrogen_atom_count",
+          "field_path": "$.wild_type_clean_statistics.added_hydrogen_atom_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "added hydrogen atom count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_clean:metric:7",
+          "metric_name": "retained_residue_count",
+          "field_path": "$.wild_type_clean_statistics.retained_residue_count",
+          "expected_value": 317,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "retained residue count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_clean:metric:8",
+          "metric_name": "mutant_residue_mapping_old_to_new_count",
+          "field_path": "$.mutant_residue_mapping_old_to_new",
+          "expected_value": 317,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "mutant residue mapping old to new count"
+          ]
+        }
+      ]
+    },
+    "1tca_mut_energy": {
+      "report_type": "enzywizard_energy",
+      "source_tool": "enzywizard-energy",
+      "artifact_type": "energy_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_mut_energy:metric:1",
+          "metric_name": "total_potential_energy",
+          "field_path": "$.energy_terms.total_potential_energy",
+          "expected_value": -9375.279406,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total energy",
+            "potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_energy:metric:2",
+          "metric_name": "harmonic_bond_potential_energy",
+          "field_path": "$.energy_terms.harmonic_bond_potential_energy",
+          "expected_value": 1264.741963,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_energy:metric:3",
+          "metric_name": "harmonic_angle_potential_energy",
+          "field_path": "$.energy_terms.harmonic_angle_potential_energy",
+          "expected_value": 3730.057316,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "harmonic angle potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_energy:metric:4",
+          "metric_name": "custom_bond_potential_energy",
+          "field_path": "$.energy_terms.custom_bond_potential_energy",
+          "expected_value": 3216.681674,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom bond potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_energy:metric:5",
+          "metric_name": "custom_torsion_potential_energy",
+          "field_path": "$.energy_terms.custom_torsion_potential_energy",
+          "expected_value": 141.659291,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom torsion potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_energy:metric:6",
+          "metric_name": "custom_nonbonded_potential_energy",
+          "field_path": "$.energy_terms.custom_nonbonded_potential_energy",
+          "expected_value": -9856.136478,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "custom nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_energy:metric:7",
+          "metric_name": "nonbonded_potential_energy",
+          "field_path": "$.energy_terms.nonbonded_potential_energy",
+          "expected_value": -18389.887742,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "nonbonded potential energy"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_energy:metric:8",
+          "metric_name": "periodic_torsion_potential_energy",
+          "field_path": "$.energy_terms.periodic_torsion_potential_energy",
+          "expected_value": 10868.33165,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "periodic torsion potential energy"
+          ]
+        }
+      ]
+    },
+    "1tca_mut_pocket": {
+      "report_type": "enzywizard_pocket",
+      "source_tool": "enzywizard-pocket",
+      "artifact_type": "pocket_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_mut_pocket:metric:1",
+          "metric_name": "binding_pocket_count",
+          "field_path": "$.binding_pocket_statistics.binding_pocket_count",
+          "expected_value": 1,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "pocket count",
+            "number of predicted pockets"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_pocket:metric:2",
+          "metric_name": "max_binding_pocket_volume",
+          "field_path": "$.binding_pocket_statistics.max_binding_pocket_volume",
+          "expected_value": 337.780014,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "maximum pocket volume",
+            "largest pocket volume"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_pocket:metric:3",
+          "metric_name": "total_binding_pocket_volume",
+          "field_path": "$.binding_pocket_statistics.total_binding_pocket_volume",
+          "expected_value": 337.780014,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "total binding pocket volume"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_pocket:metric:4",
+          "metric_name": "binding_pockets_count",
+          "field_path": "$.binding_pockets",
+          "expected_value": 1,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pockets count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_pocket:metric:5",
+          "metric_name": "binding_pocket_volume_mean",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 337.780014,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume mean"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_pocket:metric:6",
+          "metric_name": "binding_pocket_volume_min",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 337.780014,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume min"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_pocket:metric:7",
+          "metric_name": "binding_pocket_volume_max",
+          "field_path": "$.binding_pockets[*].binding_pocket_volume",
+          "expected_value": 337.780014,
+          "inference_level": "calculated",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "binding pocket volume max"
+          ]
+        }
+      ]
+    },
+    "1tca_mut_dock": {
+      "report_type": "enzywizard_dock",
+      "source_tool": "enzywizard-dock",
+      "artifact_type": "dock_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_mut_dock:metric:1",
+          "metric_name": "enzyme_substrate_binding_affinity",
+          "field_path": "$.enzyme_substrate_docking_result.enzyme_substrate_binding_affinity",
+          "expected_value": -5.974,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "docking affinity",
+            "predicted binding affinity"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_dock:metric:2",
+          "metric_name": "enzyme_substrate_complex_name",
+          "field_path": "$.enzyme_substrate_docking_result.enzyme_substrate_complex_name",
+          "expected_value": "docked_cleaned_mutant_structure_4-nitrophenyl_butyrate",
+          "inference_level": "direct",
+          "numeric_abs_tolerance": null,
+          "numeric_rel_tolerance": null,
+          "accepted_aliases": [
+            "enzyme substrate complex name"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_dock:metric:3",
+          "metric_name": "docked_substrate_names",
+          "field_path": "$.enzyme_substrate_docking_result.docked_substrate_names",
+          "expected_value": "4-nitrophenyl butyrate",
+          "inference_level": "direct",
+          "numeric_abs_tolerance": null,
+          "numeric_rel_tolerance": null,
+          "accepted_aliases": [
+            "docked substrate names"
+          ]
+        }
+      ]
+    },
+    "1tca_mut_interaction": {
+      "report_type": "enzywizard_interaction",
+      "source_tool": "enzywizard-interaction",
+      "artifact_type": "interaction_report_json",
+      "facts": [
+        {
+          "fact_id": "1tca_mut_interaction:metric:1",
+          "metric_name": "hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 261,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "hydrogen bonds",
+            "H-bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_interaction:metric:2",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 260,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.hydrogen bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_interaction:metric:3",
+          "metric_name": "molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count",
+          "field_path": "$.molecular_interaction_statistics.enzyme_substrate_interaction_statistics.hydrogen_bond_count",
+          "expected_value": 1,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.enzyme substrate interaction statistics.hydrogen bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_interaction:metric:4",
+          "metric_name": "ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.ionic_bond_count",
+          "expected_value": 2,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "ionic bonds",
+            "salt-bridge count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_interaction:metric:5",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.ionic_bond_count",
+          "expected_value": 2,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.ionic bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_interaction:metric:6",
+          "metric_name": "molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count",
+          "field_path": "$.molecular_interaction_statistics.enzyme_substrate_interaction_statistics.ionic_bond_count",
+          "expected_value": 0,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.enzyme substrate interaction statistics.ionic bond count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_interaction:metric:7",
+          "metric_name": "van_der_waals_contact_count",
+          "field_path": "$.molecular_interaction_statistics.overall_molecular_interaction_statistics.van_der_waals_contact_count",
+          "expected_value": 272,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "van der Waals contacts",
+            "VDW contact count"
+          ]
+        },
+        {
+          "fact_id": "1tca_mut_interaction:metric:8",
+          "metric_name": "molecular_interaction_statistics.intra_enzyme_interaction_statistics.van_der_waals_contact_count",
+          "field_path": "$.molecular_interaction_statistics.intra_enzyme_interaction_statistics.van_der_waals_contact_count",
+          "expected_value": 268,
+          "inference_level": "direct",
+          "numeric_abs_tolerance": 1e-06,
+          "numeric_rel_tolerance": 1e-05,
+          "accepted_aliases": [
+            "molecular interaction statistics.intra enzyme interaction statistics.van der waals contact count"
+          ]
+        }
+      ]
+    }
+  }
+}

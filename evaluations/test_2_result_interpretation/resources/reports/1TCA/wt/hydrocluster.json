@@ -1,0 +1,255 @@
+{
+  "report_type": "enzywizard_hydrocluster",
+  "hydrophobic_cluster_statistics": {
+    "hydrophobic_cluster_count": 9,
+    "max_hydrophobic_cluster_area": 2363.9010621188295,
+    "total_hydrophobic_cluster_area": 4251.07690535358
+  },
+  "hydrophobic_clusters": [
+    {
+      "hydrophobic_cluster_area": 2363.9010621188295,
+      "residues": [
+        {
+          "residue_index": 1,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 20,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 176,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 177,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 35,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 30,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 37,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 66,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 84,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 87,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 90,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 99,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 101,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 110,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 115,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 121,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 125,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 128,
+          "residue_name": "L"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 610.5894830430693,
+      "residues": [
+        {
+          "residue_index": 34,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 36,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 53,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 59,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 102,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 241,
+          "residue_name": "L"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 372.3376883892401,
+      "residues": [
+        {
+          "residue_index": 315,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 163,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 167,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 173,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 204,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 109,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 297,
+          "residue_name": "L"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 325.13058861131856,
+      "residues": [
+        {
+          "residue_index": 154,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 73,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 285,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 144,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 147,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 149,
+          "residue_name": "V"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 305.4055563097457,
+      "residues": [
+        {
+          "residue_index": 182,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 210,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 215,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 222,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 236,
+          "residue_name": "V"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 119.67997126797003,
+      "residues": [
+        {
+          "residue_index": 55,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 266,
+          "residue_name": "L"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 55.85065325838602,
+      "residues": [
+        {
+          "residue_index": 278,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 189,
+          "residue_name": "I"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 49.86665469498751,
+      "residues": [
+        {
+          "residue_index": 228,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 277,
+          "residue_name": "L"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 48.31524766003234,
+      "residues": [
+        {
+          "residue_index": 139,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 140,
+          "residue_name": "L"
+        }
+      ]
+    }
+  ]
+}

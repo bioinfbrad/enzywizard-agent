@@ -40,6 +40,10 @@ def build_user_confirmation_interrupt_payload(
         "purpose_type": planning_result.purpose_type,
         "summary": planning_result.summary,
         "plan_reason": tool_plan.plan_reason,
+        "plan_repairs": [
+            repair.model_dump(mode="json")
+            for repair in planning_result.plan_repairs
+        ],
         "calls": [
             call.model_dump(mode="json")
             for call in tool_plan.calls

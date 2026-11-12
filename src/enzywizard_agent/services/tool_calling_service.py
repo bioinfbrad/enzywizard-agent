@@ -46,7 +46,12 @@ from .runtime_service import (
     record_runtime_error,
     remaining_session_seconds,
 )
-from .tool_recovery_service import diagnose_tool_failure, select_recovery_decision
+from .tool_recovery_service import (
+    authorize_managed_input_repair,
+    diagnose_tool_failure,
+    prepare_managed_input_repair,
+    select_recovery_decision,
+)
 from .ai_failure_diagnosis_service import (
     diagnose_failure_with_llm,
     review_ai_recovery_proposal,
@@ -459,6 +464,7 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
     ai_assessed_steps: set[int] = set()
 
     for tool_call in tool_plan.calls:
+        active_tool_call = tool_call
         enforce_session_deadline(state, f"tool.{tool_call.tool_name}")
         if tool_call.tool_name not in tool_specs:
             raise ValueError(
@@ -466,8 +472,8 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
             )
         call_execution = execute_tool_call(
             state,
-            tool_call,
-            tool_specs[tool_call.tool_name],
+            active_tool_call,
+            tool_specs[active_tool_call.tool_name],
             available_artifacts,
             successful_step_indexes,
         )
@@ -475,6 +481,18 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
         completed_recovery_attempts = 0
         while call_execution.execution_status == "failed":
             diagnosis = diagnose_tool_failure(call_execution)
+            config = state.get("config")
+            managed_repair = (
+                prepare_managed_input_repair(
+                    active_tool_call,
+                    available_artifacts,
+                    successful_step_indexes,
+                    config.workdir,
+                )
+                if config is not None
+                else None
+            )
+            diagnosis = authorize_managed_input_repair(diagnosis, managed_repair)
             call_execution.failure_diagnosis = diagnosis
             decision, action, requires_confirmation, decision_reason = (
                 select_recovery_decision(
@@ -484,7 +502,6 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
                 )
             )
             decision_source = "deterministic_policy"
-            config = state.get("config")
             runtime = state.get("runtime_session")
             should_request_ai_diagnosis = bool(
                 decision != "retry"
@@ -585,8 +602,18 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
                 category=("timeout" if diagnosis.category == "timeout" else "tool"),
                 recoverable=decision in {"retry", "request_confirmation"},
             )
-            if decision != "retry" or action != "retry_same_call":
+            if decision != "retry" or action not in {
+                "retry_same_call",
+                "repair_managed_inputs",
+                "rebuild_managed_workspace",
+            }:
                 break
+
+            managed_input_repairs = []
+            if action == "repair_managed_inputs":
+                if managed_repair is None:
+                    break
+                active_tool_call, managed_input_repairs = managed_repair
 
             # Preserve only Agent-owned process logs from the failed attempt.
             # Scientific outputs are cleared before retry and must not remain in
@@ -604,8 +631,8 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
             retry_started = time.monotonic()
             call_execution = execute_tool_call(
                 state,
-                tool_call,
-                tool_specs[tool_call.tool_name],
+                active_tool_call,
+                tool_specs[active_tool_call.tool_name],
                 available_artifacts,
                 successful_step_indexes,
                 attempt_index=completed_recovery_attempts + 1,
@@ -615,7 +642,7 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
                     step_index=tool_call.step_index,
                     attempt_index=call_execution.attempt_index,
                     tool_name=tool_call.tool_name,
-                    action="retry_same_call",
+                    action=action,
                     trigger_category=diagnosis.category,
                     execution_status=call_execution.execution_status,
                     previous_error_message=(
@@ -625,6 +652,7 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
                     stdout_file=call_execution.stdout_file,
                     stderr_file=call_execution.stderr_file,
                     duration_seconds=time.monotonic() - retry_started,
+                    managed_input_repairs=managed_input_repairs,
                 )
             )
             if call_execution.execution_status == "succeeded":
@@ -639,12 +667,12 @@ def execute_approved_tool_plan(state: AgentState) -> ToolExecution:
                         step_index=tool_call.step_index,
                         attempt_index=call_execution.attempt_index,
                         decision="continue",
-                        selected_action="retry_same_call",
+                        selected_action=action,
                         reason=(
-                            "The bounded retry succeeded and its required outputs "
+                            "The bounded recovery succeeded and its required outputs "
                             "passed deterministic validation."
                         ),
-                        allowed_actions=["retry_same_call"],
+                        allowed_actions=[action],
                         requires_user_confirmation=False,
                         decision_source=decision_source,
                     )

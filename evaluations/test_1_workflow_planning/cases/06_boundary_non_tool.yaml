@@ -1,0 +1,15 @@
+schema_version: 1
+category_id: boundary_non_tool
+title: Boundary and non-tool requests
+description: Requests for which correct behavior is to avoid every EnzyWizard tool call.
+expected_case_count: 8
+applicable_metrics: [TSA]
+cases:
+  - {case_id: T1-BN01, legacy_case_id: help_supported_tools, description: Supported tools help, request: "Which EnzyWizard tools and analysis types do you support?", expected_request_type: software_help, expected_actions: [answer_software_help], expected_calls: []}
+  - {case_id: T1-BN02, legacy_case_id: help_required_inputs, description: Required inputs help, request: "What input files are required for a WT versus mutant comparison?", expected_request_type: software_help, expected_actions: [answer_software_help], expected_calls: []}
+  - {case_id: T1-BN03, legacy_case_id: science_glycine_flexibility, description: General enzyme science question, request: "Why can glycine increase local protein flexibility?", expected_request_type: general_scientific_question, expected_actions: [answer_general_question], expected_calls: []}
+  - {case_id: T1-BN04, legacy_case_id: science_binding_pocket, description: Scientific definition with explicit no-tool constraint, request: "What is a protein binding pocket? Do not run any analysis.", expected_request_type: general_scientific_question, expected_actions: [answer_general_question], expected_calls: []}
+  - {case_id: T1-BN05, legacy_case_id: conversation_greeting, description: Conversational greeting, request: "Hello, are you ready to help with an enzyme analysis session?", expected_request_type: conversation, expected_actions: [continue_conversation], expected_calls: []}
+  - {case_id: T1-BN06, legacy_case_id: out_of_scope_weather, description: Out-of-scope weather request, request: "What will the weather be in London tomorrow?", expected_request_type: out_of_scope, expected_actions: [decline_out_of_scope], expected_calls: []}
+  - {case_id: T1-BN07, legacy_case_id: clarification_run_it, description: Underspecified tool request, request: "Run it for me.", expected_request_type: clarification, expected_actions: [clarify_request], expected_calls: []}
+  - {case_id: T1-BN08, legacy_case_id: exit_session, description: Explicit session exit, request: "Exit the EnzyWizard-Agent session now.", expected_request_type: exit, expected_actions: [exit_session], expected_calls: []}

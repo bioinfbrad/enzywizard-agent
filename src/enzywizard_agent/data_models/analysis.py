@@ -141,6 +141,12 @@ class ReportSummary(BaseModel):
     side: Literal["single", "wt", "mut", "shared"]
     path: str
     key_metrics: dict[str, Any]
+    # Maps compressed metric names back to their source JSON locations.  The
+    # default keeps older checkpoints and fixed fixtures readable.
+    metric_paths: dict[str, str] = Field(default_factory=dict)
+    metric_inference_levels: dict[str, InferenceLevel] = Field(
+        default_factory=dict
+    )
     highlights: list[str]
     warnings: list[str]
 

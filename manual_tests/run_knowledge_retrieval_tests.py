@@ -156,6 +156,8 @@ def check_enrichment_modes_and_tracking() -> None:
     assert len(enriched) == len(messages)
     assert "Local FAIR terminology" in str(enriched[-1].content)
     assert "amino acid substitution" in str(enriched[-1].content).casefold()
+    assert "scientific meaning" in str(enriched[-1].content).casefold()
+    assert "inference boundary" in str(enriched[-1].content).casefold()
     records = retrieve_state["runtime_session"].metadata["knowledge_retrieval"]
     assert len(records) == 1
     assert records[0]["stage"] == "routing.request"
@@ -243,6 +245,9 @@ def check_enrichment_modes_and_tracking() -> None:
         retrieval_context="binding pocket",
     )
     assert "binding pocket:" in str(focused[-1].content).casefold()
+    assert "ignore definitions that are irrelevant" in str(
+        focused[-1].content
+    ).casefold()
     focused_record = focused_state["runtime_session"].metadata[
         "knowledge_retrieval"
     ][0]

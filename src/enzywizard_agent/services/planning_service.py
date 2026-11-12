@@ -11,6 +11,8 @@ from ..data_models.planning import (
     IntentClassificationOutput,
     ParameterAdjustment,
     ParameterExtractionOutput,
+    PlanRepairRecord,
+    PlanValidationRecord,
     PlanningResult,
     ToolSelectionOutput,
     ToolPlan,
@@ -68,6 +70,14 @@ HISTORICAL_ARTIFACT_TO_ANALYSIS_TYPE = {
     "dock_report_json": "docking",
     "interaction_report_json": "interaction",
 }
+
+
+class ToolPlanValidationError(ValueError):
+    """A deterministic post-compilation plan audit failure."""
+
+    def __init__(self, validation: PlanValidationRecord):
+        self.validation = validation
+        super().__init__("; ".join(validation.error_messages))
 
 
 def _remove_history_only_analyses(
@@ -711,5 +721,62 @@ def finalize_tool_plan(
     )
     validation = audit_tool_plan(final_plan, state["config"].workdir)
     if not validation.passed:
-        raise ValueError("; ".join(validation.error_messages))
+        raise ToolPlanValidationError(validation)
     return final_plan
+
+
+def repair_internal_tool_plan(
+    state: AgentState,
+    planning_result: PlanningResult,
+    parameter_extraction: ParameterExtractionOutput,
+    failed_validation: PlanValidationRecord,
+) -> tuple[ToolPlan | None, PlanRepairRecord]:
+    """Regenerate only program-managed plan structure and audit it once.
+
+    Scientific requirements and accepted user parameter adjustments are reused
+    unchanged. Invalid scientific or user-supplied values fail before this repair
+    path and are never silently altered.
+    """
+
+    try:
+        canonical_default = build_default_tool_plan(state, planning_result)
+        canonical_default = apply_historical_rerun_settings(state, canonical_default)
+        repaired_plan = apply_parameter_extraction(
+            canonical_default,
+            parameter_extraction,
+            state["config"].workdir,
+        )
+        validation = audit_tool_plan(repaired_plan, state["config"].workdir)
+    except Exception as error:
+        validation = PlanValidationRecord(
+            passed=False,
+            checks=list(failed_validation.checks),
+            warnings=list(failed_validation.warnings),
+            error_messages=[f"Internal plan regeneration failed: {error}"],
+        )
+        record = PlanRepairRecord(
+            attempt_index=1,
+            repair_type="regenerate_program_managed_plan",
+            trigger_errors=list(failed_validation.error_messages),
+            repair_status="failed",
+            reason=(
+                "Attempted to regenerate Agent-managed plan structure from the "
+                "unchanged scientific requirements and accepted parameters."
+            ),
+            validation=validation,
+        )
+        return None, record
+    succeeded = validation.passed
+    record = PlanRepairRecord(
+        attempt_index=1,
+        repair_type="regenerate_program_managed_plan",
+        trigger_errors=list(failed_validation.error_messages),
+        repair_status="succeeded" if succeeded else "failed",
+        reason=(
+            "Regenerated tool commands, dependencies, output references, staging "
+            "rules, and managed paths from the unchanged scientific requirements "
+            "and accepted parameter adjustments."
+        ),
+        validation=validation,
+    )
+    return (repaired_plan if succeeded else None), record

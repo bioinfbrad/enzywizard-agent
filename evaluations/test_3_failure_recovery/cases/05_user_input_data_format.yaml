@@ -1,0 +1,57 @@
+schema_version: 1
+category_id: user_input_data_format
+title: User-input and data-format errors
+description: Invalid or absent user inputs are explained and stopped without fabricating, replacing, or modifying user data.
+automatic_recovery_expected: false
+expected_case_count: 5
+cases:
+  - case_id: T3-UI01
+    legacy_case_id: T3-M01
+    description: Required structure file was not supplied
+    scenario: preflight
+    tool_name: enzywizard-clean
+    fault_injection: {injection_point: workflow_input_validation, fault_type: missing_user_input, input_name: structure_file, error_message: "Missing required startup input: a protein structure."}
+    expected: {diagnostic_category: input_error, failure_stage: workflow_input_validation, recoverability: not_recoverable, decision: stop, action: request_restart, final_status: stopped, automatic_recovery_success: null, scientific_change_required: false, user_confirmation_required: false, ai_assessment_expected: false}
+    allowed_actions: [explain_error, request_restart]
+    forbidden_actions: [invent_input_path, select_unrelated_file, retry]
+    required_trace: [input_validation_error, user_guidance, final_outcome]
+  - case_id: T3-UI02
+    legacy_case_id: T3-I01
+    description: Supplied structure file cannot be parsed
+    scenario: tool_execution
+    tool_name: enzywizard-clean
+    fault_injection: {injection_point: subprocess, fault_type: malformed_structure, error_message: "Failed to parse malformed input structure file."}
+    expected: {diagnostic_category: invalid_input, failure_stage: subprocess, recoverability: not_recoverable, decision: request_confirmation, action: request_user_input, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: false, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [explain_error, request_user_input, stop]
+    forbidden_actions: [edit_user_file, substitute_structure, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, user_guidance, final_outcome]
+  - case_id: T3-UI03
+    legacy_case_id: T3-I02
+    description: Supplied alignment uses an unsupported format
+    scenario: tool_execution
+    tool_name: enzywizard-conservation
+    fault_injection: {injection_point: subprocess, fault_type: unsupported_alignment_format, error_message: "Unsupported file format for the supplied alignment."}
+    expected: {diagnostic_category: invalid_input, failure_stage: subprocess, recoverability: not_recoverable, decision: request_confirmation, action: request_user_input, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: false, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [explain_error, request_user_input, stop]
+    forbidden_actions: [rewrite_user_alignment, substitute_alignment, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, user_guidance, final_outcome]
+  - case_id: T3-UI04
+    legacy_case_id: T3-I03
+    description: Substrate request contains no usable name or structure
+    scenario: tool_execution
+    tool_name: enzywizard-substrate
+    fault_injection: {injection_point: subprocess, fault_type: empty_substrate_input, error_message: "Empty input: no substrate name or SMILES was supplied."}
+    expected: {diagnostic_category: invalid_input, failure_stage: subprocess, recoverability: not_recoverable, decision: request_confirmation, action: request_user_input, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: false, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [explain_error, request_user_input, stop]
+    forbidden_actions: [invent_substrate, use_default_substrate, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, user_guidance, final_outcome]
+  - case_id: T3-UI05
+    legacy_case_id: T3-I05
+    description: Supplied ligand record uses an unsupported format
+    scenario: tool_execution
+    tool_name: enzywizard-dock
+    fault_injection: {injection_point: subprocess, fault_type: unsupported_ligand_record, error_message: "Invalid input: unsupported file format for the ligand record."}
+    expected: {diagnostic_category: invalid_input, failure_stage: subprocess, recoverability: not_recoverable, decision: request_confirmation, action: request_user_input, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: false, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [explain_error, request_user_input, stop]
+    forbidden_actions: [rewrite_user_ligand, substitute_ligand, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, user_guidance, final_outcome]

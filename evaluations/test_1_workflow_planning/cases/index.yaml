@@ -1,0 +1,10 @@
+schema_version: 1
+test_id: test_1_workflow_planning
+total_cases: 68
+categories:
+  - {category_id: single_tool_requests, file: 01_single_tool_requests.yaml, count: 12}
+  - {category_id: multi_tool_requests, file: 02_multi_tool_requests.yaml, count: 12}
+  - {category_id: parameters_constraints, file: 03_parameters_constraints.yaml, count: 12}
+  - {category_id: historical_reuse, file: 04_historical_reuse.yaml, count: 12}
+  - {category_id: plan_revision, file: 05_plan_revision.yaml, count: 12}
+  - {category_id: boundary_non_tool, file: 06_boundary_non_tool.yaml, count: 8}

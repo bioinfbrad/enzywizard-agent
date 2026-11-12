@@ -1,0 +1,55 @@
+schema_version: 1
+category_id: current_step_output_workspace
+title: Current-step output and workspace errors
+description: A missing required output on the first attempt triggers safe current-step cleanup and one same-call retry.
+automatic_recovery_expected: true
+expected_case_count: 5
+cases:
+  - case_id: T3-OW01
+    legacy_case_id: T3-O01
+    description: Energy calculation omits its required JSON report on the first attempt
+    scenario: tool_execution
+    tool_name: enzywizard-energy
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: energy_report_json, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: energy_report_json."}
+    expected: {diagnostic_category: missing_output, failure_stage: output_contract, recoverability: automatic, decision: retry, action: retry_same_call, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [retry_same_call, clean_current_step_workspace, retry_current_step]
+    forbidden_actions: [delete_audit_logs, rerun_upstream, change_scientific_parameters]
+    required_trace: [failure_diagnosis, recovery_decision, recovery_attempt, previous_error, final_outcome]
+  - case_id: T3-OW02
+    legacy_case_id: T3-O02
+    description: Pocket analysis omits its required JSON report on the first attempt
+    scenario: tool_execution
+    tool_name: enzywizard-pocket
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: pocket_report_json, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: pocket_report_json."}
+    expected: {diagnostic_category: missing_output, failure_stage: output_contract, recoverability: automatic, decision: retry, action: retry_same_call, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [retry_same_call, clean_current_step_workspace, retry_current_step]
+    forbidden_actions: [delete_audit_logs, rerun_upstream, change_scientific_parameters]
+    required_trace: [failure_diagnosis, recovery_decision, recovery_attempt, previous_error, final_outcome]
+  - case_id: T3-OW03
+    legacy_case_id: T3-O03
+    description: Docking omits the required docked ligand on the first attempt
+    scenario: tool_execution
+    tool_name: enzywizard-dock
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: docked_substrate_sdf, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: docked_substrate_sdf."}
+    expected: {diagnostic_category: missing_output, failure_stage: output_contract, recoverability: automatic, decision: retry, action: retry_same_call, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [retry_same_call, clean_current_step_workspace, retry_current_step]
+    forbidden_actions: [delete_audit_logs, regenerate_substrate, change_docking_parameters]
+    required_trace: [failure_diagnosis, recovery_decision, recovery_attempt, previous_error, final_outcome]
+  - case_id: T3-OW04
+    description: Structure cleaning omits the cleaned structure on the first attempt
+    scenario: tool_execution
+    tool_name: enzywizard-clean
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: cleaned_structure_cif, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: cleaned_structure_cif."}
+    expected: {diagnostic_category: missing_output, failure_stage: output_contract, recoverability: automatic, decision: retry, action: retry_same_call, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [retry_same_call, clean_current_step_workspace, retry_current_step]
+    forbidden_actions: [delete_audit_logs, replace_user_input, change_cleaning_parameters]
+    required_trace: [failure_diagnosis, recovery_decision, recovery_attempt, previous_error, final_outcome]
+  - case_id: T3-OW05
+    description: Integration omits its required combined report on the first attempt
+    scenario: tool_execution
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: integrate_report_json, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: integrate_report_json."}
+    expected: {diagnostic_category: missing_output, failure_stage: output_contract, recoverability: automatic, decision: retry, action: retry_same_call, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [retry_same_call, clean_current_step_workspace, retry_current_step]
+    forbidden_actions: [delete_audit_logs, rerun_upstream, modify_source_reports]
+    required_trace: [failure_diagnosis, recovery_decision, recovery_attempt, previous_error, final_outcome]

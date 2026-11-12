@@ -1,0 +1,52 @@
+schema_version: 1
+category_id: input_staging_workspace
+title: Input staging and managed-workspace errors
+description: Conflicts created inside the current Agent-managed step workspace are removed and staging is rebuilt before one bounded retry.
+automatic_recovery_expected: true
+expected_case_count: 5
+cases:
+  - case_id: T3-SW01
+    description: Residual energy report conflicts with single-protein integration staging
+    scenario: tool_execution
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: report_staging, fault_type: existing_destination_report, artifact_type: energy_report_json, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: rebuild_managed_workspace, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [rebuild_managed_workspace, clean_current_step_workspace, rebuild_report_staging, retry_current_step]
+    forbidden_actions: [delete_audit_logs, delete_upstream_artifacts, modify_source_report]
+    required_trace: [failure_diagnosis, recovery_decision, workspace_cleanup, recovery_attempt, final_outcome]
+  - case_id: T3-SW02
+    description: Residual pocket report conflicts with integration staging
+    scenario: tool_execution
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: report_staging, fault_type: existing_destination_report, artifact_type: pocket_report_json, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: rebuild_managed_workspace, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [rebuild_managed_workspace, clean_current_step_workspace, rebuild_report_staging, retry_current_step]
+    forbidden_actions: [delete_audit_logs, delete_upstream_artifacts, modify_source_report]
+    required_trace: [failure_diagnosis, recovery_decision, workspace_cleanup, recovery_attempt, final_outcome]
+  - case_id: T3-SW03
+    description: Residual WT report conflicts with paired integration staging
+    scenario: tool_execution
+    tool_name: enzywizard-mut-integrate
+    fault_injection: {injection_point: report_staging, fault_type: existing_side_destination_report, artifact_type: flexibility_report_json, side: wt, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: rebuild_managed_workspace, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [rebuild_managed_workspace, clean_current_step_workspace, rebuild_report_staging, retry_current_step]
+    forbidden_actions: [delete_audit_logs, delete_upstream_artifacts, swap_sides]
+    required_trace: [failure_diagnosis, recovery_decision, workspace_cleanup, failed_step_identity, recovery_attempt, final_outcome]
+  - case_id: T3-SW04
+    description: Residual mutant report conflicts with paired integration staging
+    scenario: tool_execution
+    tool_name: enzywizard-mut-integrate
+    fault_injection: {injection_point: report_staging, fault_type: existing_side_destination_report, artifact_type: disorder_report_json, side: mut, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: rebuild_managed_workspace, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [rebuild_managed_workspace, clean_current_step_workspace, rebuild_report_staging, retry_current_step]
+    forbidden_actions: [delete_audit_logs, delete_upstream_artifacts, swap_sides]
+    required_trace: [failure_diagnosis, recovery_decision, workspace_cleanup, failed_step_identity, recovery_attempt, final_outcome]
+  - case_id: T3-SW05
+    description: Partially staged interaction report blocks a clean integration retry
+    scenario: tool_execution
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: report_staging, fault_type: partial_destination_report, artifact_type: interaction_report_json, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: rebuild_managed_workspace, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [rebuild_managed_workspace, clean_current_step_workspace, rebuild_report_staging, retry_current_step]
+    forbidden_actions: [delete_audit_logs, delete_upstream_artifacts, accept_partial_report]
+    required_trace: [failure_diagnosis, recovery_decision, workspace_cleanup, recovery_attempt, final_outcome]

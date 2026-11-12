@@ -1,0 +1,52 @@
+schema_version: 1
+category_id: artifact_reference
+title: Historical and upstream artifact reference errors
+description: Stale Agent-managed references are rebound only when one compatible registered artifact can be identified.
+automatic_recovery_expected: true
+expected_case_count: 5
+cases:
+  - case_id: T3-AR01
+    description: Stale cleaned-structure reference for energy analysis
+    scenario: tool_execution
+    tool_name: enzywizard-energy
+    fault_injection: {injection_point: argument_resolution, fault_type: stale_output_reference, argument_name: input_path, artifact_type: cleaned_structure_cif, available_compatible_artifacts: 1, occurrence: first_attempt_only, error_message: "Expected exactly one artifact_type cleaned_structure_cif from the referenced step."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: repair_managed_inputs, repair_type: rebind_output_reference, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [repair_managed_inputs, retry_current_step]
+    forbidden_actions: [rerun_upstream, change_scientific_parameters, replace_user_input]
+    required_trace: [failure_diagnosis, recovery_decision, managed_input_repair, recovery_attempt, final_outcome]
+  - case_id: T3-AR02
+    description: Stale cleaned-structure reference for docking
+    scenario: tool_execution
+    tool_name: enzywizard-dock
+    fault_injection: {injection_point: argument_resolution, fault_type: stale_output_reference, argument_name: input_path, artifact_type: cleaned_structure_cif, available_compatible_artifacts: 1, occurrence: first_attempt_only, error_message: "Expected exactly one artifact_type cleaned_structure_cif from the referenced step."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: repair_managed_inputs, repair_type: rebind_output_reference, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [repair_managed_inputs, retry_current_step]
+    forbidden_actions: [rerun_structure_cleaning, replace_user_input, change_docking_parameters]
+    required_trace: [failure_diagnosis, recovery_decision, managed_input_repair, recovery_attempt, final_outcome]
+  - case_id: T3-AR03
+    description: Stale docked-ligand reference for interaction analysis
+    scenario: tool_execution
+    tool_name: enzywizard-interaction
+    fault_injection: {injection_point: argument_resolution, fault_type: stale_output_reference, argument_name: substrate_dir, artifact_type: docked_substrate_sdf, available_compatible_artifacts: 1, occurrence: first_attempt_only, error_message: "Expected exactly one artifact_type docked_substrate_sdf from the referenced step."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: repair_managed_inputs, repair_type: rebind_output_reference, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [repair_managed_inputs, retry_current_step]
+    forbidden_actions: [rerun_docking, change_substrate, replace_user_input]
+    required_trace: [failure_diagnosis, recovery_decision, managed_input_repair, recovery_attempt, final_outcome]
+  - case_id: T3-AR04
+    description: Stale registered historical clean artifact after current-plan import
+    scenario: tool_execution
+    tool_name: enzywizard-disorder
+    fault_injection: {injection_point: argument_resolution, fault_type: stale_imported_historical_reference, argument_name: input_path, artifact_type: cleaned_structure_cif, available_compatible_artifacts: 1, occurrence: first_attempt_only, error_message: "Expected exactly one artifact_type cleaned_structure_cif for the imported historical input."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: repair_managed_inputs, repair_type: rebind_output_reference, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [repair_managed_inputs, retry_current_step]
+    forbidden_actions: [select_unregistered_history, clean_again, replace_user_input]
+    required_trace: [failure_diagnosis, recovery_decision, managed_input_repair, historical_artifact_identity, recovery_attempt, final_outcome]
+  - case_id: T3-AR05
+    description: Mutant analysis references the wrong upstream step index
+    scenario: tool_execution
+    tool_name: enzywizard-flexibility
+    fault_injection: {injection_point: argument_resolution, fault_type: stale_side_specific_output_reference, argument_name: input_path, artifact_type: mut_cleaned_structure_cif, requested_side: mut, available_compatible_artifacts: 1, occurrence: first_attempt_only, error_message: "Expected exactly one artifact_type mut_cleaned_structure_cif from the referenced step."}
+    expected: {diagnostic_category: path_or_file, failure_stage: preparation, recoverability: automatic, decision: retry, action: repair_managed_inputs, repair_type: rebind_output_reference, final_status: succeeded, automatic_recovery_success: true, scientific_change_required: false, user_confirmation_required: false}
+    allowed_actions: [repair_managed_inputs, retry_current_step]
+    forbidden_actions: [use_wt_artifact, swap_sides, change_mutation, rerun_upstream]
+    required_trace: [failure_diagnosis, recovery_decision, managed_input_repair, side_identity, recovery_attempt, final_outcome]

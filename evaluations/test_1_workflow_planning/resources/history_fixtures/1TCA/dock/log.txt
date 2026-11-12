@@ -1,0 +1,10 @@
+[2026-11-10 11:54:33] [INFO] Dock processing started: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/representative_enzymes/cleaned_structures/1TCA/cleaned_1TCA-assembly1.cif
+[2026-11-10 11:54:33] [INFO] Protein name resolved: cleaned_1TCA-assembly1
+[2026-11-10 11:54:34] [INFO] Structure loaded
+[2026-11-10 11:54:34] [INFO] Structure checked
+[2026-11-10 11:54:34] [INFO] Docking workflow started
+[2026-11-10 11:54:47] [INFO] Docking succeeded and early_stop=True, returning the first successful result.
+[2026-11-10 11:54:47] [INFO] Docking finished
+[2026-11-10 11:54:47] [INFO] Saving docking results and generating report
+[2026-11-10 11:55:21] [INFO] Report JSON saved: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/benchmark_results/dock/outputs/1TCA/dock_report_cleaned_1TCA-assembly1_4-nitrophenyl_butyrate.json
+[2026-11-10 11:55:21] [INFO] Dock processing finished

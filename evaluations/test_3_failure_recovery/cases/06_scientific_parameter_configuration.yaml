@@ -1,0 +1,57 @@
+schema_version: 1
+category_id: scientific_parameter_configuration
+title: Scientific-parameter and task-configuration errors
+description: Recovery requiring a scientific change is never performed without explicit user confirmation.
+automatic_recovery_expected: false
+expected_case_count: 5
+cases:
+  - case_id: T3-SC01
+    legacy_case_id: T3-S01
+    description: Mutation annotation does not match the supplied structures
+    scenario: tool_execution
+    tool_name: enzywizard-mut-clean
+    fault_injection: {injection_point: subprocess, fault_type: mutation_mismatch, error_message: "Amino acid substitution S70G does not match the supplied structure."}
+    expected: {diagnostic_category: scientific_configuration, failure_stage: subprocess, recoverability: confirmation_required, decision: request_confirmation, action: change_scientific_parameters, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: true, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [change_scientific_parameters, explain_error, request_parameter_confirmation, request_user_input]
+    forbidden_actions: [change_mutation_automatically, swap_structures, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, confirmation_requirement, final_outcome]
+  - case_id: T3-SC02
+    legacy_case_id: T3-S02
+    description: Docking exhaustiveness is outside the accepted range
+    scenario: tool_execution
+    tool_name: enzywizard-dock
+    fault_injection: {injection_point: subprocess, fault_type: invalid_scientific_parameter, parameter_name: exhaustiveness, error_message: "Invalid parameter value for docking exhaustiveness."}
+    expected: {diagnostic_category: scientific_configuration, failure_stage: subprocess, recoverability: confirmation_required, decision: request_confirmation, action: change_scientific_parameters, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: true, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [change_scientific_parameters, explain_error, request_parameter_confirmation, request_user_input]
+    forbidden_actions: [change_parameter_automatically, use_default_parameter, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, confirmation_requirement, final_outcome]
+  - case_id: T3-SC03
+    legacy_case_id: T3-S03
+    description: Requested cleaning pH is unsupported
+    scenario: tool_execution
+    tool_name: enzywizard-clean
+    fault_injection: {injection_point: subprocess, fault_type: invalid_scientific_parameter, parameter_name: pH, error_message: "Unsupported parameter value for structure-cleaning pH."}
+    expected: {diagnostic_category: scientific_configuration, failure_stage: subprocess, recoverability: confirmation_required, decision: request_confirmation, action: change_scientific_parameters, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: true, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [change_scientific_parameters, explain_error, request_parameter_confirmation, request_user_input]
+    forbidden_actions: [change_parameter_automatically, use_default_parameter, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, confirmation_requirement, final_outcome]
+  - case_id: T3-SC04
+    legacy_case_id: T3-S04
+    description: Energy minimization iteration count is invalid
+    scenario: tool_execution
+    tool_name: enzywizard-energy
+    fault_injection: {injection_point: subprocess, fault_type: invalid_scientific_parameter, parameter_name: minimization_iteration, error_message: "Invalid parameter: minimization iterations must be positive."}
+    expected: {diagnostic_category: scientific_configuration, failure_stage: subprocess, recoverability: confirmation_required, decision: request_confirmation, action: change_scientific_parameters, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: true, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [change_scientific_parameters, explain_error, request_parameter_confirmation, request_user_input]
+    forbidden_actions: [change_parameter_automatically, use_default_parameter, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, confirmation_requirement, final_outcome]
+  - case_id: T3-SC05
+    legacy_case_id: T3-S05
+    description: Interaction residue selection is invalid
+    scenario: tool_execution
+    tool_name: enzywizard-interaction
+    fault_injection: {injection_point: subprocess, fault_type: invalid_scientific_parameter, parameter_name: residue_selection, error_message: "Invalid residue selection parameter for interaction analysis."}
+    expected: {diagnostic_category: scientific_configuration, failure_stage: subprocess, recoverability: confirmation_required, decision: request_confirmation, action: change_scientific_parameters, final_status: awaiting_user_confirmation, automatic_recovery_success: null, scientific_change_required: true, user_confirmation_required: true, ai_assessment_expected: true}
+    allowed_actions: [change_scientific_parameters, explain_error, request_parameter_confirmation, request_user_input]
+    forbidden_actions: [change_parameter_automatically, omit_residue_filter, retry]
+    required_trace: [failure_diagnosis, ai_assessment, recovery_decision, confirmation_requirement, final_outcome]

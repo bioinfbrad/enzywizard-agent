@@ -1,0 +1,2500 @@
+{
+  "report_type": "enzywizard_flexibility",
+  "protein_flexibility": [
+    {
+      "residue_index": 1,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.19086370707171857
+    },
+    {
+      "residue_index": 2,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.16592267645697847
+    },
+    {
+      "residue_index": 3,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.13863443461401154
+    },
+    {
+      "residue_index": 4,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.13132281347982075
+    },
+    {
+      "residue_index": 5,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.09596532047244201
+    },
+    {
+      "residue_index": 6,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.07815093748212018
+    },
+    {
+      "residue_index": 7,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.058368250328919194
+    },
+    {
+      "residue_index": 8,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.05659944194992242
+    },
+    {
+      "residue_index": 9,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.057561049838942696
+    },
+    {
+      "residue_index": 10,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.06099981133435933
+    },
+    {
+      "residue_index": 11,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.05841352731324637
+    },
+    {
+      "residue_index": 12,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.05805186272736004
+    },
+    {
+      "residue_index": 13,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.05513458154945747
+    },
+    {
+      "residue_index": 14,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.053568660798681805
+    },
+    {
+      "residue_index": 15,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.06536206941054205
+    },
+    {
+      "residue_index": 16,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.06886162349352358
+    },
+    {
+      "residue_index": 17,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.06704954509921018
+    },
+    {
+      "residue_index": 18,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.07608212401789514
+    },
+    {
+      "residue_index": 19,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.09152479851430059
+    },
+    {
+      "residue_index": 20,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.10150180735808076
+    },
+    {
+      "residue_index": 21,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.10948745486096248
+    },
+    {
+      "residue_index": 22,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.13281770221806877
+    },
+    {
+      "residue_index": 23,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.15537591937894268
+    },
+    {
+      "residue_index": 24,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.16400327068792242
+    },
+    {
+      "residue_index": 25,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.18368078694923026
+    },
+    {
+      "residue_index": 26,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.14343480040531023
+    },
+    {
+      "residue_index": 27,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.14040054223880752
+    },
+    {
+      "residue_index": 28,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.10528052555237948
+    },
+    {
+      "residue_index": 29,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.09417670862438086
+    },
+    {
+      "residue_index": 30,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.07531010567562074
+    },
+    {
+      "residue_index": 31,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.07643024565102768
+    },
+    {
+      "residue_index": 32,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.07132881003038023
+    },
+    {
+      "residue_index": 33,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.08065112860409221
+    },
+    {
+      "residue_index": 34,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.07879663168683812
+    },
+    {
+      "residue_index": 35,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.09213574105185958
+    },
+    {
+      "residue_index": 36,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.0877109183582478
+    },
+    {
+      "residue_index": 37,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.08594019674295464
+    },
+    {
+      "residue_index": 38,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.11484587251823175
+    },
+    {
+      "residue_index": 39,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.1816615457194932
+    },
+    {
+      "residue_index": 40,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.21950204031912124
+    },
+    {
+      "residue_index": 41,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.19926314848301502
+    },
+    {
+      "residue_index": 42,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.3804781961618617
+    },
+    {
+      "residue_index": 43,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.23920906212435658
+    },
+    {
+      "residue_index": 44,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.25080896304975053
+    },
+    {
+      "residue_index": 45,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.1436039386715404
+    },
+    {
+      "residue_index": 46,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.105548277420153
+    },
+    {
+      "residue_index": 47,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.08437838328614909
+    },
+    {
+      "residue_index": 48,
+      "residue_name": "C",
+      "residue_root_mean_square_fluctuation": 0.09902409145152002
+    },
+    {
+      "residue_index": 49,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.0887075311743524
+    },
+    {
+      "residue_index": 50,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.08580968212215787
+    },
+    {
+      "residue_index": 51,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.10420000678254357
+    },
+    {
+      "residue_index": 52,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.1274996175866376
+    },
+    {
+      "residue_index": 53,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.11699909953940421
+    },
+    {
+      "residue_index": 54,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.13873775177060357
+    },
+    {
+      "residue_index": 55,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.13317575369501633
+    },
+    {
+      "residue_index": 56,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.10260097382753262
+    },
+    {
+      "residue_index": 57,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.09128042576706723
+    },
+    {
+      "residue_index": 58,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.10098640533008266
+    },
+    {
+      "residue_index": 59,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.10924876274985788
+    },
+    {
+      "residue_index": 60,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.16256615305138278
+    },
+    {
+      "residue_index": 61,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.17798540537572463
+    },
+    {
+      "residue_index": 62,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.23506399475088413
+    },
+    {
+      "residue_index": 63,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.19881919872440754
+    },
+    {
+      "residue_index": 64,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.13311286040940612
+    },
+    {
+      "residue_index": 65,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.11440979333481281
+    },
+    {
+      "residue_index": 66,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.10695121809419414
+    },
+    {
+      "residue_index": 67,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.07054915809419747
+    },
+    {
+      "residue_index": 68,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.07558465509622968
+    },
+    {
+      "residue_index": 69,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.08516955523238542
+    },
+    {
+      "residue_index": 70,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.09838723930540179
+    },
+    {
+      "residue_index": 71,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.1315583444862833
+    },
+    {
+      "residue_index": 72,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.1436039307795427
+    },
+    {
+      "residue_index": 73,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.12907852255078622
+    },
+    {
+      "residue_index": 74,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.12428879358017013
+    },
+    {
+      "residue_index": 75,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.16464090165762413
+    },
+    {
+      "residue_index": 76,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.1805584213556257
+    },
+    {
+      "residue_index": 77,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.15234202183943468
+    },
+    {
+      "residue_index": 78,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.1700131861209808
+    },
+    {
+      "residue_index": 79,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.22895101340562163
+    },
+    {
+      "residue_index": 80,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.4341966397947666
+    },
+    {
+      "residue_index": 81,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.21927390122091595
+    },
+    {
+      "residue_index": 82,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.2554147318295903
+    },
+    {
+      "residue_index": 83,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.2170672610414379
+    },
+    {
+      "residue_index": 84,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.14747638295357102
+    },
+    {
+      "residue_index": 85,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.11136936997921705
+    },
+    {
+      "residue_index": 86,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.09511732615162535
+    },
+    {
+      "residue_index": 87,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.07406112864463175
+    },
+    {
+      "residue_index": 88,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.0743720321840398
+    },
+    {
+      "residue_index": 89,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.08765617964710776
+    },
+    {
+      "residue_index": 90,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.08467358610313772
+    },
+    {
+      "residue_index": 91,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.08359311976618261
+    },
+    {
+      "residue_index": 92,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.10479485816722471
+    },
+    {
+      "residue_index": 93,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.12111389288333686
+    },
+    {
+      "residue_index": 94,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.14193307205879963
+    },
+    {
+      "residue_index": 95,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.1198853705069964
+    },
+    {
+      "residue_index": 96,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.09518421259785365
+    },
+    {
+      "residue_index": 97,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.08289772725325227
+    },
+    {
+      "residue_index": 98,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.07499412067661575
+    },
+    {
+      "residue_index": 99,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.06726815420285591
+    },
+    {
+      "residue_index": 100,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.0652454546095483
+    },
+    {
+      "residue_index": 101,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06677389440784857
+    },
+    {
+      "residue_index": 102,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.07049685986149284
+    },
+    {
+      "residue_index": 103,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.07048707639338778
+    },
+    {
+      "residue_index": 104,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.07063410284079166
+    },
+    {
+      "residue_index": 105,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06638160564804284
+    },
+    {
+      "residue_index": 106,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06341923456668723
+    },
+    {
+      "residue_index": 107,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06392455110633895
+    },
+    {
+      "residue_index": 108,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.06434469826765261
+    },
+    {
+      "residue_index": 109,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.0660606456139973
+    },
+    {
+      "residue_index": 110,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.06266644865062404
+    },
+    {
+      "residue_index": 111,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.05911180059376246
+    },
+    {
+      "residue_index": 112,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.055287112259891476
+    },
+    {
+      "residue_index": 113,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.061765569477762704
+    },
+    {
+      "residue_index": 114,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.05906584376152197
+    },
+    {
+      "residue_index": 115,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.0628342492111437
+    },
+    {
+      "residue_index": 116,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.06541403330933039
+    },
+    {
+      "residue_index": 117,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.07277143198577646
+    },
+    {
+      "residue_index": 118,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.075333064680479
+    },
+    {
+      "residue_index": 119,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.09064378432662133
+    },
+    {
+      "residue_index": 120,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.1233202223970519
+    },
+    {
+      "residue_index": 121,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.13035741778850027
+    },
+    {
+      "residue_index": 122,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.09688428100905133
+    },
+    {
+      "residue_index": 123,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.08952897270831835
+    },
+    {
+      "residue_index": 124,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.1162632528689971
+    },
+    {
+      "residue_index": 125,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.10954803215231719
+    },
+    {
+      "residue_index": 126,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.0836330024362257
+    },
+    {
+      "residue_index": 127,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.08640842027826375
+    },
+    {
+      "residue_index": 128,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.1268175627245854
+    },
+    {
+      "residue_index": 129,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.12779486261338452
+    },
+    {
+      "residue_index": 130,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.10694732137788485
+    },
+    {
+      "residue_index": 131,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.1372156076980944
+    },
+    {
+      "residue_index": 132,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.13076448888662268
+    },
+    {
+      "residue_index": 133,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.18249174514101968
+    },
+    {
+      "residue_index": 134,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.1451156796804387
+    },
+    {
+      "residue_index": 135,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.1100820421216311
+    },
+    {
+      "residue_index": 136,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.14155863681146771
+    },
+    {
+      "residue_index": 137,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.2225019232793355
+    },
+    {
+      "residue_index": 138,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.1365098155700306
+    },
+    {
+      "residue_index": 139,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.09148402754629469
+    },
+    {
+      "residue_index": 140,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.08936771066084642
+    },
+    {
+      "residue_index": 141,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.10627979336702133
+    },
+    {
+      "residue_index": 142,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.09214123025604315
+    },
+    {
+      "residue_index": 143,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.07527803684014316
+    },
+    {
+      "residue_index": 144,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.07599993139760945
+    },
+    {
+      "residue_index": 145,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.08661748439485217
+    },
+    {
+      "residue_index": 146,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.07681010172175382
+    },
+    {
+      "residue_index": 147,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.07020638664887477
+    },
+    {
+      "residue_index": 148,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.07370370519381132
+    },
+    {
+      "residue_index": 149,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.07156410270386734
+    },
+    {
+      "residue_index": 150,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.08229872800528494
+    },
+    {
+      "residue_index": 151,
+      "residue_name": "H",
+      "residue_root_mean_square_fluctuation": 0.09449631763777477
+    },
+    {
+      "residue_index": 152,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.10839948191517308
+    },
+    {
+      "residue_index": 153,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.16243458874949984
+    },
+    {
+      "residue_index": 154,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.16372708450706125
+    },
+    {
+      "residue_index": 155,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.23509552886100715
+    },
+    {
+      "residue_index": 156,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.1713387361237214
+    },
+    {
+      "residue_index": 157,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.1251434391629331
+    },
+    {
+      "residue_index": 158,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.15735601361252075
+    },
+    {
+      "residue_index": 159,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.19518606024467935
+    },
+    {
+      "residue_index": 160,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.15671452611452424
+    },
+    {
+      "residue_index": 161,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.13675404201654337
+    },
+    {
+      "residue_index": 162,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.1079909556222998
+    },
+    {
+      "residue_index": 163,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.09486442655836026
+    },
+    {
+      "residue_index": 164,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.11414604926218766
+    },
+    {
+      "residue_index": 165,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.09318845912185338
+    },
+    {
+      "residue_index": 166,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.08761135534448845
+    },
+    {
+      "residue_index": 167,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.11335456317417619
+    },
+    {
+      "residue_index": 168,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.11722834958103474
+    },
+    {
+      "residue_index": 169,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.09804161697636482
+    },
+    {
+      "residue_index": 170,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.11178107722683235
+    },
+    {
+      "residue_index": 171,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.14686209095702055
+    },
+    {
+      "residue_index": 172,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.14067125301441166
+    },
+    {
+      "residue_index": 173,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.12665428580037205
+    },
+    {
+      "residue_index": 174,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.17235559196356312
+    },
+    {
+      "residue_index": 175,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.2061577938191879
+    },
+    {
+      "residue_index": 176,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.18744004370354084
+    },
+    {
+      "residue_index": 177,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.20064950096067657
+    },
+    {
+      "residue_index": 178,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.14603177676760798
+    },
+    {
+      "residue_index": 179,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.14808216291288046
+    },
+    {
+      "residue_index": 180,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.10706016158565626
+    },
+    {
+      "residue_index": 181,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.09380464845255986
+    },
+    {
+      "residue_index": 182,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.08724113481376962
+    },
+    {
+      "residue_index": 183,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.06706312405990968
+    },
+    {
+      "residue_index": 184,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.06752447334139064
+    },
+    {
+      "residue_index": 185,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.06540390788063195
+    },
+    {
+      "residue_index": 186,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.0670608502979234
+    },
+    {
+      "residue_index": 187,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.07313394095406665
+    },
+    {
+      "residue_index": 188,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.09434710869412836
+    },
+    {
+      "residue_index": 189,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.11183690515218384
+    },
+    {
+      "residue_index": 190,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.16138530557390457
+    },
+    {
+      "residue_index": 191,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.14183975587237513
+    },
+    {
+      "residue_index": 192,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.11205478476388271
+    },
+    {
+      "residue_index": 193,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.15437698134099698
+    },
+    {
+      "residue_index": 194,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.20683027858837844
+    },
+    {
+      "residue_index": 195,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.15865004757841203
+    },
+    {
+      "residue_index": 196,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.1661700335737079
+    },
+    {
+      "residue_index": 197,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.26237816228497857
+    },
+    {
+      "residue_index": 198,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.3543839320805459
+    },
+    {
+      "residue_index": 199,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.5786237414688531
+    },
+    {
+      "residue_index": 200,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.295954044469556
+    },
+    {
+      "residue_index": 201,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.19136042646821813
+    },
+    {
+      "residue_index": 202,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.11949643211045209
+    },
+    {
+      "residue_index": 203,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.09028501759846011
+    },
+    {
+      "residue_index": 204,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.07501756895310253
+    },
+    {
+      "residue_index": 205,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.0944716669826516
+    },
+    {
+      "residue_index": 206,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.10166633222993592
+    },
+    {
+      "residue_index": 207,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.08054123046973544
+    },
+    {
+      "residue_index": 208,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.07163943835449361
+    },
+    {
+      "residue_index": 209,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.06228504138073665
+    },
+    {
+      "residue_index": 210,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.06055407589755842
+    },
+    {
+      "residue_index": 211,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.06870585422770331
+    },
+    {
+      "residue_index": 212,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06482747323079657
+    },
+    {
+      "residue_index": 213,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.06944602595930256
+    },
+    {
+      "residue_index": 214,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.0850047542920346
+    },
+    {
+      "residue_index": 215,
+      "residue_name": "H",
+      "residue_root_mean_square_fluctuation": 0.0990899941164442
+    },
+    {
+      "residue_index": 216,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.08948772738170918
+    },
+    {
+      "residue_index": 217,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.07257256306311619
+    },
+    {
+      "residue_index": 218,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.06867957629327402
+    },
+    {
+      "residue_index": 219,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.06944138580370876
+    },
+    {
+      "residue_index": 220,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.06851208727667266
+    },
+    {
+      "residue_index": 221,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.07387943756735287
+    },
+    {
+      "residue_index": 222,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.07660919031066928
+    },
+    {
+      "residue_index": 223,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.0768476484686099
+    },
+    {
+      "residue_index": 224,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.08021339638577557
+    },
+    {
+      "residue_index": 225,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.08104615365434636
+    },
+    {
+      "residue_index": 226,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.10073032540129247
+    },
+    {
+      "residue_index": 227,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.11677007278926249
+    },
+    {
+      "residue_index": 228,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.10536081102186712
+    },
+    {
+      "residue_index": 229,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.12937633578632193
+    },
+    {
+      "residue_index": 230,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.19621472065422005
+    },
+    {
+      "residue_index": 231,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.18398083731082282
+    },
+    {
+      "residue_index": 232,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.2096416412862804
+    },
+    {
+      "residue_index": 233,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.158758813634607
+    },
+    {
+      "residue_index": 234,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.11756071583228
+    },
+    {
+      "residue_index": 235,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.1135228771327104
+    },
+    {
+      "residue_index": 236,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.09272284101364792
+    },
+    {
+      "residue_index": 237,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.1004804915942814
+    },
+    {
+      "residue_index": 238,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.09626363027392132
+    },
+    {
+      "residue_index": 239,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.10628841553247435
+    },
+    {
+      "residue_index": 240,
+      "residue_name": "H",
+      "residue_root_mean_square_fluctuation": 0.10067248181754203
+    },
+    {
+      "residue_index": 241,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.09719567671363567
+    },
+    {
+      "residue_index": 242,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.09760565997124807
+    },
+    {
+      "residue_index": 243,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.12887549611586893
+    },
+    {
+      "residue_index": 244,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.12272499525640618
+    },
+    {
+      "residue_index": 245,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.10675556362559828
+    },
+    {
+      "residue_index": 246,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.13120090633465967
+    },
+    {
+      "residue_index": 247,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.1362928882713202
+    },
+    {
+      "residue_index": 248,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.18312701761211905
+    },
+    {
+      "residue_index": 249,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.314642944022542
+    },
+    {
+      "residue_index": 250,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.3800739399346395
+    },
+    {
+      "residue_index": 251,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.20311147785415293
+    },
+    {
+      "residue_index": 252,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.13912261198910056
+    },
+    {
+      "residue_index": 253,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.11693304155668213
+    },
+    {
+      "residue_index": 254,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.12714230326866738
+    },
+    {
+      "residue_index": 255,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.1140592609349825
+    },
+    {
+      "residue_index": 256,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.1326313166209363
+    },
+    {
+      "residue_index": 257,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.1254482962392953
+    },
+    {
+      "residue_index": 258,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.16176658570157953
+    },
+    {
+      "residue_index": 259,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.15909238715243246
+    },
+    {
+      "residue_index": 260,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.21016065900868797
+    },
+    {
+      "residue_index": 261,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.22449106834417337
+    },
+    {
+      "residue_index": 262,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.16093297903204898
+    },
+    {
+      "residue_index": 263,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.33789496278769504
+    },
+    {
+      "residue_index": 264,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.3011065263554817
+    },
+    {
+      "residue_index": 265,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.7640285941152286
+    },
+    {
+      "residue_index": 266,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.5208696554597068
+    },
+    {
+      "residue_index": 267,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.6080184247192427
+    },
+    {
+      "residue_index": 268,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.5775348600363526
+    },
+    {
+      "residue_index": 269,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.32318014516393395
+    },
+    {
+      "residue_index": 270,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.18035923835118106
+    },
+    {
+      "residue_index": 271,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.1611762623054467
+    },
+    {
+      "residue_index": 272,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.13450731560449136
+    },
+    {
+      "residue_index": 273,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.13431907983845173
+    },
+    {
+      "residue_index": 274,
+      "residue_name": "C",
+      "residue_root_mean_square_fluctuation": 0.1205286328726334
+    },
+    {
+      "residue_index": 275,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.12583644623459814
+    },
+    {
+      "residue_index": 276,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.0951817826336776
+    },
+    {
+      "residue_index": 277,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.070244441876983
+    },
+    {
+      "residue_index": 278,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.05402469290397991
+    },
+    {
+      "residue_index": 279,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.04968379823877132
+    },
+    {
+      "residue_index": 280,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.04884681710999554
+    },
+    {
+      "residue_index": 281,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.05489847620554354
+    },
+    {
+      "residue_index": 282,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.05604206738020256
+    },
+    {
+      "residue_index": 283,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.06099778459712517
+    },
+    {
+      "residue_index": 284,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.06904290146578082
+    },
+    {
+      "residue_index": 285,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06376604705028556
+    },
+    {
+      "residue_index": 286,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.05952259581179244
+    },
+    {
+      "residue_index": 287,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.07419953509794605
+    },
+    {
+      "residue_index": 288,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.09583303215245793
+    },
+    {
+      "residue_index": 289,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.09107396338368494
+    },
+    {
+      "residue_index": 290,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.08706461484839348
+    },
+    {
+      "residue_index": 291,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.11076979882812314
+    },
+    {
+      "residue_index": 292,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.12942040042851377
+    },
+    {
+      "residue_index": 293,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.12176643909074812
+    },
+    {
+      "residue_index": 294,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.13761573646272526
+    },
+    {
+      "residue_index": 295,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.17894590453244036
+    },
+    {
+      "residue_index": 296,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.19220354426124986
+    },
+    {
+      "residue_index": 297,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.18701239218458235
+    },
+    {
+      "residue_index": 298,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.15349602277985896
+    },
+    {
+      "residue_index": 299,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.13313061811306254
+    },
+    {
+      "residue_index": 300,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.17038117581067694
+    },
+    {
+      "residue_index": 301,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.16208530349311503
+    },
+    {
+      "residue_index": 302,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.12454656581863216
+    },
+    {
+      "residue_index": 303,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.13510608498268628
+    },
+    {
+      "residue_index": 304,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.14313068775292467
+    },
+    {
+      "residue_index": 305,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.10943954305053177
+    },
+    {
+      "residue_index": 306,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.09485275543928384
+    },
+    {
+      "residue_index": 307,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.09708191092911864
+    },
+    {
+      "residue_index": 308,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.09427851646976378
+    },
+    {
+      "residue_index": 309,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.08217269667622136
+    },
+    {
+      "residue_index": 310,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.07261512101837866
+    },
+    {
+      "residue_index": 311,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06923576745643455
+    },
+    {
+      "residue_index": 312,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.06871784530526166
+    },
+    {
+      "residue_index": 313,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.06426469672221315
+    },
+    {
+      "residue_index": 314,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.07345012356732304
+    },
+    {
+      "residue_index": 315,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.06874442455343953
+    },
+    {
+      "residue_index": 316,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.0735595112430856
+    },
+    {
+      "residue_index": 317,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.06962710536461317
+    },
+    {
+      "residue_index": 318,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.07892989249225528
+    },
+    {
+      "residue_index": 319,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.08637269839749485
+    },
+    {
+      "residue_index": 320,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.10610241682912447
+    },
+    {
+      "residue_index": 321,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.13277157466907638
+    },
+    {
+      "residue_index": 322,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.14559007344178168
+    },
+    {
+      "residue_index": 323,
+      "residue_name": "H",
+      "residue_root_mean_square_fluctuation": 0.2002906491530359
+    },
+    {
+      "residue_index": 324,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.25917687391855243
+    },
+    {
+      "residue_index": 325,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.28197950490419227
+    },
+    {
+      "residue_index": 326,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.16703666663795239
+    },
+    {
+      "residue_index": 327,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.1477065005420202
+    },
+    {
+      "residue_index": 328,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.11420387953161142
+    },
+    {
+      "residue_index": 329,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.12585215965228583
+    },
+    {
+      "residue_index": 330,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.12688965911793945
+    },
+    {
+      "residue_index": 331,
+      "residue_name": "H",
+      "residue_root_mean_square_fluctuation": 0.11033695663902855
+    },
+    {
+      "residue_index": 332,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.08986643699931349
+    },
+    {
+      "residue_index": 333,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.07500948348161658
+    },
+    {
+      "residue_index": 334,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.0653779571750563
+    },
+    {
+      "residue_index": 335,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.06046105832209432
+    },
+    {
+      "residue_index": 336,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.06028532764297618
+    },
+    {
+      "residue_index": 337,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.0723178460580366
+    },
+    {
+      "residue_index": 338,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.07822179570209509
+    },
+    {
+      "residue_index": 339,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.07254826300483333
+    },
+    {
+      "residue_index": 340,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.0809713456335573
+    },
+    {
+      "residue_index": 341,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.09075090880544394
+    },
+    {
+      "residue_index": 342,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.09989506016823906
+    },
+    {
+      "residue_index": 343,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.09364796859064446
+    },
+    {
+      "residue_index": 344,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.11751064389871435
+    },
+    {
+      "residue_index": 345,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.10979734863344624
+    },
+    {
+      "residue_index": 346,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.12593878319292345
+    },
+    {
+      "residue_index": 347,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.11752135864984592
+    },
+    {
+      "residue_index": 348,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.11706970102410455
+    },
+    {
+      "residue_index": 349,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.09788239000769593
+    },
+    {
+      "residue_index": 350,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.08414949871185401
+    },
+    {
+      "residue_index": 351,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.07609354366693492
+    },
+    {
+      "residue_index": 352,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.06683079344008672
+    },
+    {
+      "residue_index": 353,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.06037116233065637
+    },
+    {
+      "residue_index": 354,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.06257009033588576
+    },
+    {
+      "residue_index": 355,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.05965337921239606
+    },
+    {
+      "residue_index": 356,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.06743586822336149
+    },
+    {
+      "residue_index": 357,
+      "residue_name": "M",
+      "residue_root_mean_square_fluctuation": 0.07881572444135614
+    },
+    {
+      "residue_index": 358,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.0835467096609715
+    },
+    {
+      "residue_index": 359,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.10180288571958904
+    },
+    {
+      "residue_index": 360,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.11103370347410395
+    },
+    {
+      "residue_index": 361,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.13949292433171695
+    },
+    {
+      "residue_index": 362,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.14734042380355614
+    },
+    {
+      "residue_index": 363,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.13626122448002426
+    },
+    {
+      "residue_index": 364,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.13175592433384095
+    },
+    {
+      "residue_index": 365,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.10038522996336884
+    },
+    {
+      "residue_index": 366,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.08196816654789389
+    },
+    {
+      "residue_index": 367,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.07169384296610382
+    },
+    {
+      "residue_index": 368,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.061423119686014056
+    },
+    {
+      "residue_index": 369,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.05834172054626369
+    },
+    {
+      "residue_index": 370,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.06599191204187635
+    },
+    {
+      "residue_index": 371,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.06726267805801722
+    },
+    {
+      "residue_index": 372,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.07736501071455261
+    },
+    {
+      "residue_index": 373,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.08476543586029493
+    },
+    {
+      "residue_index": 374,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.09254932355186739
+    },
+    {
+      "residue_index": 375,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.09658289316534899
+    },
+    {
+      "residue_index": 376,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.09687401832578263
+    },
+    {
+      "residue_index": 377,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.0853175430081903
+    },
+    {
+      "residue_index": 378,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.08937237275138833
+    },
+    {
+      "residue_index": 379,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.09733361512463051
+    },
+    {
+      "residue_index": 380,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.10373256648514412
+    },
+    {
+      "residue_index": 381,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.13768141357464883
+    },
+    {
+      "residue_index": 382,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.15938927966861396
+    },
+    {
+      "residue_index": 383,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.23976995834803602
+    },
+    {
+      "residue_index": 384,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.3437777634872449
+    },
+    {
+      "residue_index": 385,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 1.059080639162909
+    },
+    {
+      "residue_index": 386,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.49357381689369
+    },
+    {
+      "residue_index": 387,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.22030989842476587
+    },
+    {
+      "residue_index": 388,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.17388942659165937
+    },
+    {
+      "residue_index": 389,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.1268082088232844
+    },
+    {
+      "residue_index": 390,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.12918033041535154
+    },
+    {
+      "residue_index": 391,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.10212415336987386
+    },
+    {
+      "residue_index": 392,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.10985384857696068
+    },
+    {
+      "residue_index": 393,
+      "residue_name": "W",
+      "residue_root_mean_square_fluctuation": 0.10336496705189019
+    },
+    {
+      "residue_index": 394,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.12252944181593996
+    },
+    {
+      "residue_index": 395,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.11760374776179355
+    },
+    {
+      "residue_index": 396,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.13201049869758913
+    },
+    {
+      "residue_index": 397,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.1113035947703284
+    },
+    {
+      "residue_index": 398,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.09819592312576797
+    },
+    {
+      "residue_index": 399,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.11504544668962925
+    },
+    {
+      "residue_index": 400,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.1121604203070376
+    },
+    {
+      "residue_index": 401,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.09121022897750168
+    },
+    {
+      "residue_index": 402,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.09608210622367992
+    },
+    {
+      "residue_index": 403,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.11085641939309215
+    },
+    {
+      "residue_index": 404,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.10104890443451603
+    },
+    {
+      "residue_index": 405,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.08769420169875854
+    },
+    {
+      "residue_index": 406,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.10540482775455476
+    },
+    {
+      "residue_index": 407,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.11855908091458554
+    },
+    {
+      "residue_index": 408,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.10695899501420905
+    },
+    {
+      "residue_index": 409,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.10477987292849346
+    },
+    {
+      "residue_index": 410,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.14272689759413634
+    },
+    {
+      "residue_index": 411,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.15656908270794737
+    },
+    {
+      "residue_index": 412,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.13584975601818006
+    },
+    {
+      "residue_index": 413,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.1580346032801729
+    },
+    {
+      "residue_index": 414,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.22204132721788977
+    },
+    {
+      "residue_index": 415,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.2213027408407205
+    },
+    {
+      "residue_index": 416,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.19976874408422465
+    },
+    {
+      "residue_index": 417,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.23750396695854903
+    },
+    {
+      "residue_index": 418,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.1794414409967457
+    },
+    {
+      "residue_index": 419,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.1700134294747704
+    },
+    {
+      "residue_index": 420,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.13496118286204054
+    },
+    {
+      "residue_index": 421,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.1296969588691473
+    },
+    {
+      "residue_index": 422,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.1513107349295884
+    },
+    {
+      "residue_index": 423,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.16104392425255326
+    },
+    {
+      "residue_index": 424,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.1171572725283803
+    },
+    {
+      "residue_index": 425,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.12572547648133311
+    },
+    {
+      "residue_index": 426,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.18479693625887264
+    },
+    {
+      "residue_index": 427,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.7635088495427533
+    },
+    {
+      "residue_index": 428,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.6150610982947109
+    },
+    {
+      "residue_index": 429,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.2574119361098745
+    },
+    {
+      "residue_index": 430,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.14683333353528477
+    },
+    {
+      "residue_index": 431,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.11458383121062282
+    },
+    {
+      "residue_index": 432,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.09453769049194968
+    },
+    {
+      "residue_index": 433,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.09405581790131194
+    },
+    {
+      "residue_index": 434,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.09777985088066639
+    },
+    {
+      "residue_index": 435,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.10203574302700935
+    },
+    {
+      "residue_index": 436,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.07827036673656959
+    },
+    {
+      "residue_index": 437,
+      "residue_name": "C",
+      "residue_root_mean_square_fluctuation": 0.0686766824642336
+    },
+    {
+      "residue_index": 438,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.060147193844281716
+    },
+    {
+      "residue_index": 439,
+      "residue_name": "H",
+      "residue_root_mean_square_fluctuation": 0.060740777664637015
+    },
+    {
+      "residue_index": 440,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.06434766133823187
+    },
+    {
+      "residue_index": 441,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.06288776040073472
+    },
+    {
+      "residue_index": 442,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06598069878955512
+    },
+    {
+      "residue_index": 443,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.07638757969460422
+    },
+    {
+      "residue_index": 444,
+      "residue_name": "C",
+      "residue_root_mean_square_fluctuation": 0.07023581979355892
+    },
+    {
+      "residue_index": 445,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.0697092230300223
+    },
+    {
+      "residue_index": 446,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.07355443191080818
+    },
+    {
+      "residue_index": 447,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.0942318868187574
+    },
+    {
+      "residue_index": 448,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.09956670654879014
+    },
+    {
+      "residue_index": 449,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.09012163565241238
+    },
+    {
+      "residue_index": 450,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.08370690005190673
+    },
+    {
+      "residue_index": 451,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.0974117193923751
+    },
+    {
+      "residue_index": 452,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.09334521153041254
+    },
+    {
+      "residue_index": 453,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.08132115193040379
+    },
+    {
+      "residue_index": 454,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06744708346839078
+    },
+    {
+      "residue_index": 455,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.07890865566180628
+    },
+    {
+      "residue_index": 456,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.08175335007608037
+    },
+    {
+      "residue_index": 457,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.10884375418377774
+    },
+    {
+      "residue_index": 458,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.13597300288133796
+    },
+    {
+      "residue_index": 459,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.12019844518192416
+    },
+    {
+      "residue_index": 460,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.12697024674867574
+    },
+    {
+      "residue_index": 461,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.10401392946301356
+    },
+    {
+      "residue_index": 462,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.07528960302689286
+    },
+    {
+      "residue_index": 463,
+      "residue_name": "Y",
+      "residue_root_mean_square_fluctuation": 0.0590076621485308
+    },
+    {
+      "residue_index": 464,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.05167483072735818
+    },
+    {
+      "residue_index": 465,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.05214057144529345
+    },
+    {
+      "residue_index": 466,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.05290246134925362
+    },
+    {
+      "residue_index": 467,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.057048633863322776
+    },
+    {
+      "residue_index": 468,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.05863504454004114
+    },
+    {
+      "residue_index": 469,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.0603831449582342
+    },
+    {
+      "residue_index": 470,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.05955205113032649
+    },
+    {
+      "residue_index": 471,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.06502060527268273
+    },
+    {
+      "residue_index": 472,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06541848833155971
+    },
+    {
+      "residue_index": 473,
+      "residue_name": "S",
+      "residue_root_mean_square_fluctuation": 0.06407484688149677
+    },
+    {
+      "residue_index": 474,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.06384169263397832
+    },
+    {
+      "residue_index": 475,
+      "residue_name": "G",
+      "residue_root_mean_square_fluctuation": 0.06949075196482771
+    },
+    {
+      "residue_index": 476,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.06401991814004003
+    },
+    {
+      "residue_index": 477,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.05840873764048766
+    },
+    {
+      "residue_index": 478,
+      "residue_name": "P",
+      "residue_root_mean_square_fluctuation": 0.057052609928232995
+    },
+    {
+      "residue_index": 479,
+      "residue_name": "F",
+      "residue_root_mean_square_fluctuation": 0.058061460243009955
+    },
+    {
+      "residue_index": 480,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.06355282259094347
+    },
+    {
+      "residue_index": 481,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.062169762425494976
+    },
+    {
+      "residue_index": 482,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.05621844406090884
+    },
+    {
+      "residue_index": 483,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.06108595205065964
+    },
+    {
+      "residue_index": 484,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.06873783891801986
+    },
+    {
+      "residue_index": 485,
+      "residue_name": "L",
+      "residue_root_mean_square_fluctuation": 0.0649239666148615
+    },
+    {
+      "residue_index": 486,
+      "residue_name": "A",
+      "residue_root_mean_square_fluctuation": 0.06362463442726903
+    },
+    {
+      "residue_index": 487,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.0769401925510171
+    },
+    {
+      "residue_index": 488,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.0858662080539829
+    },
+    {
+      "residue_index": 489,
+      "residue_name": "N",
+      "residue_root_mean_square_fluctuation": 0.07856190103804836
+    },
+    {
+      "residue_index": 490,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.08199801535042678
+    },
+    {
+      "residue_index": 491,
+      "residue_name": "E",
+      "residue_root_mean_square_fluctuation": 0.10027449487772205
+    },
+    {
+      "residue_index": 492,
+      "residue_name": "R",
+      "residue_root_mean_square_fluctuation": 0.11067569877452842
+    },
+    {
+      "residue_index": 493,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.10150364445432301
+    },
+    {
+      "residue_index": 494,
+      "residue_name": "I",
+      "residue_root_mean_square_fluctuation": 0.12619669939454364
+    },
+    {
+      "residue_index": 495,
+      "residue_name": "K",
+      "residue_root_mean_square_fluctuation": 0.1705522210390943
+    },
+    {
+      "residue_index": 496,
+      "residue_name": "Q",
+      "residue_root_mean_square_fluctuation": 0.16686786883647856
+    },
+    {
+      "residue_index": 497,
+      "residue_name": "D",
+      "residue_root_mean_square_fluctuation": 0.1396792475859618
+    },
+    {
+      "residue_index": 498,
+      "residue_name": "V",
+      "residue_root_mean_square_fluctuation": 0.14370988642189064
+    },
+    {
+      "residue_index": 499,
+      "residue_name": "T",
+      "residue_root_mean_square_fluctuation": 0.20048164350644437
+    }
+  ]
+}

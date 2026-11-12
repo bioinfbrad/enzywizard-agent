@@ -1,0 +1,17 @@
+{
+  "report_type": "enzywizard_dock",
+  "enzyme_substrate_docking_result": {
+    "enzyme_substrate_complex_name": "docked_cleaned_1IU4-assembly1_Z-Gln-Gly",
+    "enzyme_substrate_binding_affinity": -6.188,
+    "docked_substrate_names": "Z-Gln-Gly",
+    "docking_box_center_coordinate": [14.971899999999998, 12.175400000000002, -4.5704],
+    "docking_box_size": [10.8166, 13.113600000000002, 12.626400000000002],
+    "docked_substrates": [
+      {
+        "docked_substrate_name": "Z-Gln-Gly",
+        "docked_substrate_structure_name": "Z-Gln-Gly_1",
+        "docked_substrate_center_coordinate": [15.159965517241378, 11.161758620689657, -3.715034482758621]
+      }
+    ]
+  }
+}

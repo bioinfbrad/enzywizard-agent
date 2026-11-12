@@ -502,6 +502,29 @@ class PlanValidationRecord(BaseModel):
         return self
 
 
+class PlanRepairRecord(BaseModel):
+    """One bounded regeneration of Agent-managed plan structure."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    attempt_index: int
+    repair_type: Literal["regenerate_program_managed_plan"]
+    trigger_errors: list[str]
+    repair_status: Literal["succeeded", "failed"]
+    reason: str
+    validation: PlanValidationRecord
+
+    @model_validator(mode="after")
+    def validate_repair(self) -> "PlanRepairRecord":
+        if self.attempt_index < 1 or not self.trigger_errors or not self.reason:
+            raise ValueError("plan repair requires an attempt, trigger, and reason")
+        if self.repair_status == "succeeded" and not self.validation.passed:
+            raise ValueError("successful plan repair requires passed validation")
+        if self.repair_status == "failed" and self.validation.passed:
+            raise ValueError("failed plan repair requires failed validation")
+        return self
+
+
 class PlanningResult(BaseModel):
     """汇总一次 Planning 节点从意图到完整工具计划的全部结果。"""
 
@@ -525,6 +548,7 @@ class PlanningResult(BaseModel):
     parameter_extraction: ParameterExtractionOutput | None
     tool_plan: ToolPlan | None
     plan_validation: PlanValidationRecord | None = None
+    plan_repairs: list[PlanRepairRecord] = Field(default_factory=list)
 
     # 保存本次 Planning 过程中产生的所有错误。
     error_messages: list[str]
