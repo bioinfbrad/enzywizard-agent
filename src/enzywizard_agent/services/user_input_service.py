@@ -8,16 +8,6 @@ from ..state import AgentState
 from ..utils.analysis_utils import compact_history_summary
 
 
-TRANSIENT_TURN_FIELDS = (
-    "current_request_routing",
-    "current_history_query",
-    "current_planning_result",
-    "current_user_confirmation",
-    "current_tool_execution",
-    "current_analysis_result",
-)
-
-
 def _archive_current_user_message(state: AgentState) -> None:
     """按 turn_id 幂等归档消息，防止中断恢复重放造成重复历史。"""
 
@@ -71,8 +61,15 @@ def record_next_user_input(state: AgentState, resume_value: Any) -> AgentState:
 
     # AgentInputs、CleanedFiles、artifacts 和各阶段历史故意保留；下面字段只能服务
     # 于刚完成的一轮，若不清理会被 Analysis 误认为新一轮的执行结果。
-    for field_name in TRANSIENT_TURN_FIELDS:
-        state.pop(field_name, None)
+    # LangGraph merges node updates into checkpoint state. Omitting a key after
+    # ``pop`` does not delete its previous channel value, so explicit nulls are
+    # required to prevent prior-turn objects from leaking into the next turn.
+    state["current_request_routing"] = None
+    state["current_history_query"] = None
+    state["current_planning_result"] = None
+    state["current_user_confirmation"] = None
+    state["current_tool_execution"] = None
+    state["current_analysis_result"] = None
     state["current_plan_artifacts"] = []
     state["current_history_artifacts"] = []
     state["current_plan_id"] = 0

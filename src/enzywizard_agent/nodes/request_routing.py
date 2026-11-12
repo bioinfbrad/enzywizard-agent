@@ -9,7 +9,9 @@ def request_routing_node(state: AgentState) -> AgentState:
 
     # 同一轮计划修改会再次进入 Router；先清除上一次路由留下的临时历史选择，
     # 防止新修改已取消历史复用时 Planning 仍读取旧产物。
-    state.pop("current_history_query", None)
+    # LangGraph treats node returns as merged channel updates; an omitted key
+    # would retain the previous checkpoint value instead of deleting it.
+    state["current_history_query"] = None
     state["current_history_artifacts"] = []
     result = route_user_request(state)
     state["current_request_routing"] = result

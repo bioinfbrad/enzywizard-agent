@@ -161,19 +161,25 @@ def build_general_answer_context(
     tool_help: str,
     *,
     answer_scope: str = "Answer the routed non-tool request.",
+    include_prior_context: bool = True,
 ) -> str:
     """为无需运行工具的回答提供会话摘要和本地能力说明。"""
 
-    payload = {
+    payload: dict[str, Any] = {
         "user_request": state.get("current_user_message", ""),
         "turn_id": state.get("current_turn_id"),
-        "prior_user_messages": state.get("user_message_summary", ""),
-        "prior_analysis_summary": state.get("analysis_summary", ""),
         "local_tool_help": tool_help,
         "request_routing": _routing_payload(state),
-        "prior_approved_plans": build_prior_plan_catalog(state),
         "answer_scope": answer_scope,
     }
+    if include_prior_context:
+        payload.update(
+            {
+                "prior_user_messages": state.get("user_message_summary", ""),
+                "prior_analysis_summary": state.get("analysis_summary", ""),
+                "prior_approved_plans": build_prior_plan_catalog(state),
+            }
+        )
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
 

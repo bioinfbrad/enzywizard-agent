@@ -1247,6 +1247,13 @@ def _answer_general_request(
         state,
         _load_local_tool_help(),
         answer_scope=answer_scope,
+        # Software help and scope responses must describe current capabilities,
+        # not replay scientific findings or plans from earlier turns. Mixed
+        # requests already retain their scientific context in the primary result.
+        include_prior_context=(
+            not only_non_tool_actions
+            and response_mode not in {"software_help", "out_of_scope"}
+        ),
     )
     try:
         final_answer = _unwrap_general_answer_text(

@@ -39,33 +39,33 @@ class AgentState(TypedDict, total=False):
     user_message_summary: str
 
     # Request Router：保存本轮结构化动作、历史引用意图和路由历史。
-    current_request_routing: RequestRoutingResult
+    current_request_routing: RequestRoutingResult | None
     request_routing_results: List[RequestRoutingResult]
     request_routing_summary: str
 
     # History Query Planner：保存逻辑查询及程序解析出的真实历史产物。
-    current_history_query: HistoryQueryResult
+    current_history_query: HistoryQueryResult | None
     history_query_results: List[HistoryQueryResult]
     history_query_summary: str
     current_history_artifacts: List[Artifact]
 
     # Planning 阶段：当前结果、历史结果以及历史摘要。
-    current_planning_result: PlanningResult
+    current_planning_result: PlanningResult | None
     planning_results: List[PlanningResult]
     planning_summary: str
 
     # 用户确认阶段：保存本轮确认结果、历史确认记录和摘要。
-    current_user_confirmation: UserConfirmation
+    current_user_confirmation: UserConfirmation | None
     user_confirmations: List[UserConfirmation]
     user_confirmation_summary: str
 
     # 工具执行阶段：一次 ToolExecution 对应一个完整计划的执行记录。
-    current_tool_execution: ToolExecution
+    current_tool_execution: ToolExecution | None
     tool_executions: List[ToolExecution]
     tool_calling_summary: str
 
     # Analysis 阶段：当前回答结果、历史分析结果和摘要。
-    current_analysis_result: AnalysisResult
+    current_analysis_result: AnalysisResult | None
     analysis_results: List[AnalysisResult]
     analysis_summary: str
 

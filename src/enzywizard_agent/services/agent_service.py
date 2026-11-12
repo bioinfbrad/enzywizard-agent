@@ -17,7 +17,7 @@ from ..utils.checkpoint_utils import create_in_memory_checkpointer
 from ..utils.IO_utils import create_session_id, normalize_path
 from ..utils.security_utils import redact_text
 from ..validators.input_validators import validate_single_amino_acid_substitution
-from .llm_service import check_model_capabilities
+from .llm_service import check_model_capabilities as run_model_capability_check
 from .manifest_service import write_session_manifest
 from .runtime_service import (
     enforce_session_deadline,
@@ -437,7 +437,7 @@ def run_agent_service(
     # 模型检查在状态图启动前完成；失败时不会生成计划或执行任何科学工具。
     write_session_manifest(state)
     try:
-        capability = check_model_capabilities(state)
+        capability = run_model_capability_check(state)
         write_session_manifest(state)
         print(
             "[INFO] Model capability check: "

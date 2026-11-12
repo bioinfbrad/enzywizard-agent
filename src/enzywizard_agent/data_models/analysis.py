@@ -23,6 +23,7 @@ AnalysisResponseMode = Literal[
     "input_error",
     "request_routing_failure",
     "history_query_failure",
+    "runtime_limit",
     "exit",
 ]
 

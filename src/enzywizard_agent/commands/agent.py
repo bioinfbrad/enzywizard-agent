@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from argparse import ArgumentParser, Namespace
 import json
+import os
 import sys
 
 from ..data_models.runtime import AgentRuntimeError
@@ -37,12 +38,26 @@ def _runtime_error_exit_code(error: BaseException) -> int:
 def add_agent_parser(parser: ArgumentParser) -> None:
     """向顶层解析器注册 Agent 运行所需的命令行参数。"""
 
-    # 模型连接参数和当前轮用户请求均为必填项。
-    parser.add_argument("--api_key", required=True, help="OpenAI-compatible API key.")
+    # 模型连接参数为必填项；首轮消息可通过参数传入或在启动后交互输入。
+    parser.add_argument(
+        "--api_key",
+        default=os.environ.get("ENZYWIZARD_API_KEY"),
+        help=(
+            "OpenAI-compatible API key. Defaults to ENZYWIZARD_API_KEY; using "
+            "the environment variable keeps secrets out of process arguments."
+        ),
+    )
     parser.add_argument("--base_url", required=True, help="OpenAI-compatible API base URL.")
     parser.add_argument("--model", required=True, help="Model name.")
     parser.add_argument("--workdir", required=True, help="Path to a working directory for EnzyWizard-Agent runs and artifacts.")
-    parser.add_argument("--message", required=True, help="User message for EnzyWizard-Agent.")
+    parser.add_argument(
+        "--message",
+        default=None,
+        help=(
+            "Optional initial user message. If omitted, EnzyWizard-Agent prompts "
+            "for it interactively."
+        ),
+    )
 
     # 文件和生物学输入均为可选；组合依赖由 agent_service 统一校验。
     parser.add_argument("--structure_file", default=None, help="Optional protein structure file (.cif/.pdb).")
@@ -105,6 +120,19 @@ def run_agent(args: Namespace) -> None:
 
     # 命令层只转发入口参数；输入校验、状态构造和首次 invoke 均由服务层完成。
     try:
+        if not args.api_key:
+            raise ValueError(
+                "An API key is required. Set ENZYWIZARD_API_KEY or pass --api_key."
+            )
+        message = args.message
+        if message is None:
+            print("\n=== EnzyWizard-Agent ===")
+            print("Enter your request:")
+            while not message:
+                message = input("> ").strip()
+                if not message:
+                    print("[ERROR] The initial message cannot be empty.")
+
         extra_body = None
         if args.llm_extra_body_json is not None:
             extra_body = json.loads(args.llm_extra_body_json)
@@ -115,7 +143,7 @@ def run_agent(args: Namespace) -> None:
             base_url=args.base_url,
             model=args.model,
             workdir=args.workdir,
-            message=args.message,
+            message=message,
             structure_file=args.structure_file,
             msa_file=args.msa_file,
             mut_structure_file=args.mut_structure_file,
@@ -140,7 +168,7 @@ def run_agent(args: Namespace) -> None:
             session_timeout_seconds=args.session_timeout_seconds or None,
             tool_timeout_seconds=args.tool_timeout_seconds or None,
         )
-    except KeyboardInterrupt:
+    except (EOFError, KeyboardInterrupt):
         print("\n[ERROR] Agent execution was cancelled by the user.")
         sys.exit(130)
     except json.JSONDecodeError as error:
@@ -225,12 +253,6 @@ def run_agent(args: Namespace) -> None:
     display_final_analysis_result(result)
     analysis = result.get("current_analysis_result")
     guidance = getattr(analysis, "error_guidance", None)
-    if guidance is not None and guidance.restart_required:
-        print(
-            f"[ERROR:{guidance.error_type}] The current session ended because "
-            "the required correction cannot be applied through a later chat message."
-        )
-        sys.exit(2 if guidance.error_type == "input_error" else 1)
     runtime = result.get("runtime_session")
     if runtime is not None and runtime.status == "budget_exceeded":
         print(f"[WARNING] Agent session stopped at the configured budget: {runtime.stop_reason}")
@@ -241,4 +263,10 @@ def run_agent(args: Namespace) -> None:
     if runtime is not None and runtime.status in {"failed", "cancelled"}:
         print(f"[ERROR:internal] Agent session ended with status={runtime.status}.")
         sys.exit(1)
+    if guidance is not None and guidance.restart_required:
+        print(
+            f"[ERROR:{guidance.error_type}] The current session ended because "
+            "the required correction cannot be applied through a later chat message."
+        )
+        sys.exit(2 if guidance.error_type == "input_error" else 1)
     print("[INFO] Agent graph execution completed")
