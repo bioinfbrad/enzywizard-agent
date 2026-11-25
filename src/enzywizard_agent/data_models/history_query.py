@@ -176,6 +176,7 @@ class HistoryQueryResult(BaseModel):
     selected_artifacts: list[Artifact]
     summary: str
     error_message: str
+    comparison_report_pairs: list[tuple[str, str]] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_result(self) -> "HistoryQueryResult":

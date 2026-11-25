@@ -46,6 +46,7 @@ _BODY_SECTION_LABELS = {
 
 _DISPLAY_SECTION_LABELS = {
     "Evidence supporting the analysis:": "Evidence supporting the analysis",
+    "Evidence for cited conclusions:": "Evidence for cited conclusions",
     "Terminology sources (definitions only, not computational-result evidence):": (
         "Terminology sources"
     ),

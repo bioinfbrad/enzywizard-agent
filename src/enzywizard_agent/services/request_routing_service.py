@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 from collections import defaultdict
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -31,6 +31,7 @@ from ..prompts.request_routing_prompt import (
     REQUEST_ROUTING_SYSTEM_PROMPT,
 )
 from ..state import AgentState
+from ..utils.analysis_utils import unique_wt_mut_report_pairs
 from ..utils.planning_utils import load_enzywizard_tool_specs
 from ..utils.tool_execution_utils import is_safe_historical_artifact
 from .llm_service import create_chat_model_for_state, invoke_structured
@@ -805,18 +806,62 @@ def _normalize_turn_candidate(candidate: Any, action_id: int) -> Any:
 
 
 _EXPLICIT_TURN_REFERENCE = re.compile(
-    r"\bturns?\s+(#?\d+(?:\s*(?:,|and|&)\s*(?:turns?\s+)?#?\d+)*)",
+    r"\bturns?\s+(#?\d+(?:\s*(?:,\s*(?:and\s+)?|and\s+|&\s*)(?:turns?\s+)?#?\d+)*)",
     flags=re.IGNORECASE,
+)
+_CHINESE_TURN_REFERENCE = re.compile(
+    r"\u7b2c\s*(\d+(?:\s*[\u3001,\uff0c\u548c\u4e0e]\s*(?:\u7b2c\s*)?\d+)*)\s*\u8f6e"
+)
+_COMPARISON_SIDE = (
+    r"(?P<side>(?<![A-Za-z0-9_])(?:WT|MUT|wild[- ]type|mutant)(?![A-Za-z0-9_])"
+    r"|\u91ce\u751f\u578b|\u7a81\u53d8[\u4f53\u578b])"
+)
+_COMPARISON_TURN = r"(?:\bturn\s*#?\s*|\u7b2c\s*)(?P<turn>\d+)(?:\s*\u8f6e)?"
+_SIDE_TURN_BINDINGS = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        _COMPARISON_SIDE
+        + r"(?:[ \t]+(?!(?:and|or|with|versus|vs|against|from|in|of|on|WT|MUT|mutant|wild)\b)[A-Za-z_-]+){0,5}?"
+        + r"(?:\s+(?:from|in|of|on)\s+|\s*[(\uff08]\s*|\s*:\s*|\s+)"
+        + _COMPARISON_TURN,
+        _COMPARISON_TURN + r"(?:['\u2019]s)?\s*(?:\u7684\s*|the\s+)?" + _COMPARISON_SIDE,
+    )
 )
 
 
 def _extract_explicit_turn_ids(text: str) -> list[int]:
     """Extract only explicit numeric turn references, preserving first-use order."""
 
-    turn_ids: list[int] = []
-    for match in _EXPLICIT_TURN_REFERENCE.finditer(text):
-        turn_ids.extend(int(value) for value in re.findall(r"\d+", match.group(1)))
-    return list(dict.fromkeys(turn_ids))
+    hits: list[tuple[int, int]] = []
+    for pattern in (_EXPLICIT_TURN_REFERENCE, _CHINESE_TURN_REFERENCE):
+        for match in pattern.finditer(text):
+            hits.extend((match.start(), int(value)) for value in re.findall(r"\d+", match.group(1)))
+    return list(dict.fromkeys(turn_id for _, turn_id in sorted(hits, key=lambda hit: hit[0])))
+
+
+def _comparison_side_turns(request: str) -> dict[str, int]:
+    """Read explicit operand references without interpreting order or vague relatives."""
+    matches: dict[str, set[int]] = defaultdict(set)
+    for pattern in _SIDE_TURN_BINDINGS:
+        for match in pattern.finditer(request):
+            name = match["side"].casefold()
+            side = "wt" if name in {"wt", "wild-type", "wild type", "\u91ce\u751f\u578b"} else "mut"
+            matches[side].add(int(match["turn"]))
+    return {
+        side: next(iter(turns)) for side, turns in matches.items() if len(turns) == 1
+    }
+
+
+def _named_comparison_reports(artifacts: Iterable[Artifact], request: str) -> set[str]:
+    paths_by_name: dict[str, set[str]] = defaultdict(set)
+    for artifact in artifacts:
+        paths_by_name[Path(artifact.path).name.casefold()].add(artifact.path)
+    return {
+        next(iter(paths))
+        for name, paths in paths_by_name.items()
+        if len(paths) == 1
+        and re.search(rf"(?<![\w.-]){re.escape(name)}(?![\w-]|\.[\w-])", request.casefold())
+    }
 
 
 def _explicit_turn_ids_for_action(
@@ -927,6 +972,85 @@ def _compile_history_query(
     )
 
 
+def _resolve_comparison_report_pairs(
+    artifacts: list[Artifact], *, explicit_scope: bool, request: str = "",
+    candidates: list[Artifact] | None = None,
+) -> list[tuple[str, str]] | None:
+    """Bind unique comparison operands or return None when a pair needs clarification."""
+    bindings = _comparison_side_turns(request)
+    selected_sides = {artifact.side for artifact in artifacts if artifact.side in {"wt", "mut"}}
+    if len(bindings) == 2 and selected_sides != {"wt", "mut"}:
+        bound_turns = set(bindings.values())
+        has_joint_report = len(bound_turns) == 1 and any(
+            artifact.artifact_type == "mut_integrate_report_json" and artifact.turn_id in bound_turns
+            for artifact in artifacts
+        )
+        if not has_joint_report:
+            return None
+    if selected_sides == {"wt", "mut"} and any(
+        artifact.side in bindings and artifact.turn_id != bindings[artifact.side]
+        for artifact in artifacts
+    ):
+        return None
+    families: dict[tuple[str, str], list[Artifact]] = defaultdict(list)
+    for artifact in artifacts:
+        if artifact.side in {"wt", "mut"}:
+            families[artifact.source_tool, artifact.artifact_type].append(artifact)
+    pairs: list[tuple[str, str]] = []
+    for family_key, family in families.items():
+        if {artifact.side for artifact in family} != {"wt", "mut"}:
+            continue
+        by_path = {artifact.path: artifact for artifact in family}
+        eligible = [
+            artifact for artifact in (family if candidates is None else candidates)
+            if artifact.side in {"wt", "mut"}
+            and (artifact.source_tool, artifact.artifact_type) == family_key
+        ]
+        named_paths = _named_comparison_reports(eligible, request) if request else set()
+        if named_paths and not named_paths <= set(by_path):
+            return None
+        exact_pairs = unique_wt_mut_report_pairs(family)
+        if exact_pairs:
+            named_pair = set(exact_pairs[0]) == named_paths
+            if named_pair or (explicit_scope and len({artifact.turn_id for artifact in family}) > 1):
+                if candidates is not None and not named_pair:
+                    for side in ("wt", "mut"):
+                        side_candidates = [artifact for artifact in eligible if artifact.side == side]
+                        named_on_side = named_paths.intersection(a.path for a in side_candidates)
+                        possible = {
+                            artifact.path for artifact in side_candidates
+                            if (not named_on_side or artifact.path in named_on_side)
+                            and (side not in bindings or artifact.turn_id == bindings[side])
+                        }
+                        if len(possible) != 1:
+                            return None
+                pairs.extend(exact_pairs)
+                continue
+        by_scope: dict[tuple[int, int], list[Artifact]] = defaultdict(list)
+        for artifact in by_path.values():
+            by_scope[artifact.turn_id, artifact.plan_id].append(artifact)
+        local_pairs = [
+            pair for scope in by_scope.values() for pair in unique_wt_mut_report_pairs(scope)
+        ]
+        paired_paths = {path for pair in local_pairs for path in pair}
+        if not local_pairs or (explicit_scope and paired_paths != set(by_path)):
+            return None
+        pairs.extend(local_pairs)
+    return pairs
+
+
+@dataclass(frozen=True)
+class _HistoryComparisonSelection:
+    artifacts: list[Artifact]
+    candidates: list[Artifact]
+    required_turns: set[int]
+    required_paths: set[str]
+
+
+def _requested_turns(text: str) -> set[int]:
+    return set(_extract_explicit_turn_ids(text)) | set(_comparison_side_turns(text).values())
+
+
 def plan_history_query(state: AgentState) -> HistoryQueryResult:
     """Resolve each history action through small schemas and exact catalog IDs."""
 
@@ -950,7 +1074,10 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
     selected_artifacts: list[Artifact] = []
     selected_paths: set[str] = set()
     operations: list[str] = []
-    comparison_artifacts: list[list[Artifact]] = []
+    comparisons: list[_HistoryComparisonSelection] = []
+    available_reports = [
+        entry.artifact for entry in catalog if entry.artifact_type.endswith("_report_json")
+    ]
 
     try:
         for action_id, action in enumerate(actions):
@@ -973,6 +1100,20 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
                 action,
                 history_action_count=len(actions),
             )
+            required_turns: set[int] = set()
+            required_paths: set[str] = set()
+            if operation == "compare":
+                required_turns = _requested_turns(current_request)
+                required_paths = _named_comparison_reports(available_reports, current_request)
+                if len(actions) > 1:
+                    required_turns &= _requested_turns(action.target)
+                    required_paths &= _named_comparison_reports(available_reports, action.target)
+                if required_turns:
+                    explicit_turn_ids = sorted(required_turns)
+                elif required_paths and not explicit_turn_ids:
+                    explicit_turn_ids = sorted({
+                        report.turn_id for report in available_reports if report.path in required_paths
+                    })
             if explicit_turn_ids:
                 turn_selection = HistoryTurnSelectionDraft(
                     action_id=action_id,
@@ -1099,7 +1240,12 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
                 entry.artifact for entry in selected_entries
             ]
             if operation == "compare":
-                comparison_artifacts.append(action_artifacts)
+                comparisons.append(_HistoryComparisonSelection(
+                    artifacts=action_artifacts,
+                    candidates=[entry.artifact for entry in candidate_entries],
+                    required_turns=required_turns,
+                    required_paths=required_paths,
+                ))
             for artifact in action_artifacts:
                 if artifact.path in selected_paths:
                     continue
@@ -1137,24 +1283,41 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
             error_message="",
         )
 
-    for artifacts in comparison_artifacts:
-        formal_reports = [
-            artifact
-            for artifact in artifacts
+    comparison_pairs: list[tuple[str, str]] = []
+    for comparison in comparisons:
+        formal_reports = list({
+            artifact.path: artifact for artifact in comparison.artifacts
             if artifact.artifact_type.endswith("_report_json")
-        ]
+        }.values())
+        covered_turns = {artifact.turn_id for artifact in formal_reports}
+        missing_turns = sorted(comparison.required_turns - covered_turns)
+        missing_paths = comparison.required_paths - {artifact.path for artifact in formal_reports}
         contains_paired_report = any(
             artifact.artifact_type == "mut_integrate_report_json"
             for artifact in formal_reports
         )
-        if len(formal_reports) < 2 and not contains_paired_report:
+        pairs = _resolve_comparison_report_pairs(
+            formal_reports,
+            explicit_scope=len(covered_turns) > 1 and covered_turns <= comparison.required_turns,
+            request=state.get("current_user_message", ""),
+            candidates=comparison.candidates,
+        )
+        too_few = len(formal_reports) < 2 and not contains_paired_report
+        if missing_turns or missing_paths or too_few or pairs is None:
+            if missing_turns or missing_paths:
+                missing = [f"turn {turn}" for turn in missing_turns]
+                missing.extend(sorted({Path(path).name for path in missing_paths}))
+                details = ", ".join(missing)
+                summary = f"The comparison selection is missing a requested report for: {details}."
+                question = f"Which completed report should be used for the missing comparison source: {details}?"
+            elif too_few:
+                summary = "The comparison has fewer than two compatible reports."
+                question = "Which additional completed report or turn should be included in the comparison?"
+            else:
+                summary = "The wild-type and mutant report pair is ambiguous."
+                question = "Which wild-type and mutant reports should be compared? Specify their turns or report names."
             clarified_query = query.model_copy(
-                update={
-                    "clarification_question": (
-                        "Which additional completed report or turn should be included "
-                        "in the comparison?"
-                    )
-                }
+                update={"clarification_question": question}
             )
             return HistoryQueryResult(
                 turn_id=current_turn_id,
@@ -1162,9 +1325,10 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
                 query=clarified_query,
                 resolved_turn_ids=resolved_turn_ids,
                 selected_artifacts=[],
-                summary="The comparison has fewer than two compatible reports.",
+                summary=summary,
                 error_message="",
             )
+        comparison_pairs.extend(pairs)
 
     return HistoryQueryResult(
         turn_id=current_turn_id,
@@ -1172,6 +1336,7 @@ def plan_history_query(state: AgentState) -> HistoryQueryResult:
         query=query,
         resolved_turn_ids=resolved_turn_ids,
         selected_artifacts=selected_artifacts,
+        comparison_report_pairs=list(dict.fromkeys(comparison_pairs)),
         summary=(
             f"Selected {len(selected_artifacts)} artifact(s) from turns "
             f"{resolved_turn_ids} through validated catalog IDs."

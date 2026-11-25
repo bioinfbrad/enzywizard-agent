@@ -28,6 +28,7 @@ from enzywizard_agent.data_models.runtime import RuntimeSession
 from enzywizard_agent.services.analysis_service import (
     _analyze_reports,
     analyze_agent_state,
+    scientific_review_answer,
 )
 from enzywizard_agent.services.llm_service import (
     check_model_capabilities,
@@ -169,7 +170,9 @@ unit. One conclusion citing two independent sources is two associations; two con
 using one source are also two associations. Count an identical repeated association only
 once, including duplication between the narrative and an evidence-summary section. A
 source listed without a linked conclusion is not an association.
-Use candidate_evidence_registry to resolve the evidence actually attached to findings.
+Use candidate_evidence_registry to resolve cited IDs. When claim_citations is present,
+it records the same links shown inline; do not count these twice. An empty evidence_ids
+list records an uncited claim, not a generated evidence association.
 It is provenance context, not a gold label: independently verify whether each referenced
 source supports the linked conclusion using the supplied report summaries and key facts.
 4. EA-F1 recall: return exactly one evidence_coverage_judgment for every KFR key-fact
@@ -1094,13 +1097,18 @@ def _build_evaluation_packet(
         for finding in result.findings
         for evidence_id in finding.evidence_ids
     }
+    referenced_evidence_ids.update(
+        evidence_id
+        for citation in (result.claim_citations or [])
+        for evidence_id in citation.evidence_ids
+    )
     pending = list(referenced_evidence_ids)
     while pending:
         evidence_id = pending.pop()
         item = evidence_by_id.get(evidence_id)
         if item is None:
             continue
-        for source_id in item.source_evidence_ids:
+        for source_id in (*item.source_evidence_ids, *item.metadata.get("source_metric_evidence_ids", [])):
             if source_id not in referenced_evidence_ids:
                 referenced_evidence_ids.add(source_id)
                 pending.append(source_id)
@@ -1127,6 +1135,8 @@ def _build_evaluation_packet(
                 "field_path": item.field_path,
                 "value_summary": item.value_summary,
                 "source_evidence_ids": item.source_evidence_ids,
+                "source_field_paths": item.metadata.get("source_field_paths", []),
+                "source_metric_evidence_ids": item.metadata.get("source_metric_evidence_ids", []),
             }
         )
 
@@ -1137,11 +1147,15 @@ def _build_evaluation_packet(
         "question": question,
         "initial_question": case.get("initial_question"),
         "initial_answer": (
-            _scientific_answer_body(initial.final_answer)
+            scientific_review_answer(initial)
             if initial is not None
             else None
         ),
-        "candidate_answer": _scientific_answer_body(result.final_answer),
+        "candidate_answer": scientific_review_answer(result),
+        "claim_citations": (
+            [citation.model_dump(mode="json") for citation in result.claim_citations]
+            if result.claim_citations is not None else None
+        ),
         "candidate_limitations": result.limitations,
         "expected_behavior": case.get("expected_behavior"),
         "required_limitations": case.get("required_limitations", []),
@@ -1208,6 +1222,8 @@ def _full_review_packet(packet: dict[str, Any]) -> dict[str, Any]:
     output["candidate_evidence_registry"] = packet.get(
         "candidate_evidence_registry", []
     )
+    if packet.get("claim_citations") is not None:
+        output["claim_citations"] = packet["claim_citations"]
     return output
 
 

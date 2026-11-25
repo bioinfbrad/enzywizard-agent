@@ -20,8 +20,14 @@ Rules:
    unsupported claim.
 6. Do not print local file paths unless the user explicitly asked about files or paths.
 7. Do not recommend internet searches or claim that external sources were consulted.
-8. Cite supplied deterministic evidence IDs in square brackets after each material
-   result or comparison. When a claim states a specific metric value, cite its
+8. Keep final_answer in natural prose. In claim_citations, list each independently
+   checkable computational result or comparison in the order it appears. Copy
+   exactly the smallest self-contained text span from final_answer that states the
+   claim, including any scientific qualifier. Do not overlap spans. Return the
+   supporting evidence IDs in evidence_ids; use an empty list if no supplied evidence
+   supports the statement, and state that limitation in the answer instead of
+   presenting it as an established result. Do not type citations in final_answer.
+   When a claim states a specific metric value, cite its
    report-N-metric-M evidence when available instead of only the report root. Do not
    cite prior-turn-* identifiers; cite the current deterministic evidence that
    revalidates the claim. Do not attach computational-report evidence to a general

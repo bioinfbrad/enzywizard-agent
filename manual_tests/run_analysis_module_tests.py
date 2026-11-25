@@ -421,10 +421,10 @@ def main() -> int:
     internal_ids = ("[report-", "[comparison-", "[consistency-", "[recovery-")
     if any(marker in result.final_answer for marker in internal_ids):
         raise AssertionError("The user-facing answer leaked an internal evidence ID")
-    if "Evidence supporting the analysis:" not in result.final_answer:
+    if "Evidence for cited conclusions:" not in result.final_answer:
         raise AssertionError("The scientific answer omitted its evidence section")
-    if "[Evidence:" not in result.final_answer:
-        raise AssertionError("The deterministic answer omitted readable evidence labels")
+    if not result.claim_citations or not all(c.evidence_ids for c in result.claim_citations):
+        raise AssertionError("The deterministic answer omitted linked evidence")
     first_evidence = result.evidence[0]
     first_label = analysis_service._evidence_display_label(first_evidence)
     if first_label != analysis_service._evidence_display_label(first_evidence):

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 import re
 from typing import Any
@@ -14,12 +15,14 @@ from ..builders.analysis_context_builder import (
 )
 from ..data_models.analysis import (
     AnalysisArtifactReference,
+    AnalysisClaimCitation,
     AnalysisErrorGuidance,
     AnalysisErrorType,
     AnalysisEvidence,
     AnalysisFinding,
     AnalysisNarrativeOutput,
     AnalysisResult,
+    NarrativeClaimCitation,
     ReportSummary,
 )
 from ..data_models.artifact import Artifact
@@ -28,16 +31,22 @@ from ..prompts.analysis_prompt import (
     SCIENTIFIC_RESULT_SYSTEM_PROMPT,
 )
 from ..state import AgentState
+from ..utils.CLI_utils import _humanize_field_path
 from ..utils.analysis_utils import (
     artifact_to_reference,
     build_report_evidence,
     select_report_artifacts,
     summarize_report_artifact,
+    unique_wt_mut_report_pairs,
 )
 from .llm_service import create_chat_model_for_state, invoke_structured, invoke_text
 from ..utils.terminology_utils import (
+    CLAIM_EVIDENCE_APPENDIX_MARKER,
     TERMINOLOGY_APPENDIX_MARKER,
     annotate_terminology,
+    claim_evidence_number,
+    order_answer_markers,
+    scientific_answer_body,
     terminology_number,
 )
 from .knowledge_retrieval_service import (
@@ -68,6 +77,7 @@ def _empty_result(
     error_messages: list[str] | None = None,
     used_language_model: bool = False,
     error_guidance: AnalysisErrorGuidance | None = None,
+    claim_citations: list[AnalysisClaimCitation] | None = None,
 ) -> AnalysisResult:
     """集中填充 AnalysisResult，避免各响应分支遗漏状态字段。"""
 
@@ -87,6 +97,7 @@ def _empty_result(
         error_messages=error_messages or [],
         used_language_model=used_language_model,
         error_guidance=error_guidance,
+        claim_citations=claim_citations,
     )
 
 
@@ -780,6 +791,8 @@ def _deterministic_scientific_answer(
     findings: list[AnalysisFinding],
     evidence: list[AnalysisEvidence],
     historical: bool,
+    *,
+    inline_evidence: bool = True,
 ) -> str:
     selected = findings[:12]
     heading = (
@@ -795,7 +808,7 @@ def _deterministic_scientific_answer(
             for evidence_id in finding.evidence_ids
             if evidence_id in by_id
         ]
-        citation = f" [{'; '.join(labels)}]" if labels else ""
+        citation = f" [{'; '.join(labels)}]" if labels and inline_evidence else ""
         lines.append(f"- {finding.title}: {finding.statement}{citation}")
     if len(findings) > len(selected):
         lines.append(
@@ -898,32 +911,213 @@ def _replace_internal_evidence_references(
     return _INTERNAL_EVIDENCE_ID_SEARCH_PATTERN.sub("", rendered)
 
 
-def _scientific_evidence_appendix(
-    findings: list[AnalysisFinding],
-    evidence: list[AnalysisEvidence],
-) -> str:
-    """Render a bounded user-visible map from claims to computational sources."""
+_CLAIM_NUMBER = re.compile(
+    r"(?<![\w.])[-+\u2212]?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][-+\u2212]?\d+)?(?![\w]|\.\d)"
+)
+_WT = re.compile(r"\b(?:WT|wild[- ]type)\b", re.IGNORECASE)
+_MUT = re.compile(r"\b(?:MUT|mutant)\b", re.IGNORECASE)
 
-    by_id = {item.evidence_id: item for item in evidence}
+
+def _claim_conflicts_with_source(text: str, source: AnalysisEvidence) -> bool:
+    """Reject only obvious conflicts; an existing ID does not imply entailment."""
+    wt, mut = bool(_WT.search(text)), bool(_MUT.search(text))
+    if (wt and not mut and source.side == "mut") or (mut and not wt and source.side == "wt"):
+        return True
+    if source.metadata.get("role") != "report_metric" or "%" in text:
+        return False
+    values = list(_CLAIM_NUMBER.finditer(text))
+    raw = (source.value_summary or "").partition("=")[2].strip()
+    if len(values) != 1 or not _CLAIM_NUMBER.fullmatch(raw):
+        return False
+    if text[values[0].end():].strip(" .!,;?") and not str(
+        source.metadata.get("metric_name", "")
+    ).endswith("_count"):
+        return False
+    stated = values[0].group().replace("\u2212", "-")
+    if "e" in stated.lower():
+        return False
+    actual, value = float(raw.replace("\u2212", "-")), float(stated)
+    if not (math.isfinite(actual) and math.isfinite(value)):
+        return False
+    precision = len(stated.partition(".")[2])
+    return not math.isclose(round(actual, precision), value, rel_tol=0, abs_tol=1e-12)
+
+
+def _readable_evidence_source(item: AnalysisEvidence, *, include_plan: bool = False) -> str:
+    sides = {"wt": "wild type", "mut": "mutant", "shared": "WT and mutant"}
+    report = (
+        Path(item.path).name
+        if item.path else (item.source_tool or item.source_kind.replace("_", " "))
+    )
+    details = ", ".join(filter(None, (
+        f"turn {item.turn_id}" if item.turn_id is not None else "",
+        f"plan {item.plan_id}" if include_plan and item.plan_id is not None else "",
+        sides.get(item.side, ""),
+    )))
+    return f"{report} ({details})" if details else report
+
+
+_EVIDENCE_FIELD_SHORT_NAMES = {"residue_root_mean_square_fluctuation": "RMSF"}
+_EVIDENCE_ARROW = " \u2192 "
+
+
+def _readable_evidence_field(path: str | None) -> tuple[str, str]:
+    """Return a field description and a short result label."""
+    if not path or path == "$":
+        return "", ""
+    array_path, selection, leaf_path = path.partition("[*].")
+    field_key = (leaf_path if selection else path).rsplit(".", 1)[-1]
+    subject = _EVIDENCE_FIELD_SHORT_NAMES.get(field_key) or _humanize_field_path(field_key)
+    if selection and "[*]" not in leaf_path:
+        collection = _humanize_field_path(array_path).replace(" > ", " / ")
+        leaf = _EVIDENCE_FIELD_SHORT_NAMES.get(leaf_path) or _humanize_field_path(leaf_path)
+        if " / " not in collection and " > " not in leaf:
+            return f"{leaf} values from all entries in {collection}", subject
+    return _humanize_field_path(path).replace(" > ", " / "), subject
+
+
+def _readable_evidence_chain(item: AnalysisEvidence, by_id: dict[str, AnalysisEvidence]) -> str:
+    # Preserve source ordering; comparison input fields and values use the same order.
+    parents = [by_id.get(eid) for eid in item.source_evidence_ids]
+    trace = item.derivation
+    fields = item.metadata.get("source_field_paths", [])
+    field, subject = _readable_evidence_field(item.field_path)
+    parts: list[str] = []
+    if fields and len(fields) == len(parents):
+        inputs = []
+        for index, (parent, path) in enumerate(zip(parents, fields, strict=True)):
+            label, source_subject = _readable_evidence_field(path)
+            include_plan = parent is not None and any(
+                other is not None and other.turn_id == parent.turn_id
+                and other.plan_id != parent.plan_id for other in parents
+            )
+            location = (
+                _readable_evidence_source(parent, include_plan=include_plan)
+                if parent is not None else "Unresolved report source"
+            )
+            if trace and index < len(trace.source_values):
+                value = trace.source_values[index]
+                steps = trace.source_steps[index] if index < len(trace.source_steps) else []
+                if steps:
+                    result_label = f"{steps[-1]}: {source_subject}" if source_subject else steps[-1]
+                    segments = [location, label, *steps[:-1], f"{result_label} = {value}"]
+                    chain = _EVIDENCE_ARROW.join(part for part in segments if part)
+                    inputs.append(f"({chain})")
+                    continue
+                label = (
+                    f"Value used in comparison = {value} (from {label})"
+                    if "[*]" in path
+                    else f"{label or 'Source value'} = {value}"
+                )
+            inputs.append(f"{location}: {label}" if label else location)
+        parts.append(" + ".join(inputs))
+    else:
+        parts.append(_readable_evidence_source(item))
+        if field:
+            parts.append(field)
+
+    if item.inference_level == "inferred":
+        sources = " + ".join(_readable_evidence_source(parent) for parent in parents if parent)
+        return _EVIDENCE_ARROW.join([
+            sources or parts[0], f"Interpretation: {item.value_summary}",
+        ])
+
+    if trace is not None:
+        result = " ".join(trace.result_value.split())
+        if trace.steps:
+            parts.extend(trace.steps[:-1])
+            label = trace.result_label or (
+                f"{trace.steps[-1]}: {subject}" if subject else trace.steps[-1]
+            )
+            parts.append(f"{label} = {result}")
+        elif item.inference_level == "direct" and field:
+            parts[-1] += f" = {result}"
+        else:
+            label = "Calculated result" if item.inference_level == "calculated" else "Result"
+            parts.append(f"{label} = {result}")
+    elif item.metadata.get("role") == "report_metric" and "=" in item.value_summary:
+        _, _, result = item.value_summary.partition("=")
+        if item.inference_level == "direct" and field:
+            parts[-1] += f" = {result}"
+        else:
+            parts.append(f"Calculated result = {result}")
+    else:
+        label = "Calculated result" if item.inference_level == "calculated" else "Recorded result"
+        result = " ".join(item.value_summary.replace("_", " ").split())
+        parts.append(f"{label}: {result}")
+    return _EVIDENCE_ARROW.join(parts)
+
+
+def _find_claim_span(answer: str, claim: str, cursor: int) -> int:
+    if not claim:
+        return -1
+    left = r"(?<!\w)" if claim[0].isalnum() else ""
+    right = r"(?!\w)" if claim[-1].isalnum() else ""
+    if claim[-1].isdigit():
+        right = r"(?!\w|\.\d)"
+    if len(claim) > 1 and claim.endswith(".") and claim[-2].isdigit():
+        right = r"(?!\d)"
+    match = re.compile(left + re.escape(claim) + right).search(answer, cursor)
+    return match.start() if match else -1
+
+
+def _render_claim_citations(
+    answer: str,
+    drafts: list[NarrativeClaimCitation],
+    evidence: list[AnalysisEvidence],
+    *,
+    supplied_evidence_ids: set[str] | None = None,
+) -> tuple[str, str, list[AnalysisClaimCitation], list[str]]:
+    by_id = {item.evidence_id: item for item in evidence if item.source_kind != "knowledge_base"}
+    chunks: list[str] = []
     lines: list[str] = []
-    for finding in findings[:12]:
-        sources = [
-            by_id[evidence_id]
-            for evidence_id in finding.evidence_ids
-            if evidence_id in by_id
-            and by_id[evidence_id].metadata.get("role")
-            != "terminology_definition"
-        ]
-        if not sources:
+    citations: list[AnalysisClaimCitation] = []
+    warnings: list[str] = []
+    cursor = 0
+    for draft in drafts:
+        start = _find_claim_span(answer, draft.text, cursor)
+        if start < 0:
+            warnings.append("A proposed citation could not be located in the answer.")
             continue
-        labels = "; ".join(_evidence_display_label(item) for item in sources)
-        lines.append(
-            f"- {finding.title}: {finding.statement}\n"
-            f"  {labels}"
+        end = start + len(draft.text)
+        ids = list(dict.fromkeys(
+            eid for eid in draft.evidence_ids
+            if eid in by_id and (supplied_evidence_ids is None or eid in supplied_evidence_ids)
+        ))
+        if len(ids) == 1 and _claim_conflicts_with_source(draft.text, by_id[ids[0]]):
+            ids = []
+        if len(set(draft.evidence_ids)) != len(ids):
+            warnings.append("One or more proposed citation sources were invalid or inconsistent.")
+        number = len(citations) + 1
+        citations.append(AnalysisClaimCitation(number=number, text=draft.text, evidence_ids=ids))
+        marker_at = end - 1 if answer[end - 1] in ".!?;," else end
+        chunks.extend((answer[cursor:marker_at], claim_evidence_number(number), answer[marker_at:end]))
+        cursor = end
+        sources = "; ".join(_readable_evidence_chain(by_id[eid], by_id) for eid in ids)
+        if not ids:
+            sources = "No validated computational source was linked"
+            warnings.append("One or more conclusions have no validated computational source.")
+        lines.append(f"[{number}] {sources}")
+    chunks.append(answer[cursor:])
+    appendix = CLAIM_EVIDENCE_APPENDIX_MARKER + "\n".join(lines) if lines else ""
+    return "".join(chunks), appendix, citations, list(dict.fromkeys(warnings))
+
+
+def scientific_review_answer(result: AnalysisResult) -> str:
+    """Expose the real citation IDs and sources to reviewers, not display numbers."""
+    answer = scientific_answer_body(result.final_answer, keep_claim_markers=True) or ""
+    by_id = {item.evidence_id: item for item in result.evidence}
+    for citation in result.claim_citations or []:
+        labels = [
+            f"{_evidence_display_label(by_id[eid])} (ID: {eid})"
+            for eid in citation.evidence_ids if eid in by_id
+        ]
+        answer = answer.replace(
+            claim_evidence_number(citation.number),
+            f" [{'; '.join(labels)}]" if labels else "",
+            1,
         )
-    if not lines:
-        return ""
-    return "\n\nEvidence supporting the analysis:\n" + "\n".join(lines)
+    return answer
 
 
 def _successful_recovery_evidence(
@@ -1038,30 +1232,93 @@ def _successful_recovery_evidence(
     return evidence, findings
 
 
+def _confirmed_staged_report_pairs(
+    state: AgentState,
+) -> tuple[list[Artifact], list[tuple[str, str]]]:
+    """Use actual paired integration inputs to recognize approved historical reuse."""
+    planning = state.get("current_planning_result")
+    plan = planning.tool_plan if planning is not None else None
+    execution = state.get("current_tool_execution")
+    if plan is None or execution is None or execution.execution_status != "succeeded":
+        return [], []
+    if (plan.turn_id, plan.plan_id) != (execution.turn_id, execution.plan_id):
+        return [], []
+    succeeded = {
+        call.step_index: call for call in execution.call_executions
+        if call.execution_status == "succeeded"
+    }
+    tracked_by_path = {artifact.path: artifact for artifact in state.get("artifacts", [])}
+    reused: dict[str, Artifact] = {}
+    pairs: list[tuple[str, str]] = []
+    for call in plan.calls:
+        if call.tool_name != "enzywizard-mut-integrate" or call.step_index not in succeeded:
+            continue
+        staged: dict[str, Artifact] = {}
+        old_paths: set[str] = set()
+        for rule in call.staging_rules:
+            if rule.side not in {"wt", "mut"}:
+                continue
+            if rule.source_step_index is None:
+                artifact = tracked_by_path.get(rule.source_path_pattern)
+                if artifact is not None and artifact.side == rule.side:
+                    staged[artifact.path] = artifact
+                    old_paths.add(artifact.path)
+            elif (source := succeeded.get(rule.source_step_index)) is not None:
+                for artifact in source.artifacts:
+                    if artifact.side == rule.side and Path(artifact.path).match(rule.source_path_pattern):
+                        staged[artifact.path] = artifact
+        for pair in unique_wt_mut_report_pairs(staged.values()):
+            if old_paths.intersection(pair):
+                pairs.append(pair)
+                reused.update((path, staged[path]) for path in pair if path in old_paths)
+    return list(reused.values()), pairs
+
+
 def _analyze_reports(
     state: AgentState,
     artifacts: list[Any],
     *,
     historical: bool,
 ) -> AnalysisResult:
+    history = state.get("current_history_query")
+    comparison_report_pairs = list(history.comparison_report_pairs) if (
+        history is not None and history.query_status == "succeeded"
+        and history.turn_id == state.get("current_turn_id")
+    ) else []
+    if not historical:
+        reused, staged_pairs = _confirmed_staged_report_pairs(state)
+        artifacts = _deduplicate_artifacts([*artifacts, *reused])
+        comparison_report_pairs.extend(staged_pairs)
     report_artifacts = select_report_artifacts(artifacts)
     summaries = [summarize_report_artifact(artifact) for artifact in report_artifacts]
-    history = state.get("current_history_query")
+    readable = [summary for summary in summaries if summary.read_status == "parsed"]
+    read_labels = {
+        "missing": "file missing",
+        "unreadable": "could not be read or parsed",
+        "too_large": "exceeds the report size limit",
+    }
+    unavailable = [
+        f"{Path(summary.path).name} (turn {summary.turn_id}, plan {summary.plan_id}, "
+        f"{summary.side}): {read_labels[summary.read_status]}."
+        for summary in summaries if summary.read_status != "parsed"
+    ]
     comparison_requested = bool(
         history is not None
         and history.query is not None
         and "compare" in history.query.operations
     )
     evidence, findings = build_report_evidence(
-        summaries,
+        readable,
         enable_general_comparison=comparison_requested,
+        comparison_report_pairs=comparison_report_pairs,
     )
     recovery_evidence, recovery_findings = _successful_recovery_evidence(state)
     evidence.extend(recovery_evidence)
     findings.extend(recovery_findings)
     references = [artifact_to_reference(artifact) for artifact in artifacts]
     limitations = [warning for summary in summaries for warning in summary.warnings]
-    limitations.extend(_load_report_cautions({item.report_type for item in summaries}))
+    limitations.extend(unavailable)
+    limitations.extend(_load_report_cautions({item.report_type for item in readable}))
     limitations.extend(
         finding.statement
         for finding in findings
@@ -1072,15 +1329,22 @@ def _analyze_reports(
         findings,
         evidence,
         historical,
+        inline_evidence=False,
     )
-    evidence_appendix = _scientific_evidence_appendix(findings, evidence)
     fallback_summary = (
-        f"Analyzed {len(summaries)} historical reports."
+        f"Analyzed {len(readable)} historical reports."
         if historical
-        else f"Executed the approved plan and analyzed {len(summaries)} reports."
+        else f"Executed the approved plan and analyzed {len(readable)} reports."
     )
+    report_notice = ""
+    if unavailable:
+        lead = (
+            "The requested comparison is incomplete."
+            if comparison_requested else "Some selected reports could not be analyzed."
+        )
+        report_notice = lead + "\n" + "\n".join(f"- {detail}" for detail in unavailable) + "\n\n"
 
-    if not summaries:
+    if not readable:
         fallback_answer = (
             "Relevant artifacts were found, but no formal JSON report could be "
             "parsed. Inspect the artifact paths and execution logs."
@@ -1090,33 +1354,43 @@ def _analyze_reports(
             response_mode="scientific_result",
             analysis_status="partial",
             summary=fallback_summary,
-            final_answer=fallback_answer,
+            final_answer=report_notice + fallback_answer,
+            report_summaries=summaries,
             referenced_artifacts=references,
-            limitations=["No parseable report artifact was available."],
+            limitations=list(dict.fromkeys(limitations + ["No parseable report artifact was available."])),
         )
 
     try:
         context = build_scientific_analysis_context(state, summaries, evidence, findings)
+        supplied_evidence_ids = {
+            item["evidence_id"] for item in json.loads(context)["deterministic_evidence"]
+        }
         output = invoke_structured(
             state,
             stage="analysis.scientific_narrative",
             schema=AnalysisNarrativeOutput,
             llm=_create_llm(state),
-            retrieval_context=_analysis_retrieval_context(summaries),
+            retrieval_context=_analysis_retrieval_context(readable),
             messages=[
                 SystemMessage(content=SCIENTIFIC_RESULT_SYSTEM_PROMPT),
                 HumanMessage(content=context),
             ],
         )
+        answer, evidence_appendix, citations, citation_warnings = _render_claim_citations(
+            output.final_answer, output.claim_citations, evidence,
+            supplied_evidence_ids=supplied_evidence_ids,
+        )
         answer, term_evidence, term_appendix = _scientific_terminology(
-            state, output.final_answer
+            state, _replace_internal_evidence_references(answer, [])
         )
         return _empty_result(
             state,
             response_mode="scientific_result",
+            analysis_status="partial" if unavailable else "succeeded",
             summary=output.summary,
             final_answer=(
-                _replace_internal_evidence_references(answer, evidence)
+                report_notice
+                + order_answer_markers(answer)
                 + evidence_appendix
                 + term_appendix
             ),
@@ -1124,20 +1398,28 @@ def _analyze_reports(
             findings=findings,
             evidence=[*evidence, *term_evidence],
             referenced_artifacts=references,
-            limitations=list(dict.fromkeys(limitations + output.limitations)),
+            limitations=list(dict.fromkeys(limitations + output.limitations + citation_warnings)),
             used_language_model=True,
+            claim_citations=citations,
         )
     except Exception as exc:
         # 报告解析和确定性比较仍有效，因此模型叙述失败只降级为 partial。
-        answer, term_evidence, term_appendix = _scientific_terminology(
-            state, fallback_answer
+        drafts = [
+            NarrativeClaimCitation(
+                text=f"{finding.title}: {finding.statement}", evidence_ids=finding.evidence_ids
+            )
+            for finding in findings[:12]
+        ]
+        answer, evidence_appendix, citations, citation_warnings = _render_claim_citations(
+            fallback_answer, drafts, evidence
         )
+        answer, term_evidence, term_appendix = _scientific_terminology(state, answer)
         return _empty_result(
             state,
             response_mode="scientific_result",
             analysis_status="partial",
             summary=fallback_summary,
-            final_answer=answer + evidence_appendix + term_appendix,
+            final_answer=report_notice + order_answer_markers(answer) + evidence_appendix + term_appendix,
             report_summaries=summaries,
             findings=findings,
             evidence=[*evidence, *term_evidence],
@@ -1145,6 +1427,7 @@ def _analyze_reports(
             limitations=list(
                 dict.fromkeys(
                     limitations
+                    + citation_warnings
                     + [
                         "Language-model synthesis was unavailable; a deterministic "
                         "summary was returned."
@@ -1152,6 +1435,7 @@ def _analyze_reports(
                 )
             ),
             error_messages=[f"Analysis narrative generation failed: {exc}"],
+            claim_citations=citations,
         )
 
 
@@ -1372,9 +1656,13 @@ def _answer_history_issue(state: AgentState) -> AnalysisResult:
 
 
 def _append_answer_section(answer: str, title: str, content: str) -> str:
-    """Add a response section without moving the terminology appendix off the end."""
-    body, marker, appendix = answer.partition(TERMINOLOGY_APPENDIX_MARKER)
-    return f"{body}\n\n{title}:\n{content}{marker}{appendix}"
+    """Insert mixed-request prose before both generated appendices."""
+    offsets = (
+        answer.find(marker)
+        for marker in (CLAIM_EVIDENCE_APPENDIX_MARKER, TERMINOLOGY_APPENDIX_MARKER)
+    )
+    end = min((offset for offset in offsets if offset >= 0), default=len(answer))
+    return f"{answer[:end]}\n\n{title}:\n{content}{answer[end:]}"
 
 
 def _merge_artifact_listing(

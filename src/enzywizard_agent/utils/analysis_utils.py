@@ -4,6 +4,7 @@ import json
 import math
 from itertools import combinations
 from pathlib import Path
+from stat import S_ISREG
 from statistics import fmean
 from typing import Any, Iterable
 
@@ -11,7 +12,9 @@ from ..data_models.analysis import (
     AnalysisArtifactReference,
     AnalysisEvidence,
     AnalysisFinding,
+    EvidenceDerivation,
     InferenceLevel,
+    ReportReadStatus,
     ReportSummary,
 )
 from ..data_models.artifact import Artifact
@@ -88,6 +91,10 @@ REPORT_PRIORITY_FIELDS: dict[str, tuple[str, ...]] = {
 
 
 def artifact_to_reference(artifact: Artifact) -> AnalysisArtifactReference:
+    try:
+        exists = Path(artifact.path).is_file()
+    except OSError:
+        exists = False
     return AnalysisArtifactReference(
         turn_id=artifact.turn_id,
         plan_id=artifact.plan_id,
@@ -95,7 +102,7 @@ def artifact_to_reference(artifact: Artifact) -> AnalysisArtifactReference:
         source_tool=artifact.source_tool,
         side=artifact.side,
         path=artifact.path,
-        exists=Path(artifact.path).is_file(),
+        exists=exists,
     )
 
 
@@ -178,12 +185,14 @@ def _summarize_record_array(
     metrics: dict[str, Any],
     metric_paths: dict[str, str],
     metric_inference_levels: dict[str, InferenceLevel],
+    metric_operations: dict[str, list[str]],
     prefix: str,
 ) -> None:
     count_key = f"{prefix}_count"
     metrics[count_key] = len(records)
     metric_paths[count_key] = f"$.{prefix}"
     metric_inference_levels[count_key] = "calculated"
+    metric_operations[count_key] = ["Count entries"]
     dict_records = [item for item in records if isinstance(item, dict)]
     if not dict_records:
         return
@@ -199,15 +208,16 @@ def _summarize_record_array(
     for key in numeric_keys[:6]:
         values = [float(item[key]) for item in dict_records]
         source_path = f"$.{prefix}[*].{key}"
-        for suffix, metric_value in (
-            ("mean", round(fmean(values), 6)),
-            ("min", round(min(values), 6)),
-            ("max", round(max(values), 6)),
+        for suffix, operation, metric_value in (
+            ("mean", "Mean", round(fmean(values), 6)),
+            ("min", "Minimum", round(min(values), 6)),
+            ("max", "Maximum", round(max(values), 6)),
         ):
             metric_key = f"{key}_{suffix}"
             metrics[metric_key] = metric_value
             metric_paths[metric_key] = source_path
             metric_inference_levels[metric_key] = "calculated"
+            metric_operations[metric_key] = [operation]
 
 
 def _prioritize_metrics(report_type: str, metrics: dict[str, Any]) -> dict[str, Any]:
@@ -233,16 +243,30 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
     metrics: dict[str, Any] = {}
     metric_paths: dict[str, str] = {}
     metric_inference_levels: dict[str, InferenceLevel] = {}
+    metric_operations: dict[str, list[str]] = {}
     report_type = "unknown"
 
-    if not path.is_file():
+    read_status: ReportReadStatus = "parsed"
+    try:
+        file_info = path.stat()
+    except FileNotFoundError:
+        read_status = "missing"
         warnings.append("The report file does not exist.")
-    elif path.stat().st_size > MAX_REPORT_BYTES:
-        warnings.append(
-            f"The report exceeds the {MAX_REPORT_BYTES}-byte safety limit and "
-            "was not parsed."
-        )
+    except OSError:
+        read_status = "unreadable"
+        warnings.append("The report file could not be accessed.")
     else:
+        if not S_ISREG(file_info.st_mode):
+            read_status = "unreadable"
+            warnings.append("The report path is not a regular file.")
+        elif file_info.st_size > MAX_REPORT_BYTES:
+            read_status = "too_large"
+            warnings.append(
+                f"The report exceeds the {MAX_REPORT_BYTES}-byte safety limit and "
+                "was not parsed."
+            )
+
+    if read_status == "parsed":
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             if not isinstance(data, dict):
@@ -267,6 +291,7 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
                         metrics,
                         metric_paths,
                         metric_inference_levels,
+                        metric_operations,
                         key,
                     )
 
@@ -287,6 +312,7 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
                         metric_inference_levels["embedding_dimension"] = (
                             "calculated"
                         )
+                        metric_operations["embedding_dimension"] = ["Measure vector length"]
 
             # integrated_graph 是节点数组；其长度比完整图内容更适合作为摘要。
             for graph_key in (
@@ -300,9 +326,19 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
                     metrics[metric_key] = len(graph)
                     metric_paths[metric_key] = f"$.{graph_key}"
                     metric_inference_levels[metric_key] = "calculated"
-        except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
+                    metric_operations[metric_key] = ["Count nodes"]
+        except FileNotFoundError:
+            read_status = "missing"
+            warnings.append("The report file does not exist.")
+        except OSError:
+            read_status = "unreadable"
+            warnings.append("The report file could not be read.")
+        except ValueError as exc:
+            read_status = "unreadable"
             warnings.append(f"Report parsing failed: {exc}")
 
+    if read_status != "parsed":
+        metrics.clear()
     metrics = _prioritize_metrics(report_type, metrics)
     metric_paths = {
         key: metric_paths.get(key, "$")
@@ -330,21 +366,44 @@ def summarize_report_artifact(artifact: Artifact) -> ReportSummary:
         key_metrics=metrics,
         metric_paths=metric_paths,
         metric_inference_levels=metric_inference_levels,
+        metric_operations={
+            key: metric_operations[key]
+            for key in metrics
+            if key in metric_operations and metric_inference_levels[key] == "calculated"
+        },
+        read_status=read_status,
         highlights=highlights,
         warnings=warnings,
     )
+
+
+def unique_wt_mut_report_pairs(artifacts: Iterable[Artifact]) -> list[tuple[str, str]]:
+    """Pair already selected reports only when each side has one distinct candidate."""
+    grouped: dict[tuple[str, str], dict[str, set[str]]] = {}
+    for artifact in artifacts:
+        if artifact.side not in {"wt", "mut"} or not artifact.artifact_type.endswith("_report_json"):
+            continue
+        group = grouped.setdefault((artifact.source_tool, artifact.artifact_type), {})
+        group.setdefault(artifact.side, set()).add(artifact.path)
+    return [
+        (next(iter(sides["wt"])), next(iter(sides["mut"])))
+        for sides in grouped.values()
+        if len(sides.get("wt", ())) == 1 and len(sides.get("mut", ())) == 1
+        and sides["wt"] != sides["mut"]
+    ]
 
 
 def build_report_evidence(
     summaries: Iterable[ReportSummary],
     *,
     enable_general_comparison: bool = False,
+    comparison_report_pairs: Iterable[tuple[str, str]] = (),
 ) -> tuple[list[AnalysisEvidence], list[AnalysisFinding]]:
     """为报告摘要和 WT/MUT 数值差异建立可验证证据链。"""
 
     evidence: list[AnalysisEvidence] = []
     findings: list[AnalysisFinding] = []
-    summaries = list(summaries)
+    summaries = [summary for summary in summaries if summary.read_status == "parsed"]
     report_evidence_ids: dict[int, str] = {}
     metric_evidence_ids: dict[tuple[int, str], str] = {}
 
@@ -412,6 +471,10 @@ def build_report_evidence(
                         [evidence_id] if inference_level == "calculated" else []
                     ),
                     metadata={"role": "report_metric", "metric_name": key},
+                    derivation=EvidenceDerivation(
+                        steps=summary.metric_operations.get(key, []),
+                        result_value=str(value),
+                    ),
                 )
             )
         findings.append(
@@ -499,6 +562,19 @@ def build_report_evidence(
                                 key,
                                 [individual_summary, integrated_summary],
                             ),
+                            derivation=EvidenceDerivation(
+                                steps=["Check whether source values agree"],
+                                result_label="Consistency check",
+                                result_value="Values differ",
+                                source_values=[
+                                    str(individual_summary.key_metrics[key]),
+                                    str(integrated_summary.key_metrics[key]),
+                                ],
+                                source_steps=[
+                                    summary.metric_operations.get(key, [])
+                                    for summary in (individual_summary, integrated_summary)
+                                ],
+                            ),
                         )
                     )
                     findings.append(
@@ -519,21 +595,38 @@ def build_report_evidence(
         if consistency_index > 10:
             break
 
-    # 仅比较同一工具、同一产物类型且分别属于 WT/MUT 的报告。
-    grouped: dict[tuple[str, str], dict[str, ReportSummary]] = {}
+    grouped: dict[tuple[int, int, str, str, str], dict[str, dict[str, ReportSummary]]] = {}
     for summary in summaries:
         if summary.side not in {"wt", "mut"}:
             continue
-        grouped.setdefault((summary.source_tool, summary.artifact_type), {})[
-            summary.side
-        ] = summary
+        scope = (
+            summary.turn_id, summary.plan_id, summary.source_tool,
+            summary.artifact_type, summary.report_type,
+        )
+        grouped.setdefault(scope, {}).setdefault(summary.side, {})[summary.path] = summary
+
+    by_path = {summary.path: summary for summary in summaries}
+    wt_mut_pairs: dict[tuple[str, str], tuple[ReportSummary, ReportSummary]] = {}
+    for wt_path, mut_path in comparison_report_pairs:
+        wt, mut = by_path.get(wt_path), by_path.get(mut_path)
+        if wt is None or mut is None or wt.side != "wt" or mut.side != "mut":
+            continue
+        if (wt.source_tool, wt.artifact_type, wt.report_type) == (
+            mut.source_tool, mut.artifact_type, mut.report_type
+        ):
+            wt_mut_pairs[wt_path, mut_path] = (wt, mut)
+    explicit_paths = {path for pair in wt_mut_pairs for path in pair}
+    for sides in grouped.values():
+        if len(sides.get("wt", ())) != 1 or len(sides.get("mut", ())) != 1:
+            continue
+        wt, mut = next(iter(sides["wt"].values())), next(iter(sides["mut"].values()))
+        if wt.path == mut.path or {wt.path, mut.path} & explicit_paths:
+            continue
+        wt_mut_pairs[wt.path, mut.path] = (wt, mut)
 
     comparison_index = 1
-    for (source_tool, artifact_type), pair in grouped.items():
-        if set(pair) != {"wt", "mut"}:
-            continue
-        wt_metrics = pair["wt"].key_metrics
-        mut_metrics = pair["mut"].key_metrics
+    for wt, mut in wt_mut_pairs.values():
+        wt_metrics, mut_metrics = wt.key_metrics, mut.key_metrics
         shared_keys = [
             key
             for key in wt_metrics
@@ -556,20 +649,29 @@ def build_report_evidence(
                     evidence_id=evidence_id,
                     source_kind="report",
                     inference_level="calculated",
-                    turn_id=pair["mut"].turn_id,
-                    plan_id=pair["mut"].plan_id,
-                    artifact_type=artifact_type,
-                    source_tool=source_tool,
+                    turn_id=mut.turn_id,
+                    plan_id=mut.plan_id,
+                    artifact_type=mut.artifact_type,
+                    source_tool=mut.source_tool,
                     side="shared",
                     path=None,
                     field_path=key,
                     value_summary=statement,
                     source_evidence_ids=[
-                        report_evidence_ids[id(pair["wt"])],
-                        report_evidence_ids[id(pair["mut"])],
+                        report_evidence_ids[id(wt)],
+                        report_evidence_ids[id(mut)],
                     ],
                     metadata=metric_provenance(
-                        key, [pair["wt"], pair["mut"]]
+                        key, [wt, mut]
+                    ),
+                    derivation=EvidenceDerivation(
+                        steps=["Subtract wild type from mutant"],
+                        result_label="Mutant minus wild type",
+                        result_value=str(difference),
+                        source_values=[str(wt_metrics[key]), str(mut_metrics[key])],
+                        source_steps=[
+                            summary.metric_operations.get(key, []) for summary in (wt, mut)
+                        ],
                     ),
                 )
             )
@@ -661,6 +763,18 @@ def build_report_evidence(
                             report_evidence_ids[id(later)],
                         ],
                         metadata=metric_provenance(key, [earlier, later]),
+                        derivation=EvidenceDerivation(
+                            steps=["Subtract earlier value from later value"],
+                            result_label="Later minus earlier",
+                            result_value=str(difference),
+                            source_values=[
+                                str(earlier.key_metrics[key]), str(later.key_metrics[key])
+                            ],
+                            source_steps=[
+                                summary.metric_operations.get(key, [])
+                                for summary in (earlier, later)
+                            ],
+                        ),
                     )
                 )
                 findings.append(

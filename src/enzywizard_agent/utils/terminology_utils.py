@@ -9,6 +9,7 @@ from typing import Any
 
 
 TERMINOLOGY_APPENDIX_MARKER = "\n\nTerminology sources "
+CLAIM_EVIDENCE_APPENDIX_MARKER = "\n\nEvidence for cited conclusions:\n"
 _SUPERSCRIPTS = str.maketrans(
     "0123456789", "\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077\u2078\u2079"
 )
@@ -38,6 +39,7 @@ _UNIT_RIGHT_OPERATOR = re.compile(
     re.IGNORECASE,
 )
 _TERM_MARKER = re.compile(r"\u207d[\u2070\u00b9\u00b2\u00b3\u2074-\u2079]+\u207e")
+CLAIM_EVIDENCE_MARKER = re.compile(r"\[[\u2070\u00b9\u00b2\u00b3\u2074-\u2079]+\]")
 # Leave Markdown code, links, URLs and square-bracketed evidence references alone.
 _PROTECTED_TEXT = re.compile(
     r"```[\s\S]*?```|`[^`\n]*`|\[[^\]\n]*\](?:\([^\n)]*\))?|https?://\S+",
@@ -290,12 +292,29 @@ def terminology_number(number: int) -> str:
     return "\u207d" + str(number).translate(_SUPERSCRIPTS) + "\u207e"
 
 
-def scientific_answer_body(answer: str | None) -> str | None:
-    """Keep scientific prose and evidence, without rendered terminology provenance."""
+def claim_evidence_number(number: int) -> str:
+    return "[" + str(number).translate(_SUPERSCRIPTS) + "]"
+
+
+def order_answer_markers(answer: str) -> str:
+    return re.sub(
+        rf"({_TERM_MARKER.pattern})({CLAIM_EVIDENCE_MARKER.pattern})", r"\2\1", answer
+    )
+
+
+def scientific_answer_body(
+    answer: str | None, *, keep_claim_markers: bool = False
+) -> str | None:
+    """Keep prose and legacy inline evidence without rendered appendices."""
     if answer is None:
         return None
     body, marker, _ = answer.partition(TERMINOLOGY_APPENDIX_MARKER)
-    return (_TERM_MARKER.sub("", body) if marker else body).rstrip()
+    if marker:
+        body = _TERM_MARKER.sub("", body)
+    body, evidence_marker, _ = body.partition(CLAIM_EVIDENCE_APPENDIX_MARKER)
+    if evidence_marker and not keep_claim_markers:
+        body = CLAIM_EVIDENCE_MARKER.sub("", body)
+    return body.rstrip()
 
 
 def annotate_terminology(

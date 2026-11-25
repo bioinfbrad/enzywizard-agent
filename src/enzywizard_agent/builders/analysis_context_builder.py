@@ -73,7 +73,7 @@ def _explicit_prior_analysis_payload(state: AgentState) -> list[dict[str, Any]]:
         }
         evidence = []
         for item in _bounded_evidence(report_evidence, MAX_PRIOR_EVIDENCE):
-            dumped = item.model_dump(mode="json", exclude={"path"})
+            dumped = item.model_dump(mode="json", exclude={"path", "derivation"})
             dumped["evidence_id"] = evidence_id_map[item.evidence_id]
             dumped["source_evidence_ids"] = [
                 evidence_id_map.get(source_id, source_id)
@@ -127,15 +127,12 @@ def build_scientific_analysis_context(
             "key_metrics": dict(list(item.key_metrics.items())[:24]),
             "highlights": item.highlights,
             "warnings": item.warnings,
+            **({"read_status": item.read_status} if item.read_status != "parsed" else {}),
         }
         for item in report_summaries
     ]
     compact_evidence = [
-        {
-            key: value
-            for key, value in item.model_dump(mode="json").items()
-            if key != "path"
-        }
+        item.model_dump(mode="json", exclude={"path", "derivation"})
         for item in _bounded_evidence(evidence, 80)
     ]
     payload: dict[str, Any] = {

@@ -64,6 +64,7 @@ EvidenceSourceKind = Literal[
     "agent_input",
     "knowledge_base",
 ]
+ReportReadStatus = Literal["parsed", "missing", "unreadable", "too_large"]
 
 InferenceLevel = Literal[
     # 报告或执行记录中直接存在的信息。
@@ -88,6 +89,13 @@ FindingKind = Literal[
 # =============================================================================
 
 
+class NarrativeClaimCitation(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    text: str
+    evidence_ids: list[str]
+
+
 class AnalysisNarrativeOutput(BaseModel):
     """LLM 只负责组织语言时使用的最小结构化输出。"""
 
@@ -96,6 +104,7 @@ class AnalysisNarrativeOutput(BaseModel):
     summary: str
     final_answer: str
     limitations: list[str]
+    claim_citations: list[NarrativeClaimCitation]
 
     @model_validator(mode="after")
     def validate_non_empty_text(self) -> "AnalysisNarrativeOutput":
@@ -148,8 +157,22 @@ class ReportSummary(BaseModel):
     metric_inference_levels: dict[str, InferenceLevel] = Field(
         default_factory=dict
     )
+    metric_operations: dict[str, list[str]] = Field(default_factory=dict)
+    read_status: ReportReadStatus = "parsed"
     highlights: list[str]
     warnings: list[str]
+
+
+class EvidenceDerivation(BaseModel):
+    """Display provenance recorded by the code performing the calculation."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    steps: list[str] = Field(default_factory=list)
+    result_value: str
+    result_label: str | None = None
+    source_values: list[str] = Field(default_factory=list)
+    source_steps: list[list[str]] = Field(default_factory=list)
 
 
 class AnalysisEvidence(BaseModel):
@@ -173,6 +196,7 @@ class AnalysisEvidence(BaseModel):
     source_version: str | None = None
     source_evidence_ids: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
+    derivation: EvidenceDerivation | None = None
 
     @field_validator("evidence_id", "value_summary")
     @classmethod
@@ -229,6 +253,10 @@ class AnalysisErrorGuidance(BaseModel):
         return self
 
 
+class AnalysisClaimCitation(NarrativeClaimCitation):
+    number: int
+
+
 class AnalysisResult(BaseModel):
     """Analysis 节点写入状态的完整、可审计结果。"""
 
@@ -249,6 +277,7 @@ class AnalysisResult(BaseModel):
     error_messages: list[str]
     used_language_model: bool
     error_guidance: AnalysisErrorGuidance | None = None
+    claim_citations: list[AnalysisClaimCitation] | None = None
 
     @model_validator(mode="after")
     def validate_analysis_result(self) -> "AnalysisResult":
