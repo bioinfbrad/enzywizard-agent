@@ -4,6 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from enzywizard_agent.builders.analysis_context_builder import (
     _explicit_prior_analysis_payload,
@@ -23,11 +24,18 @@ from enzywizard_agent.data_models.history_query import (
 )
 from enzywizard_agent.services.analysis_service import (
     _evidence_display_label,
+    _merge_artifact_listing,
+    _merge_general_answer,
     _replace_internal_evidence_references,
 )
 from enzywizard_agent.utils.analysis_utils import (
     build_report_evidence,
     summarize_report_artifact,
+)
+from enzywizard_agent.utils.terminology_utils import (
+    TERMINOLOGY_APPENDIX_MARKER,
+    scientific_answer_body,
+    terminology_number,
 )
 
 
@@ -305,6 +313,40 @@ class AnalysisContextAndProvenanceTests(unittest.TestCase):
         self.assertEqual(
             payload[0]["evidence"][0]["artifact_name"], "included.json"
         )
+
+    def test_mixed_response_sections_stay_in_the_body(self) -> None:
+        state = {"current_turn_id": 2}
+        artifact = Artifact(
+            turn_id=1,
+            plan_id=1,
+            artifact_type="energy_report_json",
+            path="/tmp/selected.json",
+            source_tool="enzywizard-energy",
+            side="single",
+            metadata={},
+        )
+        general = _analysis(2, "additional").model_copy(
+            update={"response_mode": "general_scientific_question"}
+        )
+        appendix = TERMINOLOGY_APPENDIX_MARKER + "(definitions only):\n- RMSF: a definition."
+        with patch(
+            "enzywizard_agent.services.analysis_service._answer_general_request",
+            return_value=general,
+        ):
+            for glossary in ("", appendix):
+                with self.subTest(glossary=bool(glossary)):
+                    marker = terminology_number(1) if glossary else ""
+                    initial = _analysis(2, "mixed").model_copy(
+                        update={"final_answer": f"Mean RMSF{marker}.{glossary}"}
+                    )
+                    mixed = _merge_artifact_listing(initial, state, [artifact])
+                    mixed = _merge_general_answer(mixed, state)
+                    body = scientific_answer_body(mixed.final_answer)
+                    self.assertIn("Mean RMSF.", body)
+                    self.assertIn("Artifacts:\nFound these artifacts:", body)
+                    self.assertIn("selected.json", body)
+                    self.assertTrue(body.endswith("Additional response:\nanswer-additional"))
+                    self.assertEqual(mixed.final_answer, body.replace("RMSF", f"RMSF{marker}") + glossary)
 
     def test_prior_evidence_ids_cannot_leak_into_user_answer(self) -> None:
         rendered = _replace_internal_evidence_references(

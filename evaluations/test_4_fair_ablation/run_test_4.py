@@ -44,6 +44,9 @@ from enzywizard_agent.services.request_routing_service import route_user_request
 from enzywizard_agent.services.runtime_service import utc_now
 from enzywizard_agent.state import AgentState
 from enzywizard_agent.utils.analysis_utils import summarize_report_artifact
+from enzywizard_agent.utils.terminology_utils import (
+    scientific_answer_body as _scientific_answer_body,
+)
 
 from scoring import (
     METRIC_NAMES,
@@ -64,7 +67,6 @@ TERMINOLOGY_GOLD_PATH = ROOT / "terminology_gold.yaml"
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_MODEL = "gpt-6-luna"
 DEFAULT_REASONING_EFFORT = "medium"
-TERMINOLOGY_APPENDIX_MARKER = "\n\nTerminology sources "
 
 
 class StrictModel(BaseModel):
@@ -1079,14 +1081,6 @@ def _compact_report_summaries(
         }
         for index, item in enumerate(result.report_summaries, start=1)
     ]
-
-
-def _scientific_answer_body(answer: str | None) -> str | None:
-    """Remove condition-revealing terminology provenance from judge material."""
-
-    if answer is None:
-        return None
-    return answer.split(TERMINOLOGY_APPENDIX_MARKER, 1)[0].rstrip()
 
 
 def _review_terminology_items(

@@ -14,6 +14,13 @@ from langchain_core.messages import BaseMessage, HumanMessage
 import yaml
 
 from ..state import AgentState
+from ..utils.terminology_utils import (
+    find_terminology_mentions,
+    find_user_terminology_mentions,
+    scientific_answer_body,
+    terminology_forms,
+    terminology_key,
+)
 from .runtime_service import ensure_runtime_session, utc_now
 
 
@@ -51,14 +58,6 @@ class KnowledgeMatch:
     match_reason: str
 
 
-FAIR_TERM_PROFILE = RetrievalProfile(
-    field_weights={"term": 1.0, "aliases": 0.95, "description": 0.75},
-    threshold=0.70,
-    top_k=3,
-    require_exact_phrase=False,
-    allow_partial_match=True,
-)
-
 _FAIR_CONTEXT_MAX_CHARACTERS = 2_400
 
 FAILURE_HINT_PROFILE = RetrievalProfile(
@@ -87,6 +86,52 @@ def _field_values(entry: Mapping[str, Any], field_name: str) -> list[str]:
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
         return [str(item) for item in value if str(item).strip()]
     return []
+
+
+def _applies_to_category(entry: Mapping[str, Any], category: str | None) -> bool:
+    categories = entry.get("usage_categories", [])
+    return not (
+        category is not None
+        and isinstance(categories, list)
+        and categories
+        and category not in categories
+    )
+
+
+def retrieve_terminology(
+    entries: Iterable[Mapping[str, Any]],
+    query: str,
+    *,
+    usage_category: str | None = None,
+    user_input: bool = False,
+) -> list[KnowledgeMatch]:
+    eligible = tuple(entry for entry in entries if _applies_to_category(entry, usage_category))
+    mentions = (
+        find_user_terminology_mentions(query, eligible)
+        if user_input
+        else find_terminology_mentions(query, eligible)
+    )
+    matches: dict[str, KnowledgeMatch] = {}
+    for mention in mentions:
+        key = terminology_key(mention.entry["term"])
+        score = 0.90 if mention.match_reason == "separator_normalized" else (
+            1.0 if mention.field == "term" else 0.95
+        )
+        previous = matches.get(key)
+        if previous is None or score > previous.score:
+            matched_text = query[mention.start:mention.end]
+            matches[key] = KnowledgeMatch(
+                mention.entry,
+                score,
+                mention.field,
+                matched_text,
+                mention.match_reason
+                or ("exact_value" if matched_text == query.strip() else "exact_phrase"),
+            )
+    return sorted(
+        matches.values(),
+        key=lambda match: (-match.score, -len(match.matched_text)),
+    )
 
 
 def _score_value(
@@ -267,42 +312,66 @@ def _ontology_enabled_for_stage(state: AgentState, stage: str) -> bool:
     )
 
 
-def _retrieval_query(
+def _retrieval_queries(
     state: AgentState,
     retrieval_context: str | None,
-) -> tuple[str, list[str]]:
-    """Build a bounded query from user intent and an optional stage focus."""
-
-    chunks: list[str] = []
-    sources: list[str] = []
+) -> dict[str, str]:
+    """Keep user intent ahead of stage context and resolved history."""
+    queries: dict[str, str] = {}
+    turn_id = state.get("current_turn_id", 0)
+    confirmation = state.get("current_user_confirmation")
+    if (
+        confirmation is not None
+        and confirmation.turn_id == turn_id
+        and confirmation.decision == "revision_requested"
+        and confirmation.revision_request
+    ):
+        queries["revision_request"] = confirmation.revision_request[:6_000]
     user_request = str(state.get("current_user_message", "")).strip()
     if user_request:
-        chunks.append(user_request)
-        sources.append("current_user_message")
+        queries["current_user_message"] = user_request[:6_000]
     stage_focus = str(retrieval_context or "").strip()
+    routing = state.get("current_request_routing")
+    if (
+        not stage_focus
+        and routing is not None
+        and routing.turn_id == turn_id
+        and routing.output is not None
+    ):
+        stage_focus = "; ".join(action.target for action in routing.output.actions)
     if stage_focus and _normalized_text(stage_focus) != _normalized_text(user_request):
-        chunks.append(stage_focus)
-        sources.append("stage_focus")
-    return "\n\n".join(chunks)[-6_000:], sources
+        queries["stage_focus"] = stage_focus[:2_000]
+    history = state.get("current_history_query")
+    if history is not None and history.turn_id == turn_id and history.resolved_turn_ids:
+        resolved_turns = set(history.resolved_turn_ids)
+        prior_answers = [
+            scientific_answer_body(result.final_answer)
+            for result in state.get("analysis_results", [])
+            if result.turn_id in resolved_turns
+            and result.turn_id < turn_id
+            and result.response_mode == "scientific_result"
+        ][-2:]
+        history_context = "\n\n".join(
+            answer.split("\n\nEvidence supporting the analysis:", 1)[0][:1_000]
+            for answer in prior_answers
+            if answer
+        )
+        if history_context:
+            queries["referenced_history"] = history_context
+    return queries
 
 
 def _render_fair_context(matches: Sequence[KnowledgeMatch]) -> str:
     lines = [
         "Local FAIR terminology (reference only):",
         "Use these definitions only to interpret concepts already present in the "
-        "request or current context. Do not infer additional requested actions.",
-        "For every definition that directly corresponds to a reported concept in "
-        "the requested answer, briefly state the concept's scientific meaning and "
-        "principal inference boundary. Do not repeat labels without interpretation, "
-        "and ignore definitions that are irrelevant to the current reports. Before "
-        "returning, silently check that the relevant meanings or boundaries are "
-        "represented in the answer.",
+        "request or current context. Ignore irrelevant definitions. Do not infer "
+        "additional requested actions or use definitions as computational evidence.",
     ]
     for match in matches:
         term = str(match.entry.get("term", "")).strip()
         description = str(match.entry.get("description", "")).strip()
-        uri = str(match.entry.get("uri", "")).strip()
-        lines.append(f"- {term}: {description} Source: {uri}")
+        lines.append(f"- {term}: {description}")
     return "\n".join(lines)
 
 
@@ -382,34 +451,26 @@ def _control_matches(
     related: Sequence[KnowledgeMatch],
     query: str,
     usage_category: str | None,
+    matched_terms: set[str],
 ) -> list[KnowledgeMatch]:
     """Choose a deterministic same-count irrelevant-metadata control."""
 
     if not related:
         return []
-    related_uris = {str(item.entry.get("uri", "")) for item in related}
     query_tokens = _tokens(_normalized_text(query))
     candidates: list[Mapping[str, Any]] = []
     for entry in entries:
-        categories = entry.get("usage_categories", [])
-        if (
-            usage_category is not None
-            and isinstance(categories, list)
-            and categories
-            and usage_category not in categories
-        ):
+        if not _applies_to_category(entry, usage_category):
             continue
-        if str(entry.get("uri", "")) in related_uris:
+        if terminology_key(entry["term"]) in matched_terms:
             continue
-        labels = " ".join(
-            _field_values(entry, "term") + _field_values(entry, "aliases")
-        )
-        if _tokens(_normalized_text(labels)).intersection(query_tokens):
+        labels = " ".join(terminology_forms(entry))
+        if _tokens(_normalized_text(labels)) & query_tokens:
             continue
         candidates.append(entry)
     candidates.sort(
         key=lambda entry: sha256(
-            f"{query}|{entry.get('uri', '')}|{entry.get('term', '')}".encode("utf-8")
+            f"{query}|{terminology_key(entry['term'])}".encode("utf-8")
         ).hexdigest()
     )
     selected: list[KnowledgeMatch] = []
@@ -443,14 +504,24 @@ def enrich_messages_with_fair_terms(
         return original
 
     started_monotonic = time.monotonic()
-    query, query_sources = _retrieval_query(state, retrieval_context)
+    queries = _retrieval_queries(state, retrieval_context)
+    query = "\n\n".join(queries.values())
     entries = load_fair_terms()
-    related_matches = retrieve_entries(
-        entries,
-        query,
-        FAIR_TERM_PROFILE,
-        usage_category=_stage_category(stage),
-    )
+    matches_by_term: dict[str, KnowledgeMatch] = {}
+    for source, text in queries.items():
+        user_input = source in {"current_user_message", "revision_request"}
+        matches = retrieve_terminology(
+            entries, text, usage_category=_stage_category(stage), user_input=user_input
+        )
+        if user_input:
+            matches.sort(key=lambda match: not (
+                match.matched_field == "aliases"
+                and match.match_reason in {"exact_value", "exact_phrase"}
+            ))
+        for match in matches:
+            key = terminology_key(match.entry["term"])
+            matches_by_term.setdefault(key, match)
+    related_matches = list(matches_by_term.values())
     related_matches, related_context = (
         _fit_fair_context(related_matches) if related_matches else ([], "")
     )
@@ -461,6 +532,7 @@ def enrich_messages_with_fair_terms(
             related_matches,
             query,
             _stage_category(stage),
+            set(matches_by_term),
         )
         context = _render_fair_context(matches) if matches else ""
     else:
@@ -470,7 +542,7 @@ def enrich_messages_with_fair_terms(
         state,
         stage=stage,
         query=query,
-        query_sources=query_sources,
+        query_sources=list(queries),
         matches=matches,
         context=context,
         started_monotonic=started_monotonic,

@@ -48,7 +48,16 @@ SENTENCE_PATTERN = re.compile(r"(?<=[.!?])\s+")
 HTML_TAG_PATTERN = re.compile(r"<[^>]+>")
 USER_AGENT = "EnzyWizard FAIR terminology builder/1.0"
 UNIT_HOST = "qudt.org"
+EXCLUDED_TERMS = frozenset(
+    "area atom box classification diameter distance index molecular report "
+    "size sphere statistics volume".split()
+)
+PREFERRED_TERM_SOURCES = {
+    "binding pocket": "https://schlessinger-lab.github.io/pyvol/index.html",
+    "coordinate": "https://mathworld.wolfram.com/Coordinates.html",
+}
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_REVIEWED_ALIASES_PATH = PROJECT_ROOT / "manual_tests" / "fixtures" / "fair_terms_aliases.yaml"
 DEFAULT_REVIEWED_DESCRIPTIONS_PATH = (
     PROJECT_ROOT
     / "manual_tests"
@@ -350,6 +359,39 @@ def load_cached_descriptions(path: Path) -> dict[tuple[str, str], str]:
     return cached
 
 
+def load_reviewed_aliases(
+    path: Path = DEFAULT_REVIEWED_ALIASES_PATH,
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or not payload:
+        raise ValueError(f"Expected reviewed terminology aliases in {path}")
+    aliases: dict[str, list[str]] = {}
+    unit_symbols: dict[str, list[str]] = {}
+    for term, values in payload.items():
+        if not isinstance(term, str) or not term.strip():
+            raise ValueError(f"Invalid terminology label in {path}: {term!r}")
+        key = term.strip().casefold()
+        symbols = []
+        if isinstance(values, dict) and set(values) == {"aliases", "unit_symbols"}:
+            symbols = values["unit_symbols"]
+            values = values["aliases"]
+        if (
+            key in aliases
+            or not isinstance(values, list)
+            or not values
+            or any(not isinstance(value, str) or not value.strip() for value in values)
+        ):
+            raise ValueError(f"Invalid aliases for {term!r} in {path}")
+        aliases[key] = [value.strip() for value in values]
+        if not isinstance(symbols, list) or any(
+            not isinstance(symbol, str) or symbol not in aliases[key] for symbol in symbols
+        ):
+            raise ValueError(f"Invalid unit symbols for {term!r} in {path}")
+        if symbols:
+            unit_symbols[key] = symbols
+    return aliases, unit_symbols
+
+
 def validate_reviewed_sources(
     sources: list[TermSource],
     reviewed_descriptions: dict[tuple[str, str], ReviewedDescription],
@@ -584,6 +626,11 @@ def usage_categories(source: TermSource) -> list[str]:
     ]
 
 
+def keep_term_source(term: str, uri: str) -> bool:
+    key = term.casefold()
+    return key not in EXCLUDED_TERMS and PREFERRED_TERM_SOURCES.get(key, uri) == uri
+
+
 def build_terms(
     sources: list[TermSource],
     *,
@@ -594,6 +641,17 @@ def build_terms(
 ) -> tuple[list[dict[str, Any]], list[TermSource]]:
     reviewed_descriptions = reviewed_descriptions or {}
     cached_descriptions = cached_descriptions or {}
+    reviewed_aliases, reviewed_unit_symbols = load_reviewed_aliases()
+    sources = [
+        source
+        for source in sources
+        if keep_term_source(
+            source.term,
+            reviewed.uri
+            if (reviewed := reviewed_descriptions.get((source.term.casefold(), source.uri)))
+            else source.uri,
+        )
+    ]
     descriptions: dict[tuple[str, str], str] = {}
     sources_to_fetch = [
         source
@@ -643,13 +701,19 @@ def build_terms(
         if existing is None:
             terms_by_pair[effective_key] = {
                 "term": effective_source.term,
-                "aliases": [],
+                "aliases": reviewed_aliases.get(effective_source.term.casefold(), []),
                 "uri": effective_source.uri,
                 "description": description,
                 "source_documents": list(effective_source.source_documents),
                 "related_tools": list(effective_source.source_documents),
                 "usage_categories": usage_categories(effective_source),
             }
+            uri = urlsplit(effective_source.uri)
+            if uri.netloc.casefold() == UNIT_HOST and uri.path.startswith("/vocab/unit/"):
+                terms_by_pair[effective_key]["kind"] = "unit"
+                symbols = reviewed_unit_symbols.get(effective_key[0])
+                if symbols:
+                    terms_by_pair[effective_key]["unit_symbols"] = symbols
             continue
 
         documents = sorted(

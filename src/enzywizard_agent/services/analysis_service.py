@@ -35,7 +35,16 @@ from ..utils.analysis_utils import (
     summarize_report_artifact,
 )
 from .llm_service import create_chat_model_for_state, invoke_structured, invoke_text
-from .knowledge_retrieval_service import retrieve_failure_hints
+from ..utils.terminology_utils import (
+    TERMINOLOGY_APPENDIX_MARKER,
+    annotate_terminology,
+    terminology_number,
+)
+from .knowledge_retrieval_service import (
+    fair_terms_sha256,
+    load_fair_terms,
+    retrieve_failure_hints,
+)
 
 
 def _create_llm(state: AgentState):
@@ -297,73 +306,51 @@ def _match_failure_hints(error_text: str) -> list[dict[str, str]]:
         return []
 
 
-def _fair_evidence_for_stage(
-    state: AgentState,
-    stage: str,
-) -> tuple[list[AnalysisEvidence], str]:
-    """Expose injected terminology as semantic provenance, not result evidence."""
-
-    runtime = state.get("runtime_session")
-    metadata = getattr(runtime, "metadata", {}) if runtime is not None else {}
-    records = metadata.get("knowledge_retrieval", []) if isinstance(metadata, dict) else []
-    stage_records = [
-        item
-        for item in records
-        if isinstance(item, dict)
-        and item.get("stage") == stage
-        and item.get("mode") == "retrieve"
-    ]
-    if not stage_records:
-        return [], ""
+def _scientific_terminology(
+    state: AgentState, answer: str
+) -> tuple[str, list[AnalysisEvidence], str]:
+    """Render definitions for terms actually used, not the prompt's candidate terms."""
+    config = state.get("config")
+    if config is None or config.ontology_mode != "retrieve":
+        return answer, [], ""
+    marked_answer, entries = annotate_terminology(answer, load_fair_terms())
+    if not entries:
+        return answer, [], ""
 
     evidence: list[AnalysisEvidence] = []
     lines: list[str] = []
-    seen: set[tuple[str, str]] = set()
-    for record in stage_records:
-        for term_record in record.get("matched_terms", []):
-            if not isinstance(term_record, dict):
-                continue
-            term = str(term_record.get("term", "")).strip()
-            uri = str(term_record.get("uri", "")).strip()
-            description = str(term_record.get("description", "")).strip()
-            if not term or not uri or (term, uri) in seen:
-                continue
-            seen.add((term, uri))
-            evidence_id = f"fair-term-{len(evidence) + 1}"
-            evidence.append(
-                AnalysisEvidence(
-                    evidence_id=evidence_id,
-                    source_kind="knowledge_base",
-                    inference_level="direct",
-                    turn_id=state.get("current_turn_id"),
-                    plan_id=state.get("current_plan_id"),
-                    artifact_type=None,
-                    source_tool=None,
-                    side=None,
-                    path=None,
-                    field_path="description",
-                    value_summary=description or f"Definition supplied for {term}.",
-                    source_uri=uri,
-                    source_label=term,
-                    source_version=record.get("knowledge_base_sha256"),
-                    metadata={
-                        "role": "terminology_definition",
-                        "stage": stage,
-                        "source_documents": term_record.get("source_documents", []),
-                        "related_tools": term_record.get("related_tools", []),
-                        "retrieval_score": term_record.get("score"),
-                    },
-                )
+    for number, entry in enumerate(entries, 1):
+        term, uri, description = entry["term"], entry["uri"], entry["description"]
+        evidence.append(
+            AnalysisEvidence(
+                evidence_id=f"fair-term-{number}",
+                source_kind="knowledge_base",
+                inference_level="direct",
+                turn_id=state.get("current_turn_id"),
+                plan_id=state.get("current_plan_id"),
+                artifact_type=None,
+                source_tool=None,
+                side=None,
+                path=None,
+                field_path="description",
+                value_summary=description,
+                source_uri=uri,
+                source_label=term,
+                source_version=fair_terms_sha256(),
+                metadata={
+                    "role": "terminology_definition",
+                    "stage": "analysis.scientific_narrative",
+                    "source_documents": entry.get("source_documents", []),
+                    "related_tools": entry.get("related_tools", []),
+                },
             )
-            lines.append(f"- Terminology source: {term} definition ({uri})")
-    if not evidence:
-        return [], ""
-    appendix = (
-        "\n\nTerminology sources "
-        "(definitions only, not computational-result evidence):\n"
+        )
+        lines.append(f"- {terminology_number(number)} {term}: {description} ({uri})")
+    return marked_answer, evidence, (
+        TERMINOLOGY_APPENDIX_MARKER
+        + "(definitions only, not computational-result evidence):\n"
         + "\n".join(lines)
     )
-    return evidence, appendix
 
 
 def _analyze_planning_failure(
@@ -1121,41 +1108,39 @@ def _analyze_reports(
                 HumanMessage(content=context),
             ],
         )
-        fair_evidence, fair_appendix = _fair_evidence_for_stage(
-            state,
-            "analysis.scientific_narrative",
+        answer, term_evidence, term_appendix = _scientific_terminology(
+            state, output.final_answer
         )
         return _empty_result(
             state,
             response_mode="scientific_result",
             summary=output.summary,
             final_answer=(
-                _replace_internal_evidence_references(output.final_answer, evidence)
+                _replace_internal_evidence_references(answer, evidence)
                 + evidence_appendix
-                + fair_appendix
+                + term_appendix
             ),
             report_summaries=summaries,
             findings=findings,
-            evidence=[*evidence, *fair_evidence],
+            evidence=[*evidence, *term_evidence],
             referenced_artifacts=references,
             limitations=list(dict.fromkeys(limitations + output.limitations)),
             used_language_model=True,
         )
     except Exception as exc:
         # 报告解析和确定性比较仍有效，因此模型叙述失败只降级为 partial。
-        fair_evidence, fair_appendix = _fair_evidence_for_stage(
-            state,
-            "analysis.scientific_narrative",
+        answer, term_evidence, term_appendix = _scientific_terminology(
+            state, fallback_answer
         )
         return _empty_result(
             state,
             response_mode="scientific_result",
             analysis_status="partial",
             summary=fallback_summary,
-            final_answer=fallback_answer + evidence_appendix + fair_appendix,
+            final_answer=answer + evidence_appendix + term_appendix,
             report_summaries=summaries,
             findings=findings,
-            evidence=[*evidence, *fair_evidence],
+            evidence=[*evidence, *term_evidence],
             referenced_artifacts=references,
             limitations=list(
                 dict.fromkeys(
@@ -1386,6 +1371,12 @@ def _answer_history_issue(state: AgentState) -> AnalysisResult:
     )
 
 
+def _append_answer_section(answer: str, title: str, content: str) -> str:
+    """Add a response section without moving the terminology appendix off the end."""
+    body, marker, appendix = answer.partition(TERMINOLOGY_APPENDIX_MARKER)
+    return f"{body}\n\n{title}:\n{content}{marker}{appendix}"
+
+
 def _merge_artifact_listing(
     result: AnalysisResult,
     state: AgentState,
@@ -1410,8 +1401,8 @@ def _merge_artifact_listing(
     return result.model_copy(
         update={
             "summary": f"{result.summary} {listing.summary}",
-            "final_answer": (
-                f"{result.final_answer}\n\nArtifacts:\n{listing.final_answer}"
+            "final_answer": _append_answer_section(
+                result.final_answer, "Artifacts", listing.final_answer
             ),
             "referenced_artifacts": references,
             "evidence": evidence,
@@ -1447,9 +1438,8 @@ def _merge_general_answer(
     return result.model_copy(
         update={
             "summary": f"{result.summary} {general.summary}",
-            "final_answer": (
-                f"{result.final_answer}\n\n{section_label}:\n"
-                f"{general.final_answer}"
+            "final_answer": _append_answer_section(
+                result.final_answer, section_label, general.final_answer
             ),
             "limitations": list(
                 dict.fromkeys(result.limitations + general.limitations)

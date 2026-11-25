@@ -1,6 +1,15 @@
 terms:
 - term: 3-10 helix
-  aliases: []
+  aliases:
+  - "310 helix"
+  - "310 helices"
+  - "three_ten_helix"
+  - "3_10_helix"
+  - "DSSP G"
+  - "DSSP code G"
+  - "3\u2081\u2080 helix"
+  - "3\u2081\u2080 helices"
+  - "3(10) helix"
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
   description: A 3-10 helix is a protein secondary-structure class assigned the DSSP code G.
   source_documents:
@@ -19,7 +28,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: alanine
-  aliases: []
+  aliases: ["Ala"]
   uri: http://purl.obolibrary.org/obo/CHEBI_16977
   description: The L -enantiomer of alanine.
   source_documents:
@@ -60,7 +69,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: alpha carbon
-  aliases: []
+  aliases: ["C-alpha", "C\u03b1", "C_alpha", "alpha_carbon", "\u03b1-carbon", "\u03b1-carbons"]
   uri: https://www.rcsb.org/docs/general-help/glossary
   description: The alpha carbon is the backbone carbon atom adjacent to the carbonyl group in an alpha
     amino acid, to which the amino-acid side chain is attached.
@@ -83,7 +92,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: alpha helix
-  aliases: []
+  aliases: ["\u03b1-helix", "\u03b1-helices", "alpha_helix", "DSSP code H", "DSSP assignment H"]
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
   description: An alpha-helix is a protein secondary-structure class assigned the DSSP code H.
   source_documents:
@@ -102,7 +111,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: amino acid residue
-  aliases: []
+  aliases: ["amino_acid_residue", "amino_acid_residues"]
   uri: https://goldbook.iupac.org/terms/view/A00279
   description: An amino-acid residue is the portion of an amino acid remaining after loss of the elements
     of water when amino acids combine to form a peptide.
@@ -119,7 +128,13 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: amino acid substitution
-  aliases: []
+  aliases:
+  - "residue substitution"
+  - "amino_acid_substitution"
+  - "amino_acid_substitutions"
+  - "residue_substitution"
+  - "amino acid replacement"
+  - "amino acid replacements"
   uri: http://purl.obolibrary.org/obo/SO_0001606
   description: A sequence variant of a codon resulting in the substitution of one amino acid for another
     in the resulting polypeptide.
@@ -138,8 +153,10 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: angstrom
-  aliases: []
+  aliases: ["angstroms", "\u00e5ngstr\u00f6m", "\u00e5ngstr\u00f6ms", "\u00c5"]
   uri: http://qudt.org/vocab/unit/ANGSTROM
+  kind: unit
+  unit_symbols: ["\u00c5"]
   description: The \(Angstr\ddot{o}m\) is an internationally recognized unit of length equal to \(0.1
     \,nanometre\) or \(1 \times 10^{-10}\,metres\). Although accepted for use, it is not formally defined
     within the International System of Units(SI). The angstrom is often used in the natural sciences to
@@ -171,30 +188,8 @@ terms:
   usage_categories:
   - parameter_extraction
   - scientific_analysis
-- term: area
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/PATO_0001323
-  description: A 2-D extent quality inhering in a bearer by virtue of the bearer's two dimensional extent.
-  source_documents:
-  - enzywizard-batch
-  - enzywizard-hydrocluster
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  related_tools:
-  - enzywizard-batch
-  - enzywizard-hydrocluster
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  usage_categories:
-  - request_routing
-  - history_query
-  - workflow_planning
-  - parameter_extraction
-  - scientific_analysis
 - term: arginine
-  aliases: []
+  aliases: ["Arg"]
   uri: http://purl.obolibrary.org/obo/CHEBI_29016
   description: "An \u03B1-amino acid that is glycine in which the \u03B1-is substituted by a 3-guanidinopropyl\
     \ group."
@@ -236,7 +231,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: asparagine
-  aliases: []
+  aliases: ["Asn"]
   uri: http://purl.obolibrary.org/obo/CHEBI_22653
   description: "An \u03B1-amino acid in which one of the hydrogens attached to the \u03B1-carbon of glycine\
     \ is substituted by a 2-amino-2-oxoethyl group."
@@ -255,7 +250,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: aspartic acid
-  aliases: []
+  aliases: ["Asp", "aspartic_acid"]
   uri: http://purl.obolibrary.org/obo/CHEBI_22660
   description: "An \u03B1-amino acid that consists of succinic acid bearing a single \u03B1-amino substituent"
   source_documents:
@@ -273,7 +268,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: asphericity
-  aliases: []
+  aliases: ["substrate_structure_asphericity"]
   uri: https://www.rdkit.org/docs/source/rdkit.Chem.Descriptors3D.html
   description: Asphericity is a three-dimensional molecular-shape descriptor calculated from the differences
     among a molecule's three principal moments of inertia, optionally using atomic-mass weighting.
@@ -295,28 +290,8 @@ terms:
   - workflow_planning
   - parameter_extraction
   - scientific_analysis
-- term: atom
-  aliases: []
-  uri: https://goldbook.iupac.org/terms/view/A00493
-  description: An atom is the smallest particle still characterizing a chemical element.
-  source_documents: &id001
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-clean
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-clean
-  - enzywizard-mut-integrate
-  - enzywizard-substrate
-  related_tools: *id001
-  usage_categories:
-  - request_routing
-  - history_query
-  - workflow_planning
-  - parameter_extraction
-  - scientific_analysis
 - term: AutoDock Vina
-  aliases: []
+  aliases: ["Vina", "AutoDockVina"]
   uri: https://autodock-vina.readthedocs.io/en/latest/
   description: AutoDock Vina is an open-source molecular docking engine used to predict ligand binding
     poses and evaluate them with a scoring function.
@@ -336,7 +311,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: bend
-  aliases: []
+  aliases: ["DSSP S", "DSSP code S"]
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
   description: A bend is a protein secondary-structure class assigned the DSSP code S.
   source_documents:
@@ -355,7 +330,14 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: beta bridge
-  aliases: []
+  aliases:
+  - "\u03b2-bridge"
+  - "\u03b2-bridges"
+  - "beta_bridge"
+  - "DSSP B"
+  - "DSSP code B"
+  - "isolated beta bridge"
+  - "isolated \u03b2-bridge"
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
   description: "B \u2014 residue in isolated beta-bridge;"
   source_documents:
@@ -373,7 +355,11 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: binding affinity
-  aliases: []
+  aliases:
+  - "Vina docking score"
+  - "predicted docking affinity"
+  - "enzyme_substrate_binding_affinity"
+  - "Vina-predicted affinity"
   uri: https://vina.scripps.edu/manual/#output
   description: In AutoDock Vina output, binding affinity is a predicted receptor-ligand binding score
     reported in kcal/mol for a docking pose.
@@ -396,7 +382,13 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: binding pocket
-  aliases: []
+  aliases:
+  - "ligand pocket"
+  - "ligand-binding cavity"
+  - "binding cavity"
+  - "binding cavities"
+  - "binding_pocket"
+  - "binding_pockets"
   uri: https://schlessinger-lab.github.io/pyvol/index.html
   description: In PyVOL, a protein binding pocket is a cavity identified from the protein's solvent-excluded
     geometry; PyVOL can calculate its volume and partition it into sub-pockets.
@@ -418,31 +410,8 @@ terms:
   - workflow_planning
   - parameter_extraction
   - scientific_analysis
-- term: binding pocket
-  aliases: []
-  uri: https://schlessinger-lab.github.io/pyvol/pocket_specification.html
-  description: PyVOL can localize a binding pocket of interest using a bound ligand, an adjacent residue,
-    or a spatial coordinate within the pocket.
-  source_documents:
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  related_tools:
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  usage_categories:
-  - request_routing
-  - history_query
-  - workflow_planning
-  - parameter_extraction
-  - scientific_analysis
 - term: bond
-  aliases: []
+  aliases: ["chemical_bond"]
   uri: https://goldbook.iupac.org/terms/view/B00697
   description: A chemical bond is an interaction between atoms or groups of atoms that leads to the formation
     of an aggregate sufficiently stable to be considered an independent molecular species.
@@ -465,7 +434,12 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: bounding box
-  aliases: []
+  aliases:
+  - "AABB"
+  - "axis-aligned bounding box"
+  - "axis-aligned bounding boxes"
+  - "bounding boxes"
+  - "bounding_box"
   uri: https://developer.mozilla.org/en-US/docs/Glossary/Bounding_box
   description: The bounding box of an element is the smallest possible rectangle (aligned with the axes
     of that element's user coordinate system) that entirely encloses it and its descendants. The bounding
@@ -487,26 +461,12 @@ terms:
   - workflow_planning
   - parameter_extraction
   - scientific_analysis
-- term: box
-  aliases: []
-  uri: https://www.pbr-book.org/3ed-2018/Geometry_and_Transformations/Bounding_Boxes
-  description: An axis-aligned bounding box is a rectangular region in two dimensions or a rectangular
-    volume in three dimensions used to enclose geometric objects, with bounds specified by minimum and
-    maximum coordinates.
-  source_documents:
-  - enzywizard-dock
-  - enzywizard-pocket
-  related_tools:
-  - enzywizard-dock
-  - enzywizard-pocket
-  usage_categories:
-  - request_routing
-  - history_query
-  - workflow_planning
-  - parameter_extraction
-  - scientific_analysis
 - term: cation-pi interaction
-  aliases: []
+  aliases:
+  - "pi-cation interaction"
+  - "\u03c0-cation interaction"
+  - "cation-\u03c0 interaction"
+  - "PICATION"
   uri: https://goldbook.iupac.org/terms/view/08154
   description: A cation-pi interaction is a noncovalent attractive force between a positive ion and a
     pi-electron system.
@@ -529,7 +489,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: centroid
-  aliases: []
+  aliases: ["geometric center", "geometric centre", "geometric centres"]
   uri: https://xlinux.nist.gov/dads/HTML/centroid.html
   description: The centroid is the center of gravity or center of mass of an object.
   source_documents:
@@ -545,7 +505,10 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: chemical classification
-  aliases: []
+  aliases:
+  - "residue_chemical_classification"
+  - "amino-acid chemical class"
+  - "amino-acid chemical classes"
   uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
   description: In the IMGT amino-acid classification scheme, residues are grouped by side-chain chemistry
     into aliphatic, aromatic, sulfur-containing, hydroxyl, basic, acidic, and amide classes.
@@ -565,28 +528,8 @@ terms:
   - workflow_planning
   - parameter_extraction
   - scientific_analysis
-- term: classification
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/NCIT_C25161
-  description: Classification Classification Classification Classification A method of generalization,
-    the systematic arrangement of entities into classes or groups based on mutual similarity and certain
-    differing characteristics. Classified Classification C25161 C0008902 Intellectual Property
-  source_documents:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  related_tools:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  usage_categories:
-  - scientific_analysis
 - term: CMAP torsion force term
-  aliases: []
+  aliases: ["CMAP torsion", "CMAPTorsionForce", "cmap_torsion_force_term"]
   uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#cmaptorsionforce
   description: A CMAP torsion force assigns an energy to a pair of coupled dihedral angles using a two-dimensional
     tabulated energy function interpolated by a cubic spline.
@@ -606,7 +549,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: complex
-  aliases: []
+  aliases: ["molecular_complex", "molecular_complexes"]
   uri: https://goldbook.iupac.org/terms/view/C01203
   description: A complex is a molecular entity formed by the association of two or more constituent molecular
     entities, typically through interactions between a central atom or group and ligands.
@@ -629,27 +572,11 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: coordinate
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/NCIT_C44477
-  description: Coordinate X-Coordinate X-Coordinate C1704751 X-Coordinate A horizontal coordinate that
-    is used together with a vertical coordinate to specify an exact point in space. X-Coordinate X Spatial
-    Concept C44477
-  source_documents:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  related_tools:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  usage_categories:
-  - scientific_analysis
-- term: coordinate
-  aliases: []
+  aliases:
+  - "spatial coordinate"
+  - "spatial_coordinates"
+  - "residue_alpha_carbon_coordinate"
+  - "binding_pocket_center_coordinate"
   uri: https://mathworld.wolfram.com/Coordinates.html
   description: Coordinates are numbers that specify the position of a point relative to a reference system,
     such as Cartesian axes.
@@ -670,8 +597,10 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: cubic angstrom
-  aliases: []
+  aliases: ["cubic angstroms", "cubic \u00e5ngstr\u00f6m", "cubic \u00e5ngstr\u00f6ms", "\u00c5\u00b3", "\u00c5^3"]
   uri: http://qudt.org/vocab/unit/ANGSTROM3
+  kind: unit
+  unit_symbols: ["\u00c5\u00b3", "\u00c5^3"]
   description: A unit that is a non-SI unit, specifically a CGS unit, of polarizability known informally
     as polarizability volume. The SI defined units for polarizability are C*m^2/V and can be converted
     to \(Angstr\ddot{o}m\)^3 by multiplying the SI value by 4 times pi times the vacuum permittivity and
@@ -695,8 +624,10 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: cubic centimeter
-  aliases: []
+  aliases: ["cubic centimeters", "cubic centimetre", "cubic centimetres", "cm^3", "cm\u00b3"]
   uri: http://qudt.org/vocab/unit/CentiM3
+  kind: unit
+  unit_symbols: ["cm^3", "cm\u00b3"]
   description: The CGS unit of volume, equal to 10-6 cubic meter, 1 milliliter, or about 0.061 023 7 cubic
     inch
   source_documents:
@@ -715,7 +646,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: custom bond force term
-  aliases: []
+  aliases: ["CustomBondForce", "custom_bond_force_term"]
   uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#custombondforce
   description: A custom bond force represents an interaction between a specified pair of particles using
     a user-defined energy expression that depends on their separation.
@@ -735,7 +666,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: custom nonbonded force term
-  aliases: []
+  aliases: ["CustomNonbondedForce", "custom_nonbonded_force_term"]
   uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#customnonbondedforce
   description: A custom nonbonded force evaluates user-defined pairwise interaction energies between particles
     according to a specified algebraic expression.
@@ -755,7 +686,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: custom torsion force term
-  aliases: []
+  aliases: ["CustomTorsionForce", "custom_torsion_force_term"]
   uri: https://docs.openmm.org/latest/userguide/theory/03_custom_forces.html#customtorsionforce
   description: A custom torsion force assigns an interaction energy to sets of four particles using a
     user-defined expression of their dihedral angle.
@@ -775,7 +706,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: cysteine
-  aliases: []
+  aliases: ["Cys"]
   uri: http://purl.obolibrary.org/obo/CHEBI_15356
   description: A sulfur-containing amino acid that is propanoic acid with an amino group at position 2
     and a sulfanyl group at position 3.
@@ -794,8 +725,10 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: dalton
-  aliases: []
+  aliases: ["daltons", "Da", "unified atomic mass unit", "unified atomic mass units"]
   uri: http://qudt.org/vocab/unit/DA
+  kind: unit
+  unit_symbols: ["Da"]
   description: 'The unified atomic mass unit (symbol: \(\mu\)) or dalton (symbol: Da) is a unit that is
     used for indicating mass on an atomic or molecular scale. It is defined as one twelfth of the rest
     mass of an unbound atom of carbon-12 in its nuclear and electronic ground state, and has a value of
@@ -820,8 +753,10 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: degree
-  aliases: []
+  aliases: ["degree of arc", "arc degree", "\u00b0"]
   uri: http://qudt.org/vocab/unit/DEG
+  kind: unit
+  unit_symbols: ["\u00b0"]
   description: A degree (in full, a degree of arc, arc degree, or arcdegree), usually denoted by \(^\circ\)
     (the degree symbol), is a measurement of plane angle, representing 1/360 of a full rotation; one degree
     is equivalent to \(2\pi /360 rad\), \(0.017453 rad\). It is not an SI unit, as the SI unit for angles
@@ -841,28 +776,10 @@ terms:
   usage_categories:
   - parameter_extraction
   - scientific_analysis
-- term: diameter
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/PATO_0001334
-  description: A length quality which is equal to the length of any straight line segment that passes
-    through the center of a circle and whose endpoints are on the circular boundary.
-  source_documents:
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-substrate
-  related_tools:
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-substrate
-  usage_categories:
-  - scientific_analysis
 - term: dimensionless
-  aliases: []
+  aliases: ["unitless", "without units"]
   uri: http://qudt.org/vocab/unit/UNITLESS
+  kind: unit
   description: An explicit unit to say something has no units.
   source_documents:
   - enzywizard-aaprops
@@ -883,26 +800,8 @@ terms:
   usage_categories:
   - parameter_extraction
   - scientific_analysis
-- term: distance
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/PATO_0000040
-  description: A quality that is the extent of space between two entities.
-  source_documents:
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-substrate
-  related_tools:
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-substrate
-  usage_categories:
-  - scientific_analysis
 - term: disulfide bond
-  aliases: []
+  aliases: ["disulphide bond", "disulfide bridge", "disulphide bridge", "SSBOND", "disulfide_bond"]
   uri: https://www.uniprot.org/help/disulfid
   description: A disulfide bond is a covalent linkage between the sulfur atoms of two cysteine residues
     in a protein.
@@ -925,7 +824,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: docking
-  aliases: []
+  aliases: ["in silico ligand docking"]
   uri: https://goldbook.iupac.org/terms/view/11437
   description: Docking comprises computational methods that optimize the placement of a ligand in a macromolecular
     binding site of known or proposed three-dimensional structure and score the quality of the fit.
@@ -948,7 +847,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: DSSP
-  aliases: []
+  aliases: ["gmx dssp"]
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
   description: DSSP assigns protein secondary structure by recognizing characteristic hydrogen-bonding
     patterns and geometric features; gmx dssp calculates such assignments from a structure.
@@ -968,7 +867,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: electric charge
-  aliases: []
+  aliases: ["electrical charge", "electric_charge"]
   uri: https://goldbook.iupac.org/terms/view/E01923
   description: Electric charge is the time integral of electric current; the elementary charge is the
     magnitude of the charge carried by a proton.
@@ -989,7 +888,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: embedding
-  aliases: []
+  aliases: ["sequence_embeddings", "residue_embedding", "residue_embeddings"]
   uri: https://developers.google.com/machine-learning/crash-course/embeddings
   description: An embedding is a dense numerical vector representation of an item in which learned relationships
     can be represented by distances or directions in vector space.
@@ -1012,7 +911,13 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: emission probability
-  aliases: []
+  aliases:
+  - "emission probabilities"
+  - "match emission probability"
+  - "emission_probability"
+  - "emission_probabilities"
+  - "normalized_emission_probability"
+  - "normalized_emission_probabilities"
   uri: https://pyhmmer.readthedocs.io/en/stable/api/plan7/hmms.html
   description: In a profile hidden Markov model, an emission probability p_k(x) is the probability of
     emitting sequence symbol x from match state k.
@@ -1048,7 +953,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: enzyme
-  aliases: []
+  aliases: ["enzymes"]
   uri: https://goldbook.iupac.org/terms/view/E02159
   description: Enzymes are macromolecules, mostly proteins, that act as biological catalysts by increasing
     reaction rates.
@@ -1073,7 +978,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: ESM-2
-  aliases: []
+  aliases: ["ESM2"]
   uri: https://docs.nvidia.com/bionemo-framework/2.0/models/esm2/
   description: ESM-2 is a pre-trained, bi-directional encoder (BERT-style model) over amino acid sequences.
     ESM-2 models provide embeddings for amino acids that have led to state-of-the-art performance on downstream
@@ -1097,7 +1002,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: extended strand
-  aliases: []
+  aliases: ["extended_strand", "DSSP E", "DSSP code E", "beta-ladder strand", "beta-ladder strands"]
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
   description: "E \u2014 extended strand that participates in beta-ladder;"
   source_documents:
@@ -1115,7 +1020,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: glutamic acid
-  aliases: []
+  aliases: ["Glu", "glutamic_acid"]
   uri: http://purl.obolibrary.org/obo/CHEBI_18237
   description: "An \u03B1-amino acid that is glutaric acid bearing a single amino substituent at position\
     \ 2."
@@ -1134,7 +1039,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: glutamine
-  aliases: []
+  aliases: ["Gln"]
   uri: http://purl.obolibrary.org/obo/CHEBI_18050
   description: An optically active form of glutamine having L -configuration.
   source_documents:
@@ -1152,7 +1057,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: glycine
-  aliases: []
+  aliases: ["Gly"]
   uri: http://purl.obolibrary.org/obo/CHEBI_15428
   description: The simplest (and the only achiral) proteinogenic amino acid, with a hydrogen atom as its
     side chain.
@@ -1193,7 +1098,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: harmonic angle force term
-  aliases: []
+  aliases: ["HarmonicAngleForce", "harmonic_angle_force_term"]
   uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#harmonicangleforce
   description: A harmonic angle force assigns energy E = (1/2)k(theta - theta0)^2 to the angle between
     three particles, where theta0 is the equilibrium angle.
@@ -1213,7 +1118,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: harmonic bond force term
-  aliases: []
+  aliases: ["HarmonicBondForce", "harmonic_bond_force_term"]
   uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#harmonicbondforce
   description: A harmonic bond force assigns energy E = (1/2)k(r - r0)^2 to the separation between two
     particles, where r0 is the equilibrium distance.
@@ -1233,7 +1138,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: heavy atom
-  aliases: []
+  aliases: ["non-hydrogen atom", "heavy_atom", "heavy_atoms", "non-hydrogen atoms"]
   uri: https://www.rdkit.org/docs/cppapi/QueryOps_8h_source.html
   description: A heavy atom is an atom with atomic number greater than 1; in molecular structure analysis,
     this excludes hydrogen and its isotopes.
@@ -1250,7 +1155,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: heterocyclic
-  aliases: []
+  aliases: ["heterocycle", "heterocycles"]
   uri: https://goldbook.iupac.org/terms/view/H02798
   description: Heterocyclic compounds are cyclic compounds that contain ring atoms of at least two different
     chemical elements.
@@ -1273,7 +1178,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: heterogen
-  aliases: []
+  aliases: ["PDB heterogen", "PDB heterogens"]
   uri: https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html
   description: A heterogen is a nonstandard chemical component represented by HET/HETATM records in a
     PDB structure file, such as a ligand, solvent, or modified residue.
@@ -1290,7 +1195,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: hidden Markov model
-  aliases: []
+  aliases: ["HMM", "HMMs", "hidden_markov_model"]
   uri: https://pyhmmer.readthedocs.io/en/stable/api/plan7/hmms.html
   description: A data structure storing the Plan7 Hidden Markov Model.
   source_documents:
@@ -1320,7 +1225,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: HMMER
-  aliases: []
+  aliases: ["HMMER3"]
   uri: https://hmmer.org/
   description: HMMER is a software suite for biological sequence analysis using profile hidden Markov
     models, including sequence homology searches.
@@ -1351,7 +1256,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: hydrogen bond
-  aliases: []
+  aliases: ["H-bond", "H-bonds", "HBOND", "hydrogen_bond", "hydrogen_bonds"]
   uri: https://goldbook.iupac.org/terms/view/H02899
   description: A hydrogen bond is an attractive interaction involving a hydrogen atom attached to an electronegative
     atom and another electronegative atom or electron-rich site.
@@ -1399,7 +1304,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: hydrophobic cluster
-  aliases: []
+  aliases: ["hydrophobic_clusters", "hydrophobic_cluster", "hydrophobic residue cluster"]
   uri: https://proteintools.uni-bayreuth.de/clusters/documentation
   description: Hydrophobic clusters are connected groups of contacting hydrophobic residues in a protein,
     often involving isoleucine, leucine and valine side chains; ProteinTools identifies clusters from
@@ -1423,7 +1328,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: hydrophobicity
-  aliases: []
+  aliases: ["residue_hydrophobicity"]
   uri: https://goldbook.iupac.org/terms/view/HT06964
   description: Hydrophobicity is the association of nonpolar groups or molecules in aqueous environments
     arising from water's tendency to exclude nonpolar substances.
@@ -1445,46 +1350,8 @@ terms:
   - workflow_planning
   - parameter_extraction
   - scientific_analysis
-- term: index
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/NCIT_C25390
-  description: Index C25390 Intellectual Product C0918012 A numerical scale used to compare variables
-    with one another or with some reference number; a number used to select an element of a list, vector,
-    array or other sequence. Index Index Index Scale
-  source_documents:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-clean
-  - enzywizard-conservation
-  - enzywizard-disorder
-  - enzywizard-embedding
-  - enzywizard-flexibility
-  - enzywizard-hydrocluster
-  - enzywizard-integrate
-  - enzywizard-interaction
-  - enzywizard-mut-batch
-  - enzywizard-mut-clean
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  related_tools:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-clean
-  - enzywizard-conservation
-  - enzywizard-disorder
-  - enzywizard-embedding
-  - enzywizard-flexibility
-  - enzywizard-hydrocluster
-  - enzywizard-integrate
-  - enzywizard-interaction
-  - enzywizard-mut-batch
-  - enzywizard-mut-clean
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  usage_categories:
-  - scientific_analysis
 - term: information content
-  aliases: []
+  aliases: ["information_content"]
   uri: https://www.ebsco.com/research-starters/library-and-information-science/information-content
   description: Information content is a fundamental concept in information theory that quantifies the
     amount of information contained within a message. It serves as a pivotal measure in communication
@@ -1508,7 +1375,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: interaction type
-  aliases: []
+  aliases: ["interaction_type", "molecular_interaction_type"]
   uri: http://purl.obolibrary.org/obo/MI_0190
   description: Connection between molecule.
   source_documents:
@@ -1526,7 +1393,15 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: intrinsically disordered region
-  aliases: []
+  aliases:
+  - "IDR"
+  - "IDRs"
+  - "disordered region"
+  - "intrinsically_disordered_region"
+  - "intrinsically_disordered_regions"
+  - "disordered_regions"
+  - "intrinsically disordered segment"
+  - "disordered_region"
   uri: https://www.ebi.ac.uk/training/online/courses/proteins-domains/domains-motifs-and-regions/
   description: An intrinsically disordered region (IDR) is a segment of a protein that lacks a stable,
     well-defined three-dimensional structure under physiological conditions when considered in isolation.
@@ -1549,7 +1424,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: ionic bond
-  aliases: []
+  aliases: ["electrovalent bond", "ionic interaction", "ionic_bond", "RING IONIC"]
   uri: https://goldbook.iupac.org/terms/view/IT07058
   description: An ionic bond is the electrostatic attraction between oppositely charged ions, such as
     a cation and an anion.
@@ -1572,7 +1447,14 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: isoelectric point
-  aliases: []
+  aliases:
+  - "isoelectric_point"
+  - "residue_isoelectric_point"
+  - "theoretical pI"
+  - "calculated pI"
+  - "residue pI"
+  - "protein pI"
+  - "isoelectric pH"
   uri: https://goldbook.iupac.org/terms/view/I03275
   description: The isoelectric point is the pH at which the net electric charge of a molecule or particle
     is zero under specified conditions.
@@ -1595,7 +1477,12 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: isolated node
-  aliases: []
+  aliases:
+  - "isolated vertex"
+  - "isolated vertices"
+  - "isolated_node"
+  - "zero-degree node"
+  - "zero-degree nodes"
   uri: https://mathworld.wolfram.com/IsolatedVertex.html
   description: An isolated node, or isolated vertex, is a vertex in a graph with degree zero, meaning
     it is incident to no edges.
@@ -1616,7 +1503,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: isolated point
-  aliases: []
+  aliases: ["isolated points"]
   uri: https://mathworld.wolfram.com/IsolatedPoint.html
   description: An isolated point is a point of a set for which a neighborhood exists that contains no
     other point of that set.
@@ -1653,8 +1540,10 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: kilocalorie
-  aliases: []
+  aliases: ["kilocalories", "kcal"]
   uri: http://qudt.org/vocab/unit/KiloCAL
+  kind: unit
+  unit_symbols: ["kcal"]
   description: A \(\textit{Kilocalorie}\) is a unit for \(\textit{Energy And Work}\) expressed as \(kcal\).
   source_documents:
   - enzywizard-batch
@@ -1674,8 +1563,10 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: kilojoule per mole
-  aliases: []
+  aliases: ["kilojoules per mole", "kJ/mol", "kJ mol^-1", "kJ mol\u207b\u00b9"]
   uri: http://qudt.org/vocab/unit/KiloJ-PER-MOL
+  kind: unit
+  unit_symbols: ["kJ/mol", "kJ mol^-1", "kJ mol\u207b\u00b9"]
   description: 1 000-fold of the SI derived unit joule divided by the SI base unit mol
   source_documents:
   - enzywizard-batch
@@ -1693,7 +1584,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: leucine
-  aliases: []
+  aliases: ["Leu"]
   uri: http://purl.obolibrary.org/obo/CHEBI_25017
   description: "A branched-chain amino acid that consists of glycine in which one of the hydrogens attached\
     \ to the \u03B1-carbon is substituted by an isobutyl group."
@@ -1712,7 +1603,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: LogP
-  aliases: []
+  aliases: ["log P", "log_P", "substrate_logp", "octanol-water logP"]
   uri: https://goldbook.iupac.org/terms/view/14890
   description: LogP is the base-10 logarithm of the octanol-water partition coefficient, a measure of
     lipophilicity defined using the equilibrium distribution between octanol and water.
@@ -1735,7 +1626,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: lysine
-  aliases: []
+  aliases: ["Lys"]
   uri: http://purl.obolibrary.org/obo/CHEBI_25094
   description: A diamino acid that is caproic (hexanoic) acid bearing two amino substituents at positions
     2 and 6.
@@ -1773,7 +1664,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: molar refractivity
-  aliases: []
+  aliases: ["molar refraction", "molar_refractivity", "substrate_molar_refractivity"]
   uri: https://old.iupac.org/reports/provisional/abstract05/GreenBook051206_prs.pdf
   description: Molar refractivity is a molecular property defined from refractive index n and molar volume
     V_m as R = ((n^2 - 1) / (n^2 + 2)) V_m, and is related to molecular polarizability.
@@ -1796,8 +1687,10 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: mole
-  aliases: []
+  aliases: ["moles", "mol"]
   uri: http://qudt.org/vocab/unit/MOL
+  kind: unit
+  unit_symbols: ["mol"]
   description: The mole (mol) is the SI unit of amount of substance, corresponding to exactly 6.02214076
     x 10^23 specified elementary entities.
   source_documents:
@@ -1817,23 +1710,8 @@ terms:
   usage_categories:
   - parameter_extraction
   - scientific_analysis
-- term: molecular
-  aliases: []
-  uri: https://goldbook.iupac.org/terms/view/M03986
-  description: Molecular describes something associated with a molecule or molecular entity, where a molecular
-    entity is constitutionally or isotopically distinct and identifiable as a separate unit.
-  source_documents:
-  - enzywizard-energy
-  related_tools:
-  - enzywizard-energy
-  usage_categories:
-  - request_routing
-  - history_query
-  - workflow_planning
-  - parameter_extraction
-  - scientific_analysis
 - term: molecular fingerprint
-  aliases: []
+  aliases: ["molecular_fingerprint", "molecular_fingerprints"]
   uri: https://www.rdkit.org/docs/GettingStartedInPython.html#fingerprinting-and-molecular-similarity
   description: a Daylight-like fingerprint based on hashing molecular subgraphs
   source_documents:
@@ -1855,7 +1733,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: molecular interaction
-  aliases: []
+  aliases: ["molecular_interaction", "molecular_interactions"]
   uri: https://www.ebi.ac.uk/training/online/courses/reactome-tools-for-analysing-biological-pathways/molecular-interactions-overlay/
   description: Molecular interactions encompass associations between molecular entities, including protein-protein
     and protein-compound interactions.
@@ -1878,7 +1756,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: molecular structure
-  aliases: []
+  aliases: ["molecular_structure", "molecular_structures"]
   uri: https://www.ebi.ac.uk/training/events/structural-bioinformatics2021/
   description: Molecular structure describes the three-dimensional arrangement or shape of a molecule,
     such as a protein or a molecular complex.
@@ -1903,7 +1781,12 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: molecular weight
-  aliases: []
+  aliases:
+  - "relative molecular mass"
+  - "mol wt"
+  - "molecular_weight"
+  - "substrate_molecular_weight"
+  - "residue_molecular_weight"
   uri: https://goldbook.iupac.org/terms/view/R05271
   description: Relative molecular mass (also called molecular weight) is the ratio of the mass of a molecule
     to the unified atomic mass unit.
@@ -1928,7 +1811,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: moment of inertia
-  aliases: []
+  aliases: ["moments of inertia", "moment_of_inertia"]
   uri: https://goldbook.iupac.org/terms/view/M04006
   description: The moment of inertia of a body about an axis is the sum of its mass elements multiplied
     by the squares of their respective distances from that axis.
@@ -1946,7 +1829,11 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: multi-hot encoding
-  aliases: []
+  aliases:
+  - "multihot encoding"
+  - "multi_hot_encoding"
+  - "multi-hot vector"
+  - "residue_chemical_classification_multi_hot_encoding"
   uri: https://developers.google.com/machine-learning/crash-course/categorical-data/one-hot-encoding
   description: Multi-hot encoding is a categorical vector representation in which more than one element
     can take the value 1, representing multiple active categories.
@@ -1969,7 +1856,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: mutant
-  aliases: []
+  aliases: ["MUT", "mutants"]
   uri: https://www.genome.gov/11511688/teaching-guide-for-life-in-the-lab
   description: A mutant is an organism with a permanent structural alteration in its DNA.
   source_documents:
@@ -1987,7 +1874,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: negatively charged
-  aliases: []
+  aliases: ["negative-charge class", "negatively_charged"]
   uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
   description: In the IMGT amino-acid charge classification, the negatively charged class comprises aspartate
     (D) and glutamate (E).
@@ -2010,7 +1897,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: net electric charge
-  aliases: []
+  aliases: ["net charge", "net_electric_charge", "residue_net_charge"]
   uri: https://goldbook.iupac.org/terms/view/N04111
   description: In the cited electrophoresis context, the net electric charge number of a particle is the
     algebraic sum of its surface charges divided by the elementary charge.
@@ -2033,7 +1920,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: node
-  aliases: []
+  aliases: ["graph vertex", "graph vertices"]
   uri: https://neo4j.com/docs/getting-started/appendix/graphdb-concepts/#graphdb-node
   description: A node is an entity in a graph; relationships between nodes are represented by edges.
   source_documents:
@@ -2055,7 +1942,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: nonbonded force term
-  aliases: []
+  aliases: ["non-bonded force term", "NonbondedForce", "nonbonded_force_term"]
   uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#nonbondedforce
   description: A nonbonded force includes particle-pair interactions such as Lennard-Jones and electrostatic
     interactions, with selectable treatment of distance cutoffs and long-range electrostatics.
@@ -2075,7 +1962,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: numerical vector
-  aliases: []
+  aliases: ["numeric vector", "numeric vectors", "numerical_vector"]
   uri: https://mathworld.wolfram.com/Vector.html
   description: A vector is a mathematical object with magnitude and direction that can be represented
     by numerical components in a coordinate system.
@@ -2098,7 +1985,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: one-hot encoding
-  aliases: []
+  aliases: ["onehot encoding", "one_hot_encoding", "one-hot vector", "residue_name_one_hot_encoding"]
   uri: https://developers.google.com/machine-learning/glossary#one-hot_encoding
   description: One-hot encoding represents a categorical value by a vector whose corresponding category
     position is 1 and all other positions are 0.
@@ -2121,7 +2008,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: one-letter code
-  aliases: []
+  aliases: ["single-letter code", "one-letter amino acid code", "one_letter_code"]
   uri: https://iupac.qmul.ac.uk/AminoAcid/A2021.html
   description: There are difficulties in using the three-letter system ( 3AA-14 to 3AA-19 ) in presenting
     long protein sequences. A one-letter code is much more concise, and is helpful in summarizing large
@@ -2160,7 +2047,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: OpenMM Force
-  aliases: []
+  aliases: ["openmm_force"]
   uri: https://docs.openmm.org/latest/api-python/generated/openmm.openmm.Force.html
   description: An OpenMM Force is an object that defines one contribution to the forces and potential
     energy acting on particles in a simulated System.
@@ -2172,7 +2059,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: periodic torsion force term
-  aliases: []
+  aliases: ["PeriodicTorsionForce", "periodic_torsion_force_term"]
   uri: https://docs.openmm.org/latest/userguide/theory/02_standard_forces.html#periodictorsionforce
   description: A periodic torsion force assigns energy E = k[1 + cos(n*theta - theta0)] to a dihedral
     angle between four particles, where n is the periodicity.
@@ -2192,7 +2079,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: phenylalanine
-  aliases: []
+  aliases: ["Phe"]
   uri: http://purl.obolibrary.org/obo/CHEBI_28044
   description: An aromatic amino acid that is alanine in which one of the methyl hydrogens is substituted
     by a phenyl group.
@@ -2211,7 +2098,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: pi helix
-  aliases: []
+  aliases: ["\u03c0-helix", "\u03c0-helices", "pi_helix", "DSSP code I", "DSSP assignment I"]
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
   description: A pi helix is a protein secondary-structure class assigned the DSSP code I.
   source_documents:
@@ -2230,7 +2117,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: pi-pi stacking
-  aliases: []
+  aliases: ["\u03c0-\u03c0 stacking", "pi stacking", "\u03c0 stacking", "PIPISTACK", "pi_pi_stacking"]
   uri: https://goldbook.iupac.org/terms/view/13861
   description: Pi-pi stacking is the inter- or intramolecular alignment of aromatic groups caused by interactions
     between their pi orbitals.
@@ -2253,7 +2140,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: pKa
-  aliases: []
+  aliases: ["pK_a", "pK\u2090", "residue_pka"]
   uri: https://goldbook.iupac.org/terms/view/15441
   description: pKa is the negative base-10 logarithm of the acid dissociation constant Ka; lower pKa values
     generally indicate stronger acids.
@@ -2276,7 +2163,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: positively charged
-  aliases: []
+  aliases: ["positive-charge class", "positively_charged"]
   uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
   description: The positively charged IMGT amino-acid class comprises arginine (R), histidine (H), and
     lysine (K), based on side-chain charge classification.
@@ -2299,7 +2186,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: potential energy
-  aliases: []
+  aliases: ["potential_energy"]
   uri: https://goldbook.iupac.org/terms/view/P04778
   description: Potential energy is the energy of position or orientation in a field of force.
   source_documents:
@@ -2321,7 +2208,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: profile
-  aliases: []
+  aliases: ["HMM profile", "hmm_profile"]
   uri: https://pyhmmer.readthedocs.io/en/stable/api/plan7/hmms.html
   description: "Optimized profiles store the match emissions and transition probabilities for a profile\
     \ HMM so that they can be loaded in the SIMD code. Typically, matrices use aligned storage so that\
@@ -2356,7 +2243,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: protein backbone
-  aliases: []
+  aliases: ["polypeptide backbone", "protein main chain", "protein_backbone", "polypeptide main chain"]
   uri: https://www.ebi.ac.uk/training/online/courses/foundations-protein-structure/glossary/
   description: The protein backbone is the repeating chain of atoms forming a protein structural framework,
     with the sequence N-C-alpha-C and side chains projecting outward.
@@ -2379,7 +2266,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: protein flexibility
-  aliases: []
+  aliases: ["protein_flexibility"]
   uri: http://edamontology.org/operation_0244
   description: Analyse flexibility and motion in protein structure.
   source_documents:
@@ -2393,7 +2280,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: protein language model
-  aliases: []
+  aliases: ["pLM", "pLMs", "protein LM", "protein LMs", "protein_language_model"]
   uri: https://synbiointel.com/glossary/protein-language-model/
   description: A protein language model is a deep learning model trained on protein sequences to learn
     patterns of amino acid use and evolutionary relationships, supporting predictions of protein properties.
@@ -2416,7 +2303,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: protein sequence
-  aliases: []
+  aliases: ["amino acid sequence", "polypeptide sequence", "protein_sequence"]
   uri: http://edamontology.org/data_2976
   description: One or more protein sequences, possibly with associated annotation.
   source_documents:
@@ -2438,7 +2325,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: protein structure
-  aliases: []
+  aliases: ["protein 3D structure", "3D protein structure", "protein_structure"]
   uri: http://edamontology.org/data_1537
   description: A human-readable collection of information about one or more specific protein 3D structure(s)
     or structural domains.
@@ -2495,7 +2382,12 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: radius of gyration
-  aliases: []
+  aliases:
+  - "gyration radius"
+  - "radius_of_gyration"
+  - "substrate_structure_radius_of_gyration"
+  - "Rg"
+  - "R_g"
   uri: https://goldbook.iupac.org/terms/view/R05121
   description: The radius of gyration is a measure of the distribution of mass around an axis or center,
     defined through the corresponding mass-weighted mean-square distance.
@@ -2537,47 +2429,6 @@ terms:
   usage_categories:
   - workflow_planning
   - scientific_analysis
-- term: report
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/IAO_0000088
-  description: A document assembled by an author for the purpose of providing information for the audience.
-    A report is the output of a documenting process and has the objective to be consumed by a specific
-    audience. Topic of the report is on something that has completed. A report is not a single figure.
-    Examples of reports are journal article, patent application, grant progress report, case report (not
-    patient record).
-  source_documents:
-  - enzywizard-batch
-  - enzywizard-conservation
-  - enzywizard-disorder
-  - enzywizard-dock
-  - enzywizard-embedding
-  - enzywizard-energy
-  - enzywizard-flexibility
-  - enzywizard-hydrocluster
-  - enzywizard-integrate
-  - enzywizard-interaction
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  - enzywizard-substrate
-  related_tools:
-  - enzywizard-batch
-  - enzywizard-conservation
-  - enzywizard-disorder
-  - enzywizard-dock
-  - enzywizard-embedding
-  - enzywizard-energy
-  - enzywizard-flexibility
-  - enzywizard-hydrocluster
-  - enzywizard-integrate
-  - enzywizard-interaction
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  - enzywizard-substrate
-  usage_categories:
-  - history_query
-  - scientific_analysis
 - term: residue
   aliases: []
   uri: https://goldbook.iupac.org/terms/view/A00279
@@ -2606,7 +2457,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: residue name
-  aliases: []
+  aliases: ["residue_name"]
   uri: https://iupac.qmul.ac.uk/AminoAcid/A2021.html
   description: A residue name identifies an amino-acid residue using standardized amino-acid nomenclature,
     including conventional three-letter names and one-letter symbols.
@@ -2627,7 +2478,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: RING interaction type
-  aliases: []
+  aliases: ["RING interaction code", "RING interaction codes", "ring_interaction_type"]
   uri: https://ring.biocomputingup.it/help/interactions
   description: RING interaction types categorize residue-residue contacts in protein structures by the
     physical interaction involved, including hydrogen bonds, van der Waals contacts, ionic interactions,
@@ -2648,7 +2499,12 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: root mean square fluctuation
-  aliases: []
+  aliases:
+  - "RMSF"
+  - "residue RMSF"
+  - "root_mean_square_fluctuation"
+  - "residue_root_mean_square_fluctuation"
+  - "RMSFs"
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-rmsf.html
   description: gmx rmsf computes the root mean square fluctuation (RMSF, i.e. standard deviation) of atomic
     positions in the trajectory (supplied with -f ) after (optionally) fitting to a reference frame (supplied
@@ -2669,7 +2525,7 @@ terms:
   - workflow_planning
   - scientific_analysis
 - term: secondary structure
-  aliases: []
+  aliases: ["secondary_structure", "residue_secondary_structure"]
   uri: https://goldbook.iupac.org/terms/view/S05530
   description: Secondary structure is the conformational arrangement of backbone segments of a macromolecule,
     such as alpha-helices and beta-sheets in proteins, independently of side-chain conformations.
@@ -2692,7 +2548,11 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: sequence conservation
-  aliases: []
+  aliases:
+  - "evolutionary sequence conservation"
+  - "sequence_conservation"
+  - "residue conservation"
+  - "residue_conservation"
   uri: https://www.ebi.ac.uk/training/online/courses/foundations-protein-structure/fundamentals-of-protein-composition/the-peptide-bond-and-primary-structure/ss/
   description: Sequence conservation describes the retention of identical or similar residues at corresponding
     positions across evolutionarily related sequences, often assessed using multiple sequence alignments.
@@ -2711,7 +2571,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: sequence length
-  aliases: []
+  aliases: ["sequence_length"]
   uri: http://edamontology.org/data_1249
   description: The size (length) of a sequence, subsequence or region in a sequence, or range(s) of lengths.
   source_documents:
@@ -2733,7 +2593,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: serine
-  aliases: []
+  aliases: ["Ser"]
   uri: http://purl.obolibrary.org/obo/CHEBI_17822
   description: "An \u03B1-amino acid that is alanine substituted at position 3 by a hydroxy group."
   source_documents:
@@ -2751,7 +2611,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: Shannon entropy
-  aliases: []
+  aliases: ["Shannon information entropy", "shannon_entropy"]
   uri: https://mathworld.wolfram.com/Entropy.html
   description: Shannon entropy quantifies the uncertainty of a discrete probability distribution as H
     = -sum_i p_i log2(p_i), where p_i is the probability of outcome i.
@@ -2773,20 +2633,8 @@ terms:
   - workflow_planning
   - parameter_extraction
   - scientific_analysis
-- term: size
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/PATO_0000117
-  description: A morphology quality inhering in a bearer by virtue of the bearer's physical magnitude.
-  source_documents:
-  - enzywizard-dock
-  - enzywizard-pocket
-  related_tools:
-  - enzywizard-dock
-  - enzywizard-pocket
-  usage_categories:
-  - scientific_analysis
 - term: SMILES
-  aliases: []
+  aliases: ["Simplified Molecular Input Line Entry System", "substrate_smiles"]
   uri: https://opensmiles.org/opensmiles.html
   description: SMILES (Simplified Molecular Input Line Entry System) is a line notation for representing
     molecular structures as character strings.
@@ -2809,7 +2657,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: solvent accessibility
-  aliases: []
+  aliases: ["solvent_accessibility", "residue_relative_solvent_accessibility"]
   uri: http://edamontology.org/data_1542
   description: Data on the solvent accessible or buried surface area of a protein structure.
   source_documents:
@@ -2824,21 +2672,6 @@ terms:
   - enzywizard-integrate
   - enzywizard-mut-batch
   - enzywizard-mut-integrate
-  usage_categories:
-  - request_routing
-  - history_query
-  - workflow_planning
-  - parameter_extraction
-  - scientific_analysis
-- term: sphere
-  aliases: []
-  uri: https://mathworld.wolfram.com/Sphere.html
-  description: A sphere is the set of points in three-dimensional space at a fixed distance (the radius)
-    from a specified center.
-  source_documents:
-  - enzywizard-pocket
-  related_tools:
-  - enzywizard-pocket
   usage_categories:
   - request_routing
   - history_query
@@ -2867,7 +2700,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: spherocity index
-  aliases: []
+  aliases: ["spherocity_index", "substrate_structure_spherocity"]
   uri: https://www.rdkit.org/docs/source/rdkit.Chem.rdMolDescriptors.html
   description: The spherocity index is a three-dimensional molecular-shape descriptor computed by RDKit's
     CalcSpherocityIndex function.
@@ -2890,7 +2723,13 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: standard deviation
-  aliases: []
+  aliases:
+  - "std dev"
+  - "std. dev."
+  - "stddev"
+  - "stdev"
+  - "standard_deviation"
+  - "substrate_structure_std_pairwise_atom_distance"
   uri: http://purl.obolibrary.org/obo/STATO_0000237
   description: The standard deviation of a random variable, statistical population, data set, or probability
     distribution is a measure of variation which correspond to the average distance from the mean of the
@@ -2907,37 +2746,6 @@ terms:
   - enzywizard-mut-batch
   - enzywizard-mut-integrate
   - enzywizard-substrate
-  usage_categories:
-  - scientific_analysis
-- term: statistics
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/STATO_0000039
-  description: a statistic is a measurement datum to describe a dataset or a variable. It is generated
-    by a calculation on set of observed data.
-  source_documents:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-clean
-  - enzywizard-disorder
-  - enzywizard-hydrocluster
-  - enzywizard-integrate
-  - enzywizard-interaction
-  - enzywizard-mut-batch
-  - enzywizard-mut-clean
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  related_tools:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-clean
-  - enzywizard-disorder
-  - enzywizard-hydrocluster
-  - enzywizard-integrate
-  - enzywizard-interaction
-  - enzywizard-mut-batch
-  - enzywizard-mut-clean
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
   usage_categories:
   - scientific_analysis
 - term: substrate
@@ -2990,7 +2798,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: threonine
-  aliases: []
+  aliases: ["Thr"]
   uri: http://purl.obolibrary.org/obo/CHEBI_16857
   description: An optically active form of threonine having L -configuration.
   source_documents:
@@ -3008,7 +2816,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: torsion angle
-  aliases: []
+  aliases: ["dihedral angle", "dihedral angles", "torsion_angle"]
   uri: https://goldbook.iupac.org/terms/view/T06406
   description: A torsion angle is the dihedral angle between two planes defined by four sequentially bonded
     atoms.
@@ -3031,7 +2839,12 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: TPSA
-  aliases: []
+  aliases:
+  - "topological polar surface area"
+  - "topological polar surface areas"
+  - "topological_polar_surface_area"
+  - "substrate_tpsa"
+  - "topological PSA"
   uri: https://www.rdkit.org/docs/GettingStartedInPython.html#descriptor-calculation
   description: Topological polar surface area (TPSA) is a two-dimensional molecular descriptor estimating
     polar surface area from contributions of polar atom types and their bonding environments.
@@ -3054,7 +2867,7 @@ terms:
   - parameter_extraction
   - scientific_analysis
 - term: tryptophan
-  aliases: []
+  aliases: ["Trp"]
   uri: http://purl.obolibrary.org/obo/CHEBI_27897
   description: "An \u03B1-amino acid that is alanine bearing an indol-3-yl substituent at position 3."
   source_documents:
@@ -3072,7 +2885,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: turn
-  aliases: []
+  aliases: ["DSSP T", "DSSP code T"]
   uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
   description: "T \u2014 hydrogen-bonded turn;"
   source_documents:
@@ -3090,7 +2903,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: tyrosine
-  aliases: []
+  aliases: ["Tyr"]
   uri: http://purl.obolibrary.org/obo/CHEBI_18186
   description: "An \u03B1-amino acid that is phenylalanine bearing a hydroxy substituent at position 4\
     \ on the phenyl ring."
@@ -3109,7 +2922,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: uncharged polar
-  aliases: []
+  aliases: ["polar uncharged", "neutral polar", "uncharged_polar"]
   uri: https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
   description: The 'polar' class comprises amino acids with hydrogen donor and/or acceptor atoms, except
     tryptophan. Indeed, tryptophan, despite its hydrogen donor atom, has been classified in the IMGT 'nonpolar'
@@ -3130,7 +2943,7 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: valine
-  aliases: []
+  aliases: ["Val"]
   uri: http://purl.obolibrary.org/obo/CHEBI_27266
   description: "A branched-chain amino acid that consists of glycine in which one of the hydrogens attached\
     \ to the \u03B1-carbon is substituted by an isopropyl group."
@@ -3149,7 +2962,14 @@ terms:
   usage_categories:
   - scientific_analysis
 - term: van der Waals forces
-  aliases: []
+  aliases:
+  - "vdW"
+  - "van der Waals force"
+  - "van der Waals interaction"
+  - "van der Waals interactions"
+  - "van_der_waals_forces"
+  - "RING VDW contact"
+  - "RING VDW contacts"
   uri: https://goldbook.iupac.org/terms/view/V06597
   description: Van der Waals forces are intermolecular forces arising from interactions between permanent
     and induced electric dipoles, including dispersion forces.
@@ -3171,29 +2991,8 @@ terms:
   - workflow_planning
   - parameter_extraction
   - scientific_analysis
-- term: volume
-  aliases: []
-  uri: http://purl.obolibrary.org/obo/PATO_0000918
-  description: A 3-D extent quality inhering in a bearer by virtue of the bearer's amount of 3-dimensional
-    space it occupies.
-  source_documents:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  related_tools:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  - enzywizard-pocket
-  usage_categories:
-  - scientific_analysis
 - term: wild-type
-  aliases: []
+  aliases: ["WT", "wildtype", "wild_type"]
   uri: https://www.genome.gov/11511688/teaching-guide-for-life-in-the-lab
   description: Wild-type denotes the genotype or phenotype found in nature or in a standard laboratory
     stock for an organism, commonly used as the reference against which mutants are compared.

@@ -37,6 +37,9 @@ from enzywizard_agent.services.llm_service import (
 from enzywizard_agent.services.request_routing_service import route_user_request
 from enzywizard_agent.services.runtime_service import utc_now
 from enzywizard_agent.state import AgentState
+from enzywizard_agent.utils.terminology_utils import (
+    scientific_answer_body as _scientific_answer_body,
+)
 
 from scoring import (
     METRIC_NAMES,
@@ -56,7 +59,6 @@ GOLD_STANDARD_PATH = ROOT / "gold_report_facts.json"
 DEFAULT_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_MODEL = "gpt-6-luna"
 DEFAULT_REASONING_EFFORT = "medium"
-TERMINOLOGY_APPENDIX_MARKER = "\n\nTerminology sources "
 
 
 class StrictModel(BaseModel):
@@ -834,14 +836,6 @@ def _compact_report_summaries(
         }
         for index, item in enumerate(result.report_summaries, start=1)
     ]
-
-
-def _scientific_answer_body(answer: str | None) -> str | None:
-    """Remove terminology provenance that is not part of the scientific answer."""
-
-    if answer is None:
-        return None
-    return answer.split(TERMINOLOGY_APPENDIX_MARKER, 1)[0].rstrip()
 
 
 def _build_evaluation_packet(

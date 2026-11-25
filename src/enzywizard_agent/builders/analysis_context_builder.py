@@ -6,6 +6,7 @@ from typing import Any
 
 from ..data_models.analysis import AnalysisEvidence, AnalysisFinding, ReportSummary
 from ..state import AgentState
+from ..utils.terminology_utils import scientific_answer_body
 from .request_routing_context_builder import build_prior_plan_catalog
 
 
@@ -62,12 +63,16 @@ def _explicit_prior_analysis_payload(state: AgentState) -> list[dict[str, Any]]:
 
     payload: list[dict[str, Any]] = []
     for result in selected:
+        report_evidence = [
+            item for item in result.evidence
+            if item.metadata.get("role") != "terminology_definition"
+        ]
         evidence_id_map = {
             item.evidence_id: f"prior-turn-{result.turn_id}-{item.evidence_id}"
-            for item in result.evidence
+            for item in report_evidence
         }
         evidence = []
-        for item in _bounded_evidence(result.evidence, MAX_PRIOR_EVIDENCE):
+        for item in _bounded_evidence(report_evidence, MAX_PRIOR_EVIDENCE):
             dumped = item.model_dump(mode="json", exclude={"path"})
             dumped["evidence_id"] = evidence_id_map[item.evidence_id]
             dumped["source_evidence_ids"] = [
@@ -89,7 +94,8 @@ def _explicit_prior_analysis_payload(state: AgentState) -> list[dict[str, Any]]:
                 "turn_id": result.turn_id,
                 "summary": _clip_text(result.summary, 1200),
                 "final_answer": _clip_text(
-                    result.final_answer, MAX_PRIOR_ANSWER_CHARS
+                    scientific_answer_body(result.final_answer) or "",
+                    MAX_PRIOR_ANSWER_CHARS,
                 ),
                 "findings": findings,
                 "evidence": evidence,

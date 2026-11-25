@@ -158,10 +158,10 @@ def full_review() -> dict:
 class TestScoring(unittest.TestCase):
     def test_judge_answer_excludes_terminology_source_appendix(self) -> None:
         answer = (
-            "Scientific interpretation.\n\nTerminology sources "
+            "RMSF\u207d\u00b9\u207e. [Evidence: report].\n\nTerminology sources "
             "(definitions only, not computational-result evidence):\n- source"
         )
-        self.assertEqual(_scientific_answer_body(answer), "Scientific interpretation.")
+        self.assertEqual(_scientific_answer_body(answer), "RMSF. [Evidence: report].")
 
     def test_four_metrics_follow_declared_formulas(self) -> None:
         metrics, details = score_case(evaluation_packet(), iis_review())

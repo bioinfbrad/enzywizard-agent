@@ -1,0 +1,275 @@
+# Reviewed terminology aliases. Regenerate the runtime knowledge base after edits.
+"3-10 helix":
+  - "310 helix"
+  - "310 helices"
+  - "three_ten_helix"
+  - "3_10_helix"
+  - "DSSP G"
+  - "DSSP code G"
+  - "3\u2081\u2080 helix"
+  - "3\u2081\u2080 helices"
+  - "3(10) helix"
+"alanine": ["Ala"]
+"alpha carbon": ["C-alpha", "C\u03b1", "C_alpha", "alpha_carbon", "\u03b1-carbon", "\u03b1-carbons"]
+"alpha helix": ["\u03b1-helix", "\u03b1-helices", "alpha_helix", "DSSP code H", "DSSP assignment H"]
+"amino acid residue": ["amino_acid_residue", "amino_acid_residues"]
+"amino acid substitution":
+  - "residue substitution"
+  - "amino_acid_substitution"
+  - "amino_acid_substitutions"
+  - "residue_substitution"
+  - "amino acid replacement"
+  - "amino acid replacements"
+"angstrom":
+  aliases: ["angstroms", "\u00e5ngstr\u00f6m", "\u00e5ngstr\u00f6ms", "\u00c5"]
+  unit_symbols: ["\u00c5"]
+"arginine": ["Arg"]
+"asparagine": ["Asn"]
+"aspartic acid": ["Asp", "aspartic_acid"]
+"asphericity": ["substrate_structure_asphericity"]
+"AutoDock Vina": ["Vina", "AutoDockVina"]
+"bend": ["DSSP S", "DSSP code S"]
+"beta bridge":
+  - "\u03b2-bridge"
+  - "\u03b2-bridges"
+  - "beta_bridge"
+  - "DSSP B"
+  - "DSSP code B"
+  - "isolated beta bridge"
+  - "isolated \u03b2-bridge"
+"binding affinity":
+  - "Vina docking score"
+  - "predicted docking affinity"
+  - "enzyme_substrate_binding_affinity"
+  - "Vina-predicted affinity"
+"binding pocket":
+  - "ligand pocket"
+  - "ligand-binding cavity"
+  - "binding cavity"
+  - "binding cavities"
+  - "binding_pocket"
+  - "binding_pockets"
+"bond": ["chemical_bond"]
+"bounding box":
+  - "AABB"
+  - "axis-aligned bounding box"
+  - "axis-aligned bounding boxes"
+  - "bounding boxes"
+  - "bounding_box"
+"cation-pi interaction":
+  - "pi-cation interaction"
+  - "\u03c0-cation interaction"
+  - "cation-\u03c0 interaction"
+  - "PICATION"
+"centroid": ["geometric center", "geometric centre", "geometric centres"]
+"chemical classification":
+  - "residue_chemical_classification"
+  - "amino-acid chemical class"
+  - "amino-acid chemical classes"
+"CMAP torsion force term": ["CMAP torsion", "CMAPTorsionForce", "cmap_torsion_force_term"]
+"complex": ["molecular_complex", "molecular_complexes"]
+"coordinate":
+  - "spatial coordinate"
+  - "spatial_coordinates"
+  - "residue_alpha_carbon_coordinate"
+  - "binding_pocket_center_coordinate"
+"cubic centimeter":
+  aliases: ["cubic centimeters", "cubic centimetre", "cubic centimetres", "cm^3", "cm\u00b3"]
+  unit_symbols: ["cm^3", "cm\u00b3"]
+"custom bond force term": ["CustomBondForce", "custom_bond_force_term"]
+"custom nonbonded force term": ["CustomNonbondedForce", "custom_nonbonded_force_term"]
+"custom torsion force term": ["CustomTorsionForce", "custom_torsion_force_term"]
+"cysteine": ["Cys"]
+"dalton":
+  aliases: ["daltons", "Da", "unified atomic mass unit", "unified atomic mass units"]
+  unit_symbols: ["Da"]
+"degree":
+  aliases: ["degree of arc", "arc degree", "\u00b0"]
+  unit_symbols: ["\u00b0"]
+"dimensionless": ["unitless", "without units"]
+"disulfide bond":
+  - "disulphide bond"
+  - "disulfide bridge"
+  - "disulphide bridge"
+  - "SSBOND"
+  - "disulfide_bond"
+"docking": ["in silico ligand docking"]
+"DSSP": ["gmx dssp"]
+"electric charge": ["electrical charge", "electric_charge"]
+"embedding": ["sequence_embeddings", "residue_embedding", "residue_embeddings"]
+"emission probability":
+  - "emission probabilities"
+  - "match emission probability"
+  - "emission_probability"
+  - "emission_probabilities"
+  - "normalized_emission_probability"
+  - "normalized_emission_probabilities"
+"enzyme": ["enzymes"]
+"ESM-2": ["ESM2"]
+"extended strand":
+  - "extended_strand"
+  - "DSSP E"
+  - "DSSP code E"
+  - "beta-ladder strand"
+  - "beta-ladder strands"
+"glutamic acid": ["Glu", "glutamic_acid"]
+"glutamine": ["Gln"]
+"glycine": ["Gly"]
+"harmonic angle force term": ["HarmonicAngleForce", "harmonic_angle_force_term"]
+"harmonic bond force term": ["HarmonicBondForce", "harmonic_bond_force_term"]
+"heavy atom": ["non-hydrogen atom", "heavy_atom", "heavy_atoms", "non-hydrogen atoms"]
+"heterocyclic": ["heterocycle", "heterocycles"]
+"heterogen": ["PDB heterogen", "PDB heterogens"]
+"hidden Markov model": ["HMM", "HMMs", "hidden_markov_model"]
+"HMMER": ["HMMER3"]
+"hydrogen bond": ["H-bond", "H-bonds", "HBOND", "hydrogen_bond", "hydrogen_bonds"]
+"hydrophobic cluster": ["hydrophobic_clusters", "hydrophobic_cluster", "hydrophobic residue cluster"]
+"hydrophobicity": ["residue_hydrophobicity"]
+"information content": ["information_content"]
+"interaction type": ["interaction_type", "molecular_interaction_type"]
+"intrinsically disordered region":
+  - "IDR"
+  - "IDRs"
+  - "disordered region"
+  - "intrinsically_disordered_region"
+  - "intrinsically_disordered_regions"
+  - "disordered_regions"
+  - "intrinsically disordered segment"
+  - "disordered_region"
+"ionic bond": ["electrovalent bond", "ionic interaction", "ionic_bond", "RING IONIC"]
+"isoelectric point":
+  - "isoelectric_point"
+  - "residue_isoelectric_point"
+  - "theoretical pI"
+  - "calculated pI"
+  - "residue pI"
+  - "protein pI"
+  - "isoelectric pH"
+"isolated node":
+  - "isolated vertex"
+  - "isolated vertices"
+  - "isolated_node"
+  - "zero-degree node"
+  - "zero-degree nodes"
+"isolated point": ["isolated points"]
+"kilocalorie":
+  aliases: ["kilocalories", "kcal"]
+  unit_symbols: ["kcal"]
+"kilojoule per mole":
+  aliases: ["kilojoules per mole", "kJ/mol", "kJ mol^-1", "kJ mol\u207b\u00b9"]
+  unit_symbols: ["kJ/mol", "kJ mol^-1", "kJ mol\u207b\u00b9"]
+"leucine": ["Leu"]
+"LogP": ["log P", "log_P", "substrate_logp", "octanol-water logP"]
+"lysine": ["Lys"]
+"molar refractivity": ["molar refraction", "molar_refractivity", "substrate_molar_refractivity"]
+"mole":
+  aliases: ["moles", "mol"]
+  unit_symbols: ["mol"]
+"molecular fingerprint": ["molecular_fingerprint", "molecular_fingerprints"]
+"molecular interaction": ["molecular_interaction", "molecular_interactions"]
+"molecular structure": ["molecular_structure", "molecular_structures"]
+"molecular weight":
+  - "relative molecular mass"
+  - "mol wt"
+  - "molecular_weight"
+  - "substrate_molecular_weight"
+  - "residue_molecular_weight"
+"moment of inertia": ["moments of inertia", "moment_of_inertia"]
+"multi-hot encoding":
+  - "multihot encoding"
+  - "multi_hot_encoding"
+  - "multi-hot vector"
+  - "residue_chemical_classification_multi_hot_encoding"
+"mutant": ["MUT", "mutants"]
+"negatively charged": ["negative-charge class", "negatively_charged"]
+"net electric charge": ["net charge", "net_electric_charge", "residue_net_charge"]
+"node": ["graph vertex", "graph vertices"]
+"nonbonded force term": ["non-bonded force term", "NonbondedForce", "nonbonded_force_term"]
+"numerical vector": ["numeric vector", "numeric vectors", "numerical_vector"]
+"one-hot encoding":
+  - "onehot encoding"
+  - "one_hot_encoding"
+  - "one-hot vector"
+  - "residue_name_one_hot_encoding"
+"one-letter code": ["single-letter code", "one-letter amino acid code", "one_letter_code"]
+"OpenMM Force": ["openmm_force"]
+"periodic torsion force term": ["PeriodicTorsionForce", "periodic_torsion_force_term"]
+"phenylalanine": ["Phe"]
+"pi helix": ["\u03c0-helix", "\u03c0-helices", "pi_helix", "DSSP code I", "DSSP assignment I"]
+"pi-pi stacking":
+  - "\u03c0-\u03c0 stacking"
+  - "pi stacking"
+  - "\u03c0 stacking"
+  - "PIPISTACK"
+  - "pi_pi_stacking"
+"pKa": ["pK_a", "pK\u2090", "residue_pka"]
+"positively charged": ["positive-charge class", "positively_charged"]
+"potential energy": ["potential_energy"]
+"profile": ["HMM profile", "hmm_profile"]
+"protein backbone":
+  - "polypeptide backbone"
+  - "protein main chain"
+  - "protein_backbone"
+  - "polypeptide main chain"
+"protein flexibility": ["protein_flexibility"]
+"protein language model": ["pLM", "pLMs", "protein LM", "protein LMs", "protein_language_model"]
+"protein sequence": ["amino acid sequence", "polypeptide sequence", "protein_sequence"]
+"protein structure": ["protein 3D structure", "3D protein structure", "protein_structure"]
+"radius of gyration":
+  - "gyration radius"
+  - "radius_of_gyration"
+  - "substrate_structure_radius_of_gyration"
+  - "Rg"
+  - "R_g"
+"residue name": ["residue_name"]
+"RING interaction type": ["RING interaction code", "RING interaction codes", "ring_interaction_type"]
+"root mean square fluctuation":
+  - "RMSF"
+  - "residue RMSF"
+  - "root_mean_square_fluctuation"
+  - "residue_root_mean_square_fluctuation"
+  - "RMSFs"
+"secondary structure": ["secondary_structure", "residue_secondary_structure"]
+"sequence conservation":
+  - "evolutionary sequence conservation"
+  - "sequence_conservation"
+  - "residue conservation"
+  - "residue_conservation"
+"sequence length": ["sequence_length"]
+"serine": ["Ser"]
+"Shannon entropy": ["Shannon information entropy", "shannon_entropy"]
+"SMILES": ["Simplified Molecular Input Line Entry System", "substrate_smiles"]
+"solvent accessibility": ["solvent_accessibility", "residue_relative_solvent_accessibility"]
+"spherocity index": ["spherocity_index", "substrate_structure_spherocity"]
+"standard deviation":
+  - "std dev"
+  - "std. dev."
+  - "stddev"
+  - "stdev"
+  - "standard_deviation"
+  - "substrate_structure_std_pairwise_atom_distance"
+"threonine": ["Thr"]
+"torsion angle": ["dihedral angle", "dihedral angles", "torsion_angle"]
+"TPSA":
+  - "topological polar surface area"
+  - "topological polar surface areas"
+  - "topological_polar_surface_area"
+  - "substrate_tpsa"
+  - "topological PSA"
+"tryptophan": ["Trp"]
+"turn": ["DSSP T", "DSSP code T"]
+"tyrosine": ["Tyr"]
+"uncharged polar": ["polar uncharged", "neutral polar", "uncharged_polar"]
+"valine": ["Val"]
+"van der Waals forces":
+  - "vdW"
+  - "van der Waals force"
+  - "van der Waals interaction"
+  - "van der Waals interactions"
+  - "van_der_waals_forces"
+  - "RING VDW contact"
+  - "RING VDW contacts"
+"wild-type": ["WT", "wildtype", "wild_type"]
+"cubic angstrom":
+  aliases: ["cubic angstroms", "cubic \u00e5ngstr\u00f6m", "cubic \u00e5ngstr\u00f6ms", "\u00c5\u00b3", "\u00c5^3"]
+  unit_symbols: ["\u00c5\u00b3", "\u00c5^3"]

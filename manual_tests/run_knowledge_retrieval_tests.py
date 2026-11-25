@@ -3,27 +3,43 @@
 from __future__ import annotations
 
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
+from unittest.mock import patch
 
 from langchain_core.messages import HumanMessage, SystemMessage
 import yaml
 
 from build_fair_terms import (
     DEFAULT_REVIEWED_DESCRIPTIONS_PATH,
+    EXCLUDED_TERMS,
+    PREFERRED_TERM_SOURCES,
     SOURCE_TOOLS,
+    build_terms,
     extract_term_sources,
+    keep_term_source,
+    load_cached_descriptions,
+    load_reviewed_aliases,
     load_reviewed_descriptions,
     validate_reviewed_sources,
 )
 from evaluation_utils import aggregate_usage, runtime_usage_payload
 from enzywizard_agent.conf import AgentConfig
+from enzywizard_agent.data_models.user_confirmation import UserConfirmation
+from enzywizard_agent.services.analysis_service import _scientific_terminology
 from enzywizard_agent.services.knowledge_retrieval_service import (
-    FAIR_TERM_PROFILE,
     RetrievalProfile,
     enrich_messages_with_fair_terms,
     load_fair_terms,
     retrieve_entries,
     retrieve_failure_hints,
+    retrieve_terminology,
+)
+from enzywizard_agent.utils.terminology_utils import (
+    annotate_terminology,
+    scientific_answer_body,
+    terminology_key,
+    terminology_number,
 )
 
 
@@ -62,10 +78,9 @@ def check_shared_matcher_profiles() -> None:
             "usage_categories": ["scientific_analysis"],
         },
     ]
-    alias_matches = retrieve_entries(
+    alias_matches = retrieve_terminology(
         entries,
         "Compare the residue substitution before docking.",
-        FAIR_TERM_PROFILE,
         usage_category="request_routing",
     )
     assert [match.entry["term"] for match in alias_matches] == [
@@ -73,10 +88,9 @@ def check_shared_matcher_profiles() -> None:
     ]
     assert alias_matches[0].matched_field == "aliases"
 
-    category_filtered = retrieve_entries(
+    category_filtered = retrieve_terminology(
         entries,
         "Explain the binding pocket.",
-        FAIR_TERM_PROFILE,
         usage_category="request_routing",
     )
     assert category_filtered == []
@@ -156,14 +170,16 @@ def check_enrichment_modes_and_tracking() -> None:
     assert len(enriched) == len(messages)
     assert "Local FAIR terminology" in str(enriched[-1].content)
     assert "amino acid substitution" in str(enriched[-1].content).casefold()
-    assert "scientific meaning" in str(enriched[-1].content).casefold()
-    assert "inference boundary" in str(enriched[-1].content).casefold()
+    assert "do not infer" in str(enriched[-1].content).casefold()
+    assert "computational evidence" in str(enriched[-1].content).casefold()
     records = retrieve_state["runtime_session"].metadata["knowledge_retrieval"]
     assert len(records) == 1
     assert records[0]["stage"] == "routing.request"
     assert records[0]["injected_term_count"] >= 1
-    assert records[0]["injected_term_count"] <= 3
+    assert records[0]["injected_character_count"] <= 2_400
     assert records[0]["matched_terms"]
+    assert records[0]["matched_terms"][0]["uri"] not in enriched[-1].content
+    assert "Source:" not in enriched[-1].content
     assert records[0]["query_sources"] == ["current_user_message"]
     usage = runtime_usage_payload(retrieve_state["runtime_session"])
     assert usage["knowledge_retrieval"]["event_count"] == 1
@@ -186,6 +202,7 @@ def check_enrichment_modes_and_tracking() -> None:
     assert control_record["injected_term_count"] == records[0]["injected_term_count"]
     assert control_record["matched_terms"] != records[0]["matched_terms"]
     assert "Local FAIR terminology" in str(controlled[-1].content)
+    assert control_record["matched_terms"][0]["uri"] not in controlled[-1].content
 
     capability_state = _state("retrieve")
     capability_messages = enrich_messages_with_fair_terms(
@@ -245,7 +262,7 @@ def check_enrichment_modes_and_tracking() -> None:
         retrieval_context="binding pocket",
     )
     assert "binding pocket:" in str(focused[-1].content).casefold()
-    assert "ignore definitions that are irrelevant" in str(
+    assert "ignore irrelevant definitions" in str(
         focused[-1].content
     ).casefold()
     focused_record = focused_state["runtime_session"].metadata[
@@ -259,27 +276,320 @@ def check_enrichment_modes_and_tracking() -> None:
 
 def check_expanded_terminology_retrieval() -> None:
     entries = load_fair_terms()
-    assert len(entries) == 151
+    assert len(entries) == 136
 
-    workflow_matches = retrieve_entries(
+    workflow_matches = retrieve_terminology(
         entries,
         "Prepare the ligand with AutoDock Vina before docking.",
-        FAIR_TERM_PROFILE,
         usage_category="workflow_planning",
     )
     assert workflow_matches
     assert workflow_matches[0].entry["term"] == "AutoDock Vina"
 
-    scientific_matches = retrieve_entries(
+    scientific_matches = retrieve_terminology(
         entries,
         "Explain the net electric charge in this report.",
-        FAIR_TERM_PROFILE,
         usage_category="scientific_analysis",
     )
     assert any(
         match.entry["term"] == "net electric charge"
         for match in scientific_matches
     )
+
+    state = _state("retrieve")
+    state["current_turn_id"] = 3
+    state["current_user_message"] = "Explain RMSF for the report."
+    state["current_history_query"] = SimpleNamespace(turn_id=3, resolved_turn_ids=[2])
+    state["analysis_results"] = [
+        SimpleNamespace(
+            turn_id=turn, response_mode="scientific_result", final_answer=answer
+        )
+        for turn, answer in ((1, "AutoDock Vina"), (2, "The isoelectric point."))
+    ]
+    enrich_messages_with_fair_terms(
+        state,
+        stage="analysis.scientific_narrative",
+        messages=[HumanMessage(content="Report context")],
+        retrieval_context="protein flexibility; secondary structure; binding pocket; IDR",
+    )
+    record = state["runtime_session"].metadata["knowledge_retrieval"][0]
+    terms = [match["term"] for match in record["matched_terms"]]
+    assert terms[0] == "root mean square fluctuation"
+    assert len(terms) > 3 and record["injected_character_count"] <= 2_400
+    enrich_messages_with_fair_terms(
+        state,
+        stage="analysis.general_answer",
+        messages=[HumanMessage(content="Which term was described in that turn?")],
+    )
+    record = state["runtime_session"].metadata["knowledge_retrieval"][-1]
+    terms = [match["term"] for match in record["matched_terms"]]
+    assert "isoelectric point" in terms and "AutoDock Vina" not in terms
+    assert "referenced_history" in record["query_sources"]
+    assert not retrieve_terminology(entries, "a root fluctuation")
+
+    variants = (
+        "Intrinsically-disordered regions (IDRs), then IDR and binding-pockets."
+    )
+    hits = {match.entry["term"] for match in retrieve_terminology(entries, variants)}
+    assert hits == {"intrinsically disordered region", "binding pocket"}
+    _, displayed = annotate_terminology(variants, entries)
+    assert [entry["term"] for entry in displayed] == [
+        "intrinsically disordered region", "binding pocket"
+    ]
+    assert not retrieve_terminology(entries, "an IDR2 field or intrinsically random region")
+    control = _state("control")
+    control["current_user_message"] = variants
+    enrich_messages_with_fair_terms(
+        control,
+        stage="analysis.scientific_narrative",
+        messages=[HumanMessage(content=variants)],
+    )
+    audit = control["runtime_session"].metadata["knowledge_retrieval"][0]
+    assert audit["injected_term_count"] == audit["related_match_count"] == 2
+    assert not hits.intersection(item["term"] for item in audit["matched_terms"])
+
+
+def check_user_terminology_matching() -> None:
+    entries = load_fair_terms()
+    for spelling, term, reason in (
+        ("predicted_binding_pockets.", "binding pocket", "separator_normalized"),
+        ("root_mean_square_fluctuation", "root mean square fluctuation", "exact_value"),
+    ):
+        keys = {
+            match.entry["term"]: match.match_reason
+            for match in retrieve_terminology(entries, spelling, user_input=True)
+        }
+        assert keys.get(term) == reason, (spelling, keys)
+        if reason != "exact_value":
+            assert not annotate_terminology(spelling, entries)[1]
+
+    for query, terms in (
+        ("potental energy", {"energy"}),
+        ("chemcal bond", {"bond"}),
+        ("potential energy", {"potential energy"}),
+        ("$.predicted_binding_pockets", {"binding pocket"}),
+        ("$['predicted_binding_pockets']", {"binding pocket"}),
+        ("$.entries[*].predicted_binding_pockets", {"binding pocket"}),
+        ("What does $.reports[-1].predicted_binding_pockets mean?", {"binding pocket"}),
+        ("What does $.reports[0]['predicted_binding_pockets'] mean?", {"binding pocket"}),
+        ("Compare WT/MUT", {"wild-type", "mutant"}),
+        ("30 cubic angstroms", {"cubic angstrom"}),
+    ):
+        matches = retrieve_terminology(entries, query, user_input=True)
+        assert {match.entry["term"] for match in matches} == terms, (query, matches)
+    for separator in (" ", "\t", "-", "\u2010", "\u2011", "\u2013", "\u2014", "\u2015", "\u2212", "\ufe63", "\uff0d"):
+        for first, last, term in (
+            ("binding", "pockets", "binding pocket"),
+            ("secondary", "structure", "secondary structure"),
+        ):
+            label = f"{first}{separator}{last}"
+            assert [m.entry["term"] for m in retrieve_terminology(
+                entries, label, user_input=True
+            )] == [term], label
+            marked, used = annotate_terminology(label, entries)
+            assert [entry["term"] for entry in used] == [term], label
+            assert marked == label + terminology_number(1)
+    assert retrieve_terminology(entries, "chemcal bond", user_input=True)[0].matched_text == (
+        "bond"
+    )
+    for volume in ("30 cubic angstroms", "30 \u00c5\u00b3", "30 \u00c5^3"):
+        answer = f"The reported volume is {volume}."
+        assert [m.entry["term"] for m in retrieve_terminology(entries, answer, user_input=True)] == [
+            "cubic angstrom"
+        ]
+        assert [e["term"] for e in annotate_terminology(answer, entries)[1]] == [
+            "cubic angstrom"
+        ]
+
+    for query in (
+        "RMSD",
+        "binding site",
+        "binding/pocket",
+        "binding\u207bpocket",
+        "use 12 modes",
+        "binding pokcet",
+        "binding pockt",
+        "binding pockeet",
+        "binding pockat",
+        "dihederal angle",
+        "bindng pokcet",
+        "predicted_binding_pokcets",
+        "$.entries[*].predicted_binding_pokcets",
+        "/tmp/predicted_binding_pockets.json",
+        "https://example.invalid/?term=binding_pokcet",
+        "https://example.invalid/?term='binding_pokcet'",
+        "https://example.invalid/?term=binding_pocket",
+        "https://example.invalid/?term=$.predicted_binding_pockets",
+        "https://example.invalid/?term=$.reports[-1].predicted_binding_pockets",
+    ):
+        assert not retrieve_terminology(entries, query, user_input=True), query
+
+    ambiguous = [{"term": "binding pocket"}, {"term": "binding packet"}]
+    assert not retrieve_terminology(ambiguous, "binding picket", user_input=True)
+    assert [m.entry["term"] for m in retrieve_terminology(
+        ambiguous, "binding pocket", user_input=True
+    )] == ["binding pocket"]
+
+    def inject(state: dict[str, Any], focus: str | None = None) -> dict[str, Any]:
+        enrich_messages_with_fair_terms(
+            state,
+            stage="analysis.scientific_narrative",
+            messages=[HumanMessage(content="Report context")],
+            retrieval_context=focus,
+        )
+        return state["runtime_session"].metadata["knowledge_retrieval"][-1]
+
+    follow_up = _state("retrieve")
+    follow_up.update(current_turn_id=2, current_user_message="Compare WT binding pokcets.")
+    audit = inject(follow_up)
+    matches = {item["term"]: item["match_reason"] for item in audit["matched_terms"]}
+    assert matches == {"wild-type": "exact_phrase"}
+
+    revision = UserConfirmation(
+        turn_id=2, plan_id=1, decision="revision_requested",
+        revision_request="Use binding-pockets analysis instead.",
+    )
+    revised = _state("retrieve")
+    revised.update(current_turn_id=2, current_user_confirmation=revision)
+    assert inject(revised)["matched_terms"][0]["term"] == "binding pocket"
+    assert inject(revised)["query_sources"] == ["revision_request"]
+
+    context_only = _state("retrieve")
+    context_only.update(
+        current_turn_id=3,
+        current_user_confirmation=revision,
+        current_history_query=SimpleNamespace(turn_id=3, resolved_turn_ids=[2]),
+        analysis_results=[
+            SimpleNamespace(
+                turn_id=2, response_mode="scientific_result", final_answer="binding pokcet"
+            )
+        ],
+    )
+    assert inject(context_only, focus="predicted_binding_pockets")["matched_terms"] == []
+
+    control = _state("control")
+    control["current_user_message"] = "predicted_binding_pockets"
+    audit = inject(control)
+    assert audit["related_match_count"] == audit["injected_term_count"] == 1
+    assert not any(item["term"] == "binding pocket" for item in audit["matched_terms"])
+    control["current_user_message"] = "binding pokcet"
+    assert inject(control)["matched_terms"] == []
+
+
+def check_unit_terminology_matching() -> None:
+    entries = load_fair_terms()
+    for term, amounts in (
+        ("cubic angstrom", (
+            "30\u00c5\u00b3",
+            "30\u212b\u00b3",
+            "30\u00c5^3",
+            "30 angstrom^3",
+            "30 angstroms**3",
+            "30\u00c5 ^ 3",
+            "30\u00c5^{3}",
+            "-2.5e+3\u00c5\u00b3",
+        )),
+        ("cubic centimeter", ("2cm^3", "2 cm\u00b3", "2 centimetres^3", ".5cm**3")),
+        ("kilojoule per mole", (
+            "80kJ/mol", "80 kJ / mol", "80 kJ mol^-1", "80 kJ mol\u207b\u00b9",
+            "80 kJ mol^\u22121", "80 kJ mol^{\u22121}", "80 kJ mol ** \u22121",
+        )),
+        ("dalton", ("42Da", "42 daltons", "42 Daltons", "42 DALTONS")),
+        ("degree", ("90\u00b0", "90 degree of arc")),
+        ("angstrom", ("1.2\u00c5", "1.2 angstroms")),
+        ("kilocalorie", ("5kcal", "5 kilocalories")),
+        ("mole", ("2mol", "2 moles")),
+    ):
+        for amount in amounts:
+            for phrase in (f"The value is {amount}.", f"The value is **{amount}**."):
+                assert [m.entry["term"] for m in retrieve_terminology(
+                    entries, phrase, user_input=True
+                )] == [term], phrase
+                assert [e["term"] for e in annotate_terminology(phrase, entries)[1]] == [
+                    term
+                ], phrase
+
+    for phrase in (
+        "30 \u00c5^3.5",
+        "30 \u00c5^30",
+        "30 \u00c5\u00b2",
+        "30 \u00c5\u207b\u00b3",
+        "30 \u00c5^-3",
+        "30 angstrom^2",
+        "30 \u00c5\u00b3 / mol",
+        "30 \u00c5\u00b3\u00b7mol",
+        "30 \u00c5\u00b3 * mol",
+        "30 \u00c5\u00b3 mol.",
+        "30 mol \u00c5\u00b3.",
+        "30 \u00c5^3\tmol",
+        "30 mol^{\u22122} \u00c5\u00b3",
+        "30 kJ mol^\u22121 Da",
+        "30 cubic angstroms per mole",
+        "30 kcal/mol",
+        "30 kcal mol^-1",
+        "90\u00b0C",
+        "42 dA",
+        "42 DA",
+        "42 da",
+        "2 CM^3",
+        "80 KJ/mol",
+        "80 kJ/MOL",
+        "5 KCAL",
+        "The model has six degrees of freedom.",
+        "The label is PDB42Da.",
+        "The label is PDB30\u00c5\u00b3.",
+        "Compare WT10 and RMSF12.",
+    ):
+        assert not retrieve_terminology(entries, phrase, user_input=True), phrase
+        assert not annotate_terminology(phrase, entries)[1], phrase
+
+    for phrase in ("2 mol and 42 Da.", "2 mol; 42 Da.", "2 mol\nDa is the symbol."):
+        assert {m.entry["term"] for m in retrieve_terminology(
+            entries, phrase, user_input=True
+        )} == {"mole", "dalton"}, phrase
+        assert {e["term"] for e in annotate_terminology(phrase, entries)[1]} == {
+            "mole", "dalton"
+        }, phrase
+    phrase = "The value is 80 kJ mol^{\u22121}."
+    marked, _ = annotate_terminology(phrase, entries)
+    assert marked == phrase[:-1] + terminology_number(1) + "."
+    assert not annotate_terminology("The field is `30\u00c5\u00b3`.", entries)[1]
+    assert not retrieve_terminology(
+        entries, "See https://example.invalid/?value=30\u00c5\u00b3", user_input=True
+    )
+
+
+def check_scientific_terminology_output() -> None:
+    answer = (
+        "`IDR` field. RMSF and IDR. RMSF again. "
+        "[Evidence: secondary structure, $.data[*].value]"
+    )
+    state = _state("retrieve")
+    state["current_turn_id"] = 3
+    marked, evidence, appendix = _scientific_terminology(state, answer)
+    first, second = terminology_number(1), terminology_number(2)
+    assert marked == answer.replace("RMSF and IDR", f"RMSF{first} and IDR{second}")
+    assert [item.source_label for item in evidence] == [
+        "root mean square fluctuation", "intrinsically disordered region"
+    ]
+    assert all(
+        item.turn_id == 3 and item.source_kind == "knowledge_base" for item in evidence
+    )
+    assert all(
+        item.value_summary in appendix and item.source_uri in appendix for item in evidence
+    )
+    assert appendix.index(first) < appendix.index(second)
+    assert "secondary structure" not in appendix
+    assert scientific_answer_body(marked + appendix) == answer
+    assert scientific_answer_body("1 nm\u00b2" + appendix) == "1 nm\u00b2"
+    for mode in ("off", "control"):
+        assert _scientific_terminology(_state(mode), answer) == (answer, [], "")
+
+    ambiguous = [
+        {"term": "pocket", "uri": uri, "description": "a definition"}
+        for uri in ("https://example.invalid/a", "https://example.invalid/b")
+    ]
+    assert annotate_terminology("A pocket.", ambiguous) == ("A pocket.", [])
 
 
 def check_knowledge_base_provenance() -> None:
@@ -288,6 +598,13 @@ def check_knowledge_base_provenance() -> None:
     assert set(payload) == {"terms"}
     terms = payload["terms"]
     assert isinstance(terms, list) and terms
+    reviewed_aliases, reviewed_unit_symbols = load_reviewed_aliases()
+    assert {item["term"].casefold(): item["aliases"] for item in terms if item["aliases"]} == (
+        reviewed_aliases
+    )
+    assert {
+        item["term"].casefold(): item["unit_symbols"] for item in terms if "unit_symbols" in item
+    } == reviewed_unit_symbols
 
     allowed_documents = set(SOURCE_TOOLS)
     source_readmes = [
@@ -320,7 +637,15 @@ def check_knowledge_base_provenance() -> None:
             )
             for item in source_terms
         }
-        assert len(expected_pairs) == 151
+        expected_pairs = {pair for pair in expected_pairs if keep_term_source(*pair)}
+        assert len(expected_pairs) == 136
+        with patch("build_fair_terms.fetch_description", return_value=None):
+            rebuilt, _ = build_terms(
+                source_terms, timeout_seconds=1, workers=1,
+                reviewed_descriptions=reviewed,
+                cached_descriptions=load_cached_descriptions(KNOWLEDGE_BASE_PATH),
+            )
+        assert rebuilt == terms
     observed_pairs: set[tuple[str, str]] = set()
     required_fields = {
         "term",
@@ -333,7 +658,14 @@ def check_knowledge_base_provenance() -> None:
     }
     for item in terms:
         assert isinstance(item, dict)
-        assert set(item) == required_fields
+        if item["uri"].split("://", 1)[-1].startswith("qudt.org/vocab/unit/"):
+            expected_fields = required_fields | {"kind"}
+            if item["term"].casefold() in reviewed_unit_symbols:
+                expected_fields.add("unit_symbols")
+            assert set(item) == expected_fields
+            assert item["kind"] == "unit"
+        else:
+            assert set(item) == required_fields
         pair = (str(item["term"]).casefold(), str(item["uri"]))
         assert pair not in observed_pairs
         observed_pairs.add(pair)
@@ -346,7 +678,10 @@ def check_knowledge_base_provenance() -> None:
         assert isinstance(item["usage_categories"], list)
         assert item["usage_categories"]
 
-    assert len(terms) == 151
+    assert len(terms) == 136
+    assert len({terminology_key(term) for term, _ in observed_pairs}) == 136
+    assert not EXCLUDED_TERMS.intersection(term for term, _ in observed_pairs)
+    assert set(PREFERRED_TERM_SOURCES.items()) <= observed_pairs
     if expected_pairs is not None:
         assert observed_pairs == expected_pairs
 
@@ -360,6 +695,9 @@ def main() -> None:
         check_failure_hint_precision,
         check_enrichment_modes_and_tracking,
         check_expanded_terminology_retrieval,
+        check_user_terminology_matching,
+        check_unit_terminology_matching,
+        check_scientific_terminology_output,
         check_knowledge_base_provenance,
     )
     for check in checks:
