@@ -15,6 +15,7 @@ from build_fair_terms import (
     EXCLUDED_TERMS,
     PREFERRED_TERM_SOURCES,
     SOURCE_TOOLS,
+    TERM_LABEL_OVERRIDES,
     build_terms,
     extract_term_sources,
     keep_term_source,
@@ -35,8 +36,10 @@ from enzywizard_agent.services.knowledge_retrieval_service import (
     retrieve_failure_hints,
     retrieve_terminology,
 )
+from enzywizard_agent.utils.CLI_utils import _display_sections
 from enzywizard_agent.utils.terminology_utils import (
     annotate_terminology,
+    claim_evidence_number,
     scientific_answer_body,
     terminology_key,
     terminology_number,
@@ -592,6 +595,61 @@ def check_scientific_terminology_output() -> None:
     assert annotate_terminology("A pocket.", ambiguous) == ("A pocket.", [])
 
 
+def check_turn_requires_explicit_scientific_label() -> None:
+    entries = load_fair_terms()
+    marker = claim_evidence_number(1)
+    for prose in (
+        "Turn 1 flexibility report",
+        "The report from the previous turn",
+        "This, in turn, affects the mean",
+        "Turn to the flexibility report",
+    ):
+        answer = f"{prose}: mean RMSF = 0.318195{marker}."
+        marked, evidence, appendix = _scientific_terminology(_state("retrieve"), answer)
+        assert marked == answer.replace("RMSF", "RMSF" + terminology_number(1)), marked
+        assert [item.source_label for item in evidence] == ["root mean square fluctuation"]
+        assert "hydrogen-bonded turn" not in appendix
+        assert scientific_answer_body(marked + appendix, keep_claim_markers=True) == answer
+        for user_input in (False, True):
+            assert [
+                match.entry["term"]
+                for match in retrieve_terminology(entries, answer, user_input=user_input)
+            ] == ["root mean square fluctuation"]
+
+    term = "hydrogen-bonded turn"
+    for label in (term, "hydrogen-bonded turns", "DSSP T", "DSSP code T"):
+        answer = f"From the previous turn: {label}."
+        marked, evidence, appendix = _scientific_terminology(_state("retrieve"), answer)
+        assert marked == f"From the previous turn: {label}{terminology_number(1)}."
+        assert [item.source_label for item in evidence] == [term]
+        assert term in appendix
+        for user_input in (False, True):
+            assert [
+                match.entry["term"]
+                for match in retrieve_terminology(entries, answer, user_input=user_input)
+            ] == [term]
+
+    _, used = annotate_terminology("The graph has a node and an HMM profile.", entries)
+    assert {"node", "profile"} <= {entry["term"] for entry in used}
+
+
+def check_terminology_appendix_uses_single_plain_numbers() -> None:
+    citation = claim_evidence_number(1)
+    answer = f"The mean RMSF is 0.318195{citation}."
+    marked, _, appendix = _scientific_terminology(_state("retrieve"), answer)
+    evidence = "\n\nEvidence for cited conclusions:\n[1] flexibility.json"
+    sections = dict(_display_sections("Analysis", marked + evidence + appendix))
+    assert sections["Analysis"] == marked
+    assert sections["Evidence for cited conclusions"] == "[1] flexibility.json"
+    glossary = sections["Terminology sources"]
+    assert glossary.startswith("(1) root mean square fluctuation:"), glossary
+    assert terminology_number(1) not in glossary
+    stored = f"\n\nTerminology sources:\n- {terminology_number(12)} Example: A definition."
+    assert dict(_display_sections("Analysis", answer + stored))["Terminology sources"] == (
+        "(12) Example: A definition."
+    )
+
+
 def check_knowledge_base_provenance() -> None:
     payload = yaml.safe_load(KNOWLEDGE_BASE_PATH.read_text(encoding="utf-8"))
     assert isinstance(payload, dict)
@@ -637,7 +695,11 @@ def check_knowledge_base_provenance() -> None:
             )
             for item in source_terms
         }
-        expected_pairs = {pair for pair in expected_pairs if keep_term_source(*pair)}
+        expected_pairs = {
+            (TERM_LABEL_OVERRIDES.get(pair, pair[0]).casefold(), pair[1])
+            for pair in expected_pairs
+            if keep_term_source(*pair)
+        }
         assert len(expected_pairs) == 136
         with patch("build_fair_terms.fetch_description", return_value=None):
             rebuilt, _ = build_terms(
@@ -698,6 +760,8 @@ def main() -> None:
         check_user_terminology_matching,
         check_unit_terminology_matching,
         check_scientific_terminology_output,
+        check_turn_requires_explicit_scientific_label,
+        check_terminology_appendix_uses_single_plain_numbers,
         check_knowledge_base_provenance,
     )
     for check in checks:

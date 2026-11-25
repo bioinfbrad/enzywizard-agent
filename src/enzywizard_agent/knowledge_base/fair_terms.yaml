@@ -1280,6 +1280,24 @@ terms:
   - workflow_planning
   - parameter_extraction
   - scientific_analysis
+- term: hydrogen-bonded turn
+  aliases: [hydrogen-bonded turns, DSSP T, DSSP code T]
+  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
+  description: "T \u2014 hydrogen-bonded turn;"
+  source_documents:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  related_tools:
+  - enzywizard-aaprops
+  - enzywizard-batch
+  - enzywizard-integrate
+  - enzywizard-mut-batch
+  - enzywizard-mut-integrate
+  usage_categories:
+  - scientific_analysis
 - term: hydrophobic
   aliases: []
   uri: https://goldbook.iupac.org/terms/view/13831
@@ -2870,24 +2888,6 @@ terms:
   aliases: ["Trp"]
   uri: http://purl.obolibrary.org/obo/CHEBI_27897
   description: "An \u03B1-amino acid that is alanine bearing an indol-3-yl substituent at position 3."
-  source_documents:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  related_tools:
-  - enzywizard-aaprops
-  - enzywizard-batch
-  - enzywizard-integrate
-  - enzywizard-mut-batch
-  - enzywizard-mut-integrate
-  usage_categories:
-  - scientific_analysis
-- term: turn
-  aliases: ["DSSP T", "DSSP code T"]
-  uri: https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html
-  description: "T \u2014 hydrogen-bonded turn;"
   source_documents:
   - enzywizard-aaprops
   - enzywizard-batch

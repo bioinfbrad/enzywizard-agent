@@ -56,6 +56,10 @@ PREFERRED_TERM_SOURCES = {
     "binding pocket": "https://schlessinger-lab.github.io/pyvol/index.html",
     "coordinate": "https://mathworld.wolfram.com/Coordinates.html",
 }
+# Replace ambiguous README labels with the specific concepts they reference.
+TERM_LABEL_OVERRIDES = {
+    ("turn", "https://manual.gromacs.org/current/onlinehelp/gmx-dssp.html"): "hydrogen-bonded turn",
+}
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_REVIEWED_ALIASES_PATH = PROJECT_ROOT / "manual_tests" / "fixtures" / "fair_terms_aliases.yaml"
 DEFAULT_REVIEWED_DESCRIPTIONS_PATH = (
@@ -653,11 +657,20 @@ def build_terms(
         )
     ]
     descriptions: dict[tuple[str, str], str] = {}
+
+    def cached_description(source: TermSource) -> str | None:
+        source_key = (source.term.casefold(), source.uri)
+        label = TERM_LABEL_OVERRIDES.get(source_key, source_key[0])
+        return (
+            cached_descriptions.get((label.casefold(), source.uri))
+            or cached_descriptions.get(source_key)
+        )
+
     sources_to_fetch = [
         source
         for source in sources
         if (source.term.casefold(), source.uri) not in reviewed_descriptions
-        and (source.term.casefold(), source.uri) not in cached_descriptions
+        and not cached_description(source)
     ]
     with ThreadPoolExecutor(max_workers=max(1, workers)) as executor:
         futures = {
@@ -690,18 +703,20 @@ def build_terms(
         description = (
             reviewed.description
             if reviewed is not None
-            else cached_descriptions.get(original_key)
+            else cached_description(source)
             or descriptions.get(original_key)
         )
         if not description:
             omitted.append(source)
             continue
-        effective_key = (effective_source.term.casefold(), effective_source.uri)
+        source_key = (effective_source.term.casefold(), effective_source.uri)
+        label = TERM_LABEL_OVERRIDES.get(source_key, effective_source.term)
+        effective_key = (label.casefold(), effective_source.uri)
         existing = terms_by_pair.get(effective_key)
         if existing is None:
             terms_by_pair[effective_key] = {
-                "term": effective_source.term,
-                "aliases": reviewed_aliases.get(effective_source.term.casefold(), []),
+                "term": label,
+                "aliases": reviewed_aliases.get(effective_key[0], []),
                 "uri": effective_source.uri,
                 "description": description,
                 "source_documents": list(effective_source.source_documents),

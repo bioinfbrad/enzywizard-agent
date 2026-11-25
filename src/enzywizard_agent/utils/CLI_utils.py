@@ -7,6 +7,8 @@ import sys
 from functools import lru_cache
 from typing import Any
 
+from .terminology_utils import format_terminology_appendix_labels
+
 
 _MESSAGE_TYPE_LABELS = {
     "scientific_result": "Scientific result",
@@ -336,7 +338,8 @@ def _polish_appendix_text(label: str, text: str) -> str:
     if label == "Evidence supporting the analysis":
         return _render_evidence_appendix(text)
     if label == "Terminology sources":
-        return re.sub(r"^- Terminology source:\s*", "- ", text, flags=re.MULTILINE)
+        legacy_text = re.sub(r"^- Terminology source:\s*", "- ", text, flags=re.MULTILINE)
+        return format_terminology_appendix_labels(legacy_text)
     return _humanize_side_references(text)
 
 
@@ -398,12 +401,10 @@ def _display_sections(primary_label: str, final_answer: str) -> list[tuple[str, 
             body = _strip_inline_evidence_labels(body)
             body = re.sub(r"[ \t]+\n", "\n", body).strip()
         else:
-            if label == "Evidence supporting the analysis":
-                body = _polish_appendix_text(label, body)
-                body = _number_top_level_items(body)
-            else:
+            if label != "Evidence supporting the analysis":
                 body = _render_field_paths(body)
-                body = _polish_appendix_text(label, body)
+            body = _polish_appendix_text(label, body)
+            if label != "Terminology sources":
                 body = _number_top_level_items(body)
         rendered.append((label, body))
     return rendered

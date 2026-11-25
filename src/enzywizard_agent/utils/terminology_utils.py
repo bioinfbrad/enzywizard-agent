@@ -39,6 +39,12 @@ _UNIT_RIGHT_OPERATOR = re.compile(
     re.IGNORECASE,
 )
 _TERM_MARKER = re.compile(r"\u207d[\u2070\u00b9\u00b2\u00b3\u2074-\u2079]+\u207e")
+_TERM_APPENDIX_ITEM = re.compile(rf"^-[ \t]+({_TERM_MARKER.pattern})(?=[ \t])", re.MULTILINE)
+_PLAIN_TERM_MARKER = {
+    **{value: chr(key) for key, value in _SUPERSCRIPTS.items()},
+    ord("\u207d"): "(",
+    ord("\u207e"): ")",
+}
 CLAIM_EVIDENCE_MARKER = re.compile(r"\[[\u2070\u00b9\u00b2\u00b3\u2074-\u2079]+\]")
 # Leave Markdown code, links, URLs and square-bracketed evidence references alone.
 _PROTECTED_TEXT = re.compile(
@@ -290,6 +296,13 @@ def find_user_terminology_mentions(
 
 def terminology_number(number: int) -> str:
     return "\u207d" + str(number).translate(_SUPERSCRIPTS) + "\u207e"
+
+
+def format_terminology_appendix_labels(text: str) -> str:
+    """Render stored glossary markers as plain parenthesized numbers."""
+    return _TERM_APPENDIX_ITEM.sub(
+        lambda match: match[1].translate(_PLAIN_TERM_MARKER), text
+    )
 
 
 def claim_evidence_number(number: int) -> str:

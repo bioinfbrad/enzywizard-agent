@@ -123,6 +123,7 @@
 "hidden Markov model": ["HMM", "HMMs", "hidden_markov_model"]
 "HMMER": ["HMMER3"]
 "hydrogen bond": ["H-bond", "H-bonds", "HBOND", "hydrogen_bond", "hydrogen_bonds"]
+"hydrogen-bonded turn": ["hydrogen-bonded turns", "DSSP T", "DSSP code T"]
 "hydrophobic cluster": ["hydrophobic_clusters", "hydrophobic_cluster", "hydrophobic residue cluster"]
 "hydrophobicity": ["residue_hydrophobicity"]
 "information content": ["information_content"]
@@ -257,7 +258,6 @@
   - "substrate_tpsa"
   - "topological PSA"
 "tryptophan": ["Trp"]
-"turn": ["DSSP T", "DSSP code T"]
 "tyrosine": ["Tyr"]
 "uncharged polar": ["polar uncharged", "neutral polar", "uncharged_polar"]
 "valine": ["Val"]
