@@ -219,6 +219,8 @@ def build_parameter_extraction_context(
     state: AgentState,
     planning_result: PlanningResult,
     tool_plan: ToolPlan,
+    *,
+    excluded_analyses: list[str] | None = None,
 ) -> str:
     """构造参数提取步骤使用的精简调用与参数上下文。
 
@@ -311,6 +313,12 @@ def build_parameter_extraction_context(
         default=str,
     )
     sections.append(f"Planned calls and parameter policy:\n{serialized_calls}")
+
+    if excluded_analyses:
+        sections.append(
+            "Workflow scope:\n"
+            + json.dumps({"excluded_analyses": excluded_analyses}, indent=2)
+        )
 
     planning_context = {
         "turn_id": planning_result.turn_id,

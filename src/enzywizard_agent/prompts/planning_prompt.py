@@ -876,6 +876,16 @@ JSON schema:
 #   返回成功，三个请求列表都为空。
 #
 # 只返回符合下方 Schema 的 JSON 对象，不要返回 Markdown 或额外文本。
+_WORKFLOW_REQUIREMENTS_STATUS_RULES = """
+Status rules for this extraction stage:
+- Set workflow_requirements_status to exactly workflow_requirements_succeeded when the user's requested scope can be determined. Set error_message to the empty string and give a concise requirements_reason.
+- For preparation_only and complete_analysis, an empty requested_analysis_types list is required and is valid; it does not indicate failure. A clear request to clean only is preparation_only and succeeds with empty requested and excluded lists unless the user explicitly excludes a type.
+- A clear specific_analyses request succeeds when the requested types can be identified, even though the program still has to check inputs, compile a plan, and validate parameters.
+- Use workflow_requirements_failed only when the scope itself remains genuinely unresolved or contradictory. Explain the concrete blocker in error_message.
+- When reviewing, recompute the status from the original request and your corrected fields. If you resolved the issue, set the actual status field to workflow_requirements_succeeded and clear error_message. Do not narrate a correction instead of making it.
+"""
+
+
 WORKFLOW_REQUIREMENTS_SYSTEM_PROMPT = """\
 You extract the final scientific workflow requirements for EnzyWizard-Agent. Do not
 select tool names, parameters, execution order, or paths.
@@ -932,7 +942,7 @@ Revision rules:
 
 Return failure only when the final scientific scope is genuinely contradictory or
 cannot be determined safely. Use concise English reasons.
-"""
+""" + _WORKFLOW_REQUIREMENTS_STATUS_RULES
 
 
 WORKFLOW_REQUIREMENTS_REVIEW_SYSTEM_PROMPT = """\
@@ -957,6 +967,26 @@ The latest revision is authoritative. Check that the candidate:
   separately handled historical actions.
 
 Return only the structured object.
+""" + _WORKFLOW_REQUIREMENTS_STATUS_RULES
+
+
+WORKFLOW_REQUIREMENTS_STATUS_RECHECK_SYSTEM_PROMPT = """\
+Two extraction passes agreed on the supplied workflow scope, requested analyses,
+and excluded analyses, but both marked extraction as failed. Check those fields
+against the original workflow context, including any latest revision.
+
+Return a WorkflowRequirementsDraft with the agreed scope and analysis lists.
+Set the status to succeeded only if those fields fully and faithfully capture the
+user's request. If a field would need to change, or the scope is unresolved or
+contradictory, return failed and explain the concrete issue in error_message.
+""" + _WORKFLOW_REQUIREMENTS_STATUS_RULES
+
+
+PARAMETER_EXTRACTION_EXCLUSIONS_GUIDANCE = """\
+The analyses listed in excluded_analyses were excluded from the plan as requested.
+Do not turn those exclusions into parameter changes or report them as unsupported
+parameter requests. Still extract any explicit parameter settings for the tools in
+the plan.
 """
 
 

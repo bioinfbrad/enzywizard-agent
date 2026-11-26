@@ -21,8 +21,10 @@ from ..data_models.planning import (
 )
 from ..prompts.planning_prompt import (
     INTENT_CLASSIFICATION_SYSTEM_PROMPT,
+    PARAMETER_EXTRACTION_EXCLUSIONS_GUIDANCE,
     PARAMETER_EXTRACTION_SYSTEM_PROMPT,
     WORKFLOW_REQUIREMENTS_REVIEW_SYSTEM_PROMPT,
+    WORKFLOW_REQUIREMENTS_STATUS_RECHECK_SYSTEM_PROMPT,
     WORKFLOW_REQUIREMENTS_SYSTEM_PROMPT,
 )
 from ..state import AgentState
@@ -346,6 +348,77 @@ def _normalize_workflow_requirements_draft(
     )
 
 
+def _workflow_scope_signature(draft: WorkflowRequirementsDraft) -> tuple:
+    return (
+        draft.scope_mode,
+        frozenset(draft.requested_analysis_types),
+        frozenset(draft.excluded_analysis_types),
+    )
+
+
+def _recheck_agreed_failed_requirements(
+    state: AgentState,
+    planning_result: PlanningResult,
+    context: str,
+    draft: WorkflowRequirementsDraft,
+    reviewed: WorkflowRequirementsDraft,
+) -> WorkflowRequirementsOutput | None:
+    """Recheck the status once when both failed drafts agree on a valid scope."""
+
+    if any(
+        candidate.workflow_requirements_status != "workflow_requirements_failed"
+        for candidate in (draft, reviewed)
+    ):
+        return None
+
+    signature = _workflow_scope_signature(draft)
+    scope, requested, excluded = signature
+    if (
+        signature != _workflow_scope_signature(reviewed)
+        or requested & excluded
+        or bool(requested) != (scope == "specific_analyses")
+        or _missing_workflow_analysis_inputs(state, planning_result, requested)
+    ):
+        return None
+
+    agreed_fields = draft.model_dump_json(
+        include={"scope_mode", "requested_analysis_types", "excluded_analysis_types"},
+        indent=2,
+    )
+    try:
+        checked = invoke_structured(
+            state,
+            stage="planning.workflow_requirements_status_recheck",
+            schema=WorkflowRequirementsDraft,
+            llm=_create_planning_llm(state),
+            allow_repair=False,
+            messages=[
+                SystemMessage(content=WORKFLOW_REQUIREMENTS_STATUS_RECHECK_SYSTEM_PROMPT),
+                HumanMessage(
+                    content=(
+                        f"Original workflow context:\n{context}\n\n"
+                        f"Agreed requirement fields:\n{agreed_fields}"
+                    )
+                ),
+            ],
+        )
+    except Exception as error:
+        if is_runtime_limit_error(error):
+            raise
+        return None
+
+    if (
+        checked.workflow_requirements_status != "workflow_requirements_succeeded"
+        or checked.error_message
+        or _workflow_scope_signature(checked) != signature
+    ):
+        return None
+    normalized = _normalize_workflow_requirements_draft(checked)
+    if normalized.workflow_requirements_status == "workflow_requirements_succeeded":
+        return normalized
+    return None
+
+
 def _extract_workflow_requirements(
     state: AgentState,
     planning_result: PlanningResult,
@@ -403,6 +476,12 @@ def _extract_workflow_requirements(
             raise
         # 审核服务异常不应抹掉已经满足基础类型契约的首轮草稿。
         reviewed = draft
+    else:
+        rechecked = _recheck_agreed_failed_requirements(
+            state, planning_result, context, draft, reviewed
+        )
+        if rechecked is not None:
+            return _remove_history_only_analyses(state, rechecked)
 
     candidate_output = _normalize_workflow_requirements_draft(draft)
     reviewed_output = _normalize_workflow_requirements_draft(reviewed)
@@ -418,20 +497,11 @@ def _extract_workflow_requirements(
     return _remove_history_only_analyses(state, reviewed_output)
 
 
-def _compile_workflow_requirements(
+def _missing_workflow_analysis_inputs(
     state: AgentState,
     planning_result: PlanningResult,
-    requirements: WorkflowRequirementsOutput,
-    preparation_tools: list[str],
-    candidate_tool_names: set[str],
-) -> ToolSelectionOutput:
-    """把科学需求确定性编译成工具集合，并校验不可由准备步骤生成的输入。"""
-
-    planning_result.workflow_requirements = requirements
-    if requirements.workflow_requirements_status == "workflow_requirements_failed":
-        return create_tool_selection_failure(requirements.error_message)
-
-    requested = set(requirements.requested_analysis_types)
+    requested: set[str] | frozenset[str],
+) -> list[str]:
     agent_inputs = state.get("agent_inputs")
     missing_inputs: list[str] = []
     if "conservation" in requested:
@@ -454,6 +524,25 @@ def _compile_workflow_requirements(
         agent_inputs is not None and agent_inputs.substrate_name
     ):
         missing_inputs.append("a substrate name or SMILES")
+    return missing_inputs
+
+
+def _compile_workflow_requirements(
+    state: AgentState,
+    planning_result: PlanningResult,
+    requirements: WorkflowRequirementsOutput,
+    preparation_tools: list[str],
+    candidate_tool_names: set[str],
+) -> ToolSelectionOutput:
+    """把科学需求确定性编译成工具集合，并校验不可由准备步骤生成的输入。"""
+
+    planning_result.workflow_requirements = requirements
+    if requirements.workflow_requirements_status == "workflow_requirements_failed":
+        return create_tool_selection_failure(requirements.error_message)
+
+    missing_inputs = _missing_workflow_analysis_inputs(
+        state, planning_result, set(requirements.requested_analysis_types)
+    )
     if missing_inputs:
         return create_tool_selection_input_required(missing_inputs)
 
@@ -639,11 +728,27 @@ def extract_tool_parameters(
 ) -> ParameterExtractionOutput:
     """调用一次 LLM，提取用户对默认 ToolPlan 的稀疏参数要求。"""
 
+    requirements = planning_result.workflow_requirements
+    planned_tools = {call.tool_name for call in default_tool_plan.calls}
+    excluded_analyses: list[str] = []
+    # Batch calls may run analyses that do not appear as separate plan steps.
+    if requirements and not planned_tools.intersection(
+        {"enzywizard-batch", "enzywizard-mut-batch"}
+    ):
+        excluded_analyses = [
+            analysis
+            for analysis in requirements.excluded_analysis_types
+            if ANALYSIS_TYPE_TO_TOOL[analysis] not in planned_tools
+        ]
     context = build_parameter_extraction_context(
         state,
         planning_result,
         default_tool_plan,
+        excluded_analyses=excluded_analyses,
     )
+    prompt = PARAMETER_EXTRACTION_SYSTEM_PROMPT
+    if excluded_analyses:
+        prompt += "\n\n" + PARAMETER_EXTRACTION_EXCLUSIONS_GUIDANCE
 
     # SystemMessage 只包含固定参数政策，HumanMessage 提供当前计划的动态参数表。
     extraction = invoke_structured(
@@ -652,7 +757,7 @@ def extract_tool_parameters(
         schema=ParameterExtractionOutput,
         llm=_create_planning_llm(state),
         messages=[
-            SystemMessage(content=PARAMETER_EXTRACTION_SYSTEM_PROMPT),
+            SystemMessage(content=prompt),
             HumanMessage(content=context),
         ],
     )
