@@ -1,0 +1,76 @@
+{
+  "report_type": "enzywizard_substrate",
+  "substrates": [
+    {
+      "substrate_name": "Z-Gln-Gly",
+      "substrate_smiles": "C1=CC=C(C=C1)COC(=O)NC(CCC(=O)N)C(=O)NCC(=O)O",
+      "substrate_fingerprint_encoding": [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+      "substrate_atom_count": 24,
+      "substrate_molecular_weight": 337.33200000000005,
+      "substrate_logp": -0.2522999999999989,
+      "substrate_tpsa": 147.82,
+      "substrate_heavy_atom_count": 24,
+      "substrate_hbond_donor_count": 4,
+      "substrate_hbond_acceptor_count": 5,
+      "substrate_rotatable_bond_count": 9,
+      "substrate_molar_refractivity": 82.62460000000003,
+      "substrate_possible_structures": [
+        {
+          "substrate_structure_name": "Z-Gln-Gly_1",
+          "substrate_structure_energy": 25.90613223849085,
+          "substrate_structure_max_3d_diameter": 13.097529906282839,
+          "substrate_structure_mean_pairwise_atom_distance": 5.8425413168560665,
+          "substrate_structure_std_pairwise_atom_distance": 2.8409737320677495,
+          "substrate_structure_asphericity": 0.42491369260673123,
+          "substrate_structure_spherocity": 0.21836067286002436,
+          "substrate_structure_principal_moment_ratio": 3.9616717354125286,
+          "substrate_structure_radius_of_gyration": 4.3045143831618775
+        },
+        {
+          "substrate_structure_name": "Z-Gln-Gly_2",
+          "substrate_structure_energy": 25.98804044404446,
+          "substrate_structure_max_3d_diameter": 13.198846668958623,
+          "substrate_structure_mean_pairwise_atom_distance": 5.830086679899349,
+          "substrate_structure_std_pairwise_atom_distance": 2.7810333885933276,
+          "substrate_structure_asphericity": 0.41962267420001337,
+          "substrate_structure_spherocity": 0.22382723165238644,
+          "substrate_structure_principal_moment_ratio": 3.9121615815703397,
+          "substrate_structure_radius_of_gyration": 4.303629661475456
+        },
+        {
+          "substrate_structure_name": "Z-Gln-Gly_3",
+          "substrate_structure_energy": 26.67314775655104,
+          "substrate_structure_max_3d_diameter": 12.217488184804816,
+          "substrate_structure_mean_pairwise_atom_distance": 5.640183266085555,
+          "substrate_structure_std_pairwise_atom_distance": 2.6485112098293393,
+          "substrate_structure_asphericity": 0.4006850394202274,
+          "substrate_structure_spherocity": 0.3291307044526005,
+          "substrate_structure_principal_moment_ratio": 3.699720331582298,
+          "substrate_structure_radius_of_gyration": 4.139436392716991
+        },
+        {
+          "substrate_structure_name": "Z-Gln-Gly_4",
+          "substrate_structure_energy": 27.356147810338598,
+          "substrate_structure_max_3d_diameter": 12.839091382684806,
+          "substrate_structure_mean_pairwise_atom_distance": 5.641289828418105,
+          "substrate_structure_std_pairwise_atom_distance": 2.68663150080482,
+          "substrate_structure_asphericity": 0.4930506608111514,
+          "substrate_structure_spherocity": 0.28894491873091105,
+          "substrate_structure_principal_moment_ratio": 4.634691404947117,
+          "substrate_structure_radius_of_gyration": 4.115906717841738
+        },
+        {
+          "substrate_structure_name": "Z-Gln-Gly_5",
+          "substrate_structure_energy": 29.077053514081808,
+          "substrate_structure_max_3d_diameter": 12.11910496239878,
+          "substrate_structure_mean_pairwise_atom_distance": 5.654604002290508,
+          "substrate_structure_std_pairwise_atom_distance": 2.687939583977043,
+          "substrate_structure_asphericity": 0.41742295152132325,
+          "substrate_structure_spherocity": 0.313243650876375,
+          "substrate_structure_principal_moment_ratio": 3.847776897439146,
+          "substrate_structure_radius_of_gyration": 4.185548510611506
+        }
+      ]
+    }
+  ]
+}

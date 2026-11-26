@@ -1,0 +1,16 @@
+schema_version: 1
+category_id: single_report_interpretation
+case_count: 12
+cases:
+  - {case_id: T2-SR-01, enzyme_id: 1MXT, scope: wt, question: "Summarize the main findings in the cholesterol oxidase flexibility report.", report_ids: [1mxt_wt_flexibility], required_facts: ["identify the reported flexibility observations"], forbidden_claims: ["experimental activity was proven"]}
+  - {case_id: T2-SR-02, enzyme_id: 1MXT, scope: wt, question: "What does the cholesterol oxidase pocket report indicate about predicted binding pockets?", report_ids: [1mxt_wt_pocket], required_facts: ["describe only reported pocket predictions"], required_limitations: ["predicted pockets require validation"]}
+  - {case_id: T2-SR-03, enzyme_id: 1MXT, scope: mut, question: "Summarize the disorder findings for the T244M cholesterol oxidase variant.", report_ids: [1mxt_mut_disorder], required_facts: ["identify the reported disorder observations"], forbidden_claims: ["the mutation was experimentally validated"]}
+  - {case_id: T2-SR-04, enzyme_id: 1MXT, scope: wt, question: "Explain the residue-property results for cholesterol oxidase.", report_ids: [1mxt_wt_aaprops], required_facts: ["summarize the reported residue-property features"]}
+  - {case_id: T2-SR-05, enzyme_id: 1IU4, scope: wt, question: "Summarize the energy report for microbial transglutaminase.", report_ids: [1iu4_wt_energy], required_facts: ["identify direct energy observations"], forbidden_claims: ["activity improvement was proven"]}
+  - {case_id: T2-SR-06, enzyme_id: 1IU4, scope: wt, question: "Explain the predicted hydrophobic clusters in microbial transglutaminase.", report_ids: [1iu4_wt_hydrocluster], required_facts: ["identify reported hydrophobic-cluster observations"]}
+  - {case_id: T2-SR-07, enzyme_id: 1IU4, scope: mut, question: "What does the S72N conservation report show?", report_ids: [1iu4_mut_conservation], required_facts: ["summarize the mutant conservation evidence"], forbidden_claims: ["the substitution proves a functional effect"]}
+  - {case_id: T2-SR-08, enzyme_id: 1IU4, scope: wt, question: "Summarize the microbial transglutaminase substrate-preparation report.", report_ids: [1iu4_wt_substrate], required_facts: ["identify the prepared substrate information"], required_limitations: ["substrate preparation does not establish binding"]}
+  - {case_id: T2-SR-09, enzyme_id: 1TCA, scope: wt, question: "Summarize the CALB flexibility report.", report_ids: [1tca_wt_flexibility], required_facts: ["identify direct flexibility observations"]}
+  - {case_id: T2-SR-10, enzyme_id: 1TCA, scope: wt, question: "Explain the predicted CALB pocket results.", report_ids: [1tca_wt_pocket], required_facts: ["describe the reported pocket predictions"], required_limitations: ["pocket predictions are computational"]}
+  - {case_id: T2-SR-11, enzyme_id: 1TCA, scope: mut, question: "Summarize the G107A CALB energy report.", report_ids: [1tca_mut_energy], required_facts: ["identify mutant energy observations"], forbidden_claims: ["the mutation caused an activity change"]}
+  - {case_id: T2-SR-12, enzyme_id: 1TCA, scope: wt, question: "What does the CALB interaction report show for 4-nitrophenyl butyrate?", report_ids: [1tca_wt_interaction], required_facts: ["summarize reported modeled interactions"], required_limitations: ["modeled contacts are not experimental affinity"]}

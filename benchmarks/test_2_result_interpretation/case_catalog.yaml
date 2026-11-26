@@ -1,0 +1,624 @@
+schema_version: 2
+test_id: test_2_result_interpretation
+title: "Scientific Result Interpretation and Evidence Traceability Evaluation"
+
+key_fact_policy_version: question_scope_v6
+case_key_fact_overrides:
+  T2-SR-01:
+    fact_ids: []
+    requirements:
+      - id: flexibility_finding
+        report_ids: [1mxt_wt_flexibility]
+        acceptance: "Summarize a main reported RMSF result, such as its mean, maximum, range, or a supported flexible-region observation."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-02:
+    fact_ids: []
+    requirements:
+      - id: predicted_pocket
+        report_ids: [1mxt_wt_pocket]
+        acceptance: "Describe at least one major predicted-pocket finding, such as the number, size, or location of a prominent pocket. Keep it framed as a prediction."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-03:
+    fact_ids: []
+    requirements:
+      - id: mutant_disorder
+        report_ids: [1mxt_mut_disorder]
+        acceptance: "Summarize a meaningful reported disorder prediction for T244M, such as the number, extent, or locations of its predicted disordered regions."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-04:
+    fact_ids: []
+    requirements:
+      - id: residue_properties
+        report_ids: [1mxt_wt_aaprops]
+        acceptance: "Explain a substantive residue-property result, such as solvent accessibility or a supported backbone-angle observation. A record count alone is insufficient."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-05:
+    fact_ids: []
+    requirements:
+      - id: energy_finding
+        report_ids: [1iu4_wt_energy]
+        acceptance: "Summarize a main computed energy result, such as the total potential energy or a correctly explained material contribution from the energy terms."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-06:
+    fact_ids: []
+    requirements:
+      - id: hydrophobic_clusters
+        report_ids: [1iu4_wt_hydrocluster]
+        acceptance: "Explain at least one substantial reported hydrophobic-cluster result, such as cluster count, area, or a supported prominent cluster description."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-07:
+    fact_ids: []
+    requirements:
+      - id: mutant_conservation
+        report_ids: [1iu4_mut_conservation]
+        acceptance: "Describe a supported conservation pattern or score for S72N, including a correctly identified score statistic or residue-level observation. Record count alone is insufficient."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-08:
+    fact_ids: []
+    requirements:
+      - id: substrate_preparation
+        report_ids: [1iu4_wt_substrate]
+        acceptance: "Describe a supported detail of the prepared substrate, such as its reported identity, number of entries, or a reported molecular property."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-09:
+    fact_ids: []
+    requirements:
+      - id: flexibility_finding
+        report_ids: [1tca_wt_flexibility]
+        acceptance: "Summarize a main CALB flexibility result, such as a reported RMSF statistic or supported flexible-region observation."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-10:
+    fact_ids: []
+    requirements:
+      - id: predicted_pocket
+        report_ids: [1tca_wt_pocket]
+        acceptance: "Explain at least one prominent CALB pocket prediction, for example the number, size, or location of a predicted pocket."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-11:
+    fact_ids: []
+    requirements:
+      - id: mutant_energy
+        report_ids: [1tca_mut_energy]
+        acceptance: "Summarize a main computed energy result for G107A, such as total potential energy or a correctly explained material contribution from its energy terms."
+        evidence: "Cite the report or matching field for the result actually summarized."
+  T2-SR-12:
+    rationale: Summarize the modeled contacts between CALB and its ligand.
+    fact_ids: []
+    requirements:
+      - id: protein_substrate_contacts
+        report_ids: [1tca_wt_interaction]
+        acceptance: "State at least one correct contact result for 4-nitrophenyl butyrate, such as four protein-substrate van der Waals contacts, zero protein-substrate hydrogen bonds, or another verified protein-substrate observation. Overall or intra-enzyme totals alone are insufficient."
+        evidence: "Cite the interaction report as the source of the specific protein-substrate observation."
+  T2-MI-01:
+    fact_ids: []
+    requirements:
+      - id: flexibility
+        report_ids: [1mxt_wt_flexibility]
+        acceptance: "Describe a supported flexibility observation, such as a correctly identified RMSF statistic or region."
+        evidence: "Identify the flexibility report or its relevant field as the source for the result actually stated."
+      - id: disorder
+        report_ids: [1mxt_wt_disorder]
+        acceptance: "Describe a supported disorder observation, such as a reported region count, extent, or position."
+        evidence: "Identify the disorder report or its relevant field as the source for the result actually stated."
+  T2-MI-02:
+    fact_ids: []
+    requirements:
+      - id: aaprops
+        report_ids: [1mxt_wt_aaprops]
+        acceptance: "Describe a supported residue property, such as accessibility or a backbone-angle observation. A record count alone is insufficient."
+        evidence: "Identify the aaprops report or its relevant field as the source for the result actually stated."
+      - id: hydrocluster
+        report_ids: [1mxt_wt_hydrocluster]
+        acceptance: "Describe a supported hydrophobic-cluster finding, such as the reported count or area of prominent clusters."
+        evidence: "Identify the hydrocluster report or its relevant field as the source for the result actually stated."
+      - id: pocket
+        report_ids: [1mxt_wt_pocket]
+        acceptance: "Describe a supported pocket prediction, such as a prominent pocket size, location, or count."
+        evidence: "Identify the pocket report or its relevant field as the source for the result actually stated."
+  T2-MI-03:
+    fact_ids: []
+    requirements:
+      - id: conservation
+        report_ids: [1mxt_wt_conservation]
+        acceptance: "Describe a supported conservation result, such as the range, mean, or a residue-specific observation of a named conservation score."
+        evidence: "Identify the conservation report or its relevant field as the source for the result actually stated."
+      - id: embedding
+        report_ids: [1mxt_wt_embedding]
+        acceptance: "Describe a supported property of the sequence embeddings, such as their dimensionality or per-residue organization, and distinguish it from a conservation score."
+        evidence: "Identify the embedding report or its relevant field as the source for the result actually stated."
+  T2-MI-04:
+    fact_ids: []
+    requirements:
+      - id: substrate
+        report_ids: [1mxt_wt_substrate]
+        acceptance: "Identify a supported preparation-stage result, such as the prepared substrate identity, entry count, or a reported molecular property."
+        evidence: "Identify the substrate report or its relevant field as the source for the result actually stated."
+      - id: dock
+        report_ids: [1mxt_wt_dock]
+        acceptance: "Identify the actual docked ligand and state a supported docking result, such as its score. The internal complex identifier is optional."
+        evidence: "Identify the dock report or its relevant field as the source for the result actually stated."
+      - id: interaction
+        report_ids: [1mxt_wt_interaction]
+        acceptance: "State at least one supported modeled contact result for the ligand. Any verified protein-substrate contact can qualify, including a reported absence of a contact type. Overall or intra-enzyme counts alone are insufficient."
+        evidence: "Identify the interaction report or its relevant field as the source for the result actually stated."
+  T2-MI-05:
+    fact_ids: []
+    requirements:
+      - id: energy
+        report_ids: [1iu4_wt_energy]
+        acceptance: "State a substantive computed energy result, such as total potential energy or a correctly described energy term."
+        evidence: "Identify the energy report or its relevant field as the source for the result actually stated."
+      - id: flexibility
+        report_ids: [1iu4_wt_flexibility]
+        acceptance: "Describe a supported flexibility observation, such as a correctly identified RMSF statistic or region."
+        evidence: "Identify the flexibility report or its relevant field as the source for the result actually stated."
+      - id: disorder
+        report_ids: [1iu4_wt_disorder]
+        acceptance: "Describe a supported disorder observation, such as a reported region count, extent, or position."
+        evidence: "Identify the disorder report or its relevant field as the source for the result actually stated."
+  T2-MI-06:
+    fact_ids: []
+    requirements:
+      - id: aaprops
+        report_ids: [1iu4_wt_aaprops]
+        acceptance: "Describe a supported residue property, such as accessibility or a backbone-angle observation. A record count alone is insufficient."
+        evidence: "Identify the aaprops report or its relevant field as the source for the result actually stated."
+      - id: hydrocluster
+        report_ids: [1iu4_wt_hydrocluster]
+        acceptance: "Describe a supported hydrophobic-cluster finding, such as the reported count or area of prominent clusters."
+        evidence: "Identify the hydrocluster report or its relevant field as the source for the result actually stated."
+      - id: pocket
+        report_ids: [1iu4_wt_pocket]
+        acceptance: "Describe a supported pocket prediction, such as a prominent pocket size, location, or count."
+        evidence: "Identify the pocket report or its relevant field as the source for the result actually stated."
+  T2-MI-07:
+    fact_ids: []
+    requirements:
+      - id: conservation
+        report_ids: [1iu4_wt_conservation]
+        acceptance: "Describe a supported conservation result, such as the range, mean, or a residue-specific observation of a named conservation score."
+        evidence: "Identify the conservation report or its relevant field as the source for the result actually stated."
+      - id: embedding
+        report_ids: [1iu4_wt_embedding]
+        acceptance: "Describe a supported property of the sequence embeddings, such as their dimensionality or per-residue organization, and distinguish it from a conservation score."
+        evidence: "Identify the embedding report or its relevant field as the source for the result actually stated."
+  T2-MI-08:
+    fact_ids: []
+    requirements:
+      - id: substrate
+        report_ids: [1iu4_wt_substrate]
+        acceptance: "Identify a supported preparation-stage result, such as the prepared substrate identity, entry count, or a reported molecular property."
+        evidence: "Identify the substrate report or its relevant field as the source for the result actually stated."
+      - id: dock
+        report_ids: [1iu4_wt_dock]
+        acceptance: "Identify the actual docked ligand and state a supported docking result, such as its score. The internal complex identifier is optional."
+        evidence: "Identify the dock report or its relevant field as the source for the result actually stated."
+      - id: interaction
+        report_ids: [1iu4_wt_interaction]
+        acceptance: "State at least one supported modeled contact result for the ligand. Any verified protein-substrate contact can qualify, including a reported absence of a contact type. Overall or intra-enzyme counts alone are insufficient."
+        evidence: "Identify the interaction report or its relevant field as the source for the result actually stated."
+  T2-MI-09:
+    fact_ids: []
+    requirements:
+      - id: flexibility
+        report_ids: [1tca_wt_flexibility]
+        acceptance: "Describe a supported flexibility observation, such as a correctly identified RMSF statistic or region."
+        evidence: "Identify the flexibility report or its relevant field as the source for the result actually stated."
+      - id: disorder
+        report_ids: [1tca_wt_disorder]
+        acceptance: "Describe a supported disorder observation, such as a reported region count, extent, or position."
+        evidence: "Identify the disorder report or its relevant field as the source for the result actually stated."
+      - id: energy
+        report_ids: [1tca_wt_energy]
+        acceptance: "State a substantive computed energy result, such as total potential energy or a correctly described energy term."
+        evidence: "Identify the energy report or its relevant field as the source for the result actually stated."
+  T2-MI-10:
+    fact_ids: []
+    requirements:
+      - id: aaprops
+        report_ids: [1tca_wt_aaprops]
+        acceptance: "Describe a supported residue property, such as accessibility or a backbone-angle observation. A record count alone is insufficient."
+        evidence: "Identify the aaprops report or its relevant field as the source for the result actually stated."
+      - id: hydrocluster
+        report_ids: [1tca_wt_hydrocluster]
+        acceptance: "Describe a supported hydrophobic-cluster finding, such as the reported count or area of prominent clusters."
+        evidence: "Identify the hydrocluster report or its relevant field as the source for the result actually stated."
+      - id: pocket
+        report_ids: [1tca_wt_pocket]
+        acceptance: "Describe a supported pocket prediction, such as a prominent pocket size, location, or count."
+        evidence: "Identify the pocket report or its relevant field as the source for the result actually stated."
+  T2-MI-11:
+    fact_ids: []
+    requirements:
+      - id: conservation
+        report_ids: [1tca_wt_conservation]
+        acceptance: "Describe a supported conservation result, such as the range, mean, or a residue-specific observation of a named conservation score."
+        evidence: "Identify the conservation report or its relevant field as the source for the result actually stated."
+      - id: embedding
+        report_ids: [1tca_wt_embedding]
+        acceptance: "Describe a supported property of the sequence embeddings, such as their dimensionality or per-residue organization, and distinguish it from a conservation score."
+        evidence: "Identify the embedding report or its relevant field as the source for the result actually stated."
+  T2-MI-12:
+    fact_ids: []
+    requirements:
+      - id: substrate
+        report_ids: [1tca_wt_substrate]
+        acceptance: "Identify a supported preparation-stage result, such as the prepared substrate identity, entry count, or a reported molecular property."
+        evidence: "Identify the substrate report or its relevant field as the source for the result actually stated."
+      - id: dock
+        report_ids: [1tca_wt_dock]
+        acceptance: "Identify the actual docked ligand and state a supported docking result, such as its score. The internal complex identifier is optional."
+        evidence: "Identify the dock report or its relevant field as the source for the result actually stated."
+      - id: interaction
+        report_ids: [1tca_wt_interaction]
+        acceptance: "State at least one supported modeled contact result for the ligand. Any verified protein-substrate contact can qualify, including a reported absence of a contact type. Overall or intra-enzyme counts alone are insufficient."
+        evidence: "Identify the interaction report or its relevant field as the source for the result actually stated."
+  T2-MC-01:
+    rationale: Compare the main energy result across both sides and confirm the requested mutation mapping. No particular component energy is requested.
+    fact_ids: [1mxt_wt_energy:metric:1, 1mxt_mut_energy:metric:1, "T2-MC-01:comparison:total_potential_energy", 1mxt_mut_clean:mutation_identity]
+  T2-MC-02:
+    fact_ids: []
+    requirements:
+      - id: flexibility_comparison
+        report_ids: [1mxt_wt_flexibility, 1mxt_mut_flexibility]
+        acceptance: "Compare at least one corresponding reported flexibility feature across WT and T244M, such as the direction of the same RMSF statistic or a supported contrast in regions. A correct direction or equality can suffice without repeating both numbers."
+        evidence: "Cite the matching WT and mutant sources for the comparison, directly or through calculated evidence traceable to both."
+  T2-MC-03:
+    fact_ids: []
+    requirements:
+      - id: disorder_comparison
+        report_ids: [1mxt_wt_disorder, 1mxt_mut_disorder]
+        acceptance: "Compare at least one corresponding disorder prediction across WT and T244M, using supported differences or similarities in regions, extent, or count. State the computational uncertainty without implying validation."
+        evidence: "Cite the matching WT and mutant sources for the comparison, directly or through calculated evidence traceable to both."
+  T2-MC-04:
+    fact_ids: []
+    requirements:
+      - id: report_comparison
+        report_ids: [1mxt_wt_pocket, 1mxt_wt_hydrocluster]
+        acceptance: "Compare a reported pocket observation with a reported hydrophobic-cluster observation. Explain what the reports contribute separately, without assuming overlap or using unlike area and volume measurements as interchangeable."
+        evidence: "Cite both reports, linking each observation to the source that supports it."
+  T2-MC-05:
+    fact_ids: []
+    requirements:
+      - id: conservation_comparison
+        report_ids: [1iu4_wt_conservation, 1iu4_mut_conservation]
+        acceptance: "Compare at least one corresponding conservation score or a supported residue-level conservation feature across WT and the correctly identified S72N mutant. The mutant may be identified by context, and restating its residue mapping is optional. Equal numbers of records alone do not compare conservation."
+        evidence: "Cite the corresponding WT and mutant conservation sources or calculated evidence traceable to both."
+  T2-MC-06:
+    fact_ids: []
+    requirements:
+      - id: embedding_difference
+        report_ids: [1iu4_wt_embedding, 1iu4_mut_embedding]
+        acceptance: "Identify a verified difference in the embedding vector contents between WT and S72N. A difference in a comparable coordinate at residue 72 is sufficient. Equal entry counts and dimensionality can provide context. They do not establish a difference or equivalence of the vector values."
+        evidence: "Cite both embedding reports at the matching coordinate or cite the calculated comparison traceable to both. Report counts or vector dimensions cannot support a claim about the coordinate values."
+  T2-MC-07:
+    fact_ids: []
+    requirements:
+      - id: report_comparison
+        report_ids: [1iu4_wt_energy, 1iu4_wt_flexibility]
+        acceptance: "Contrast a supported energy result with a supported flexibility result, explaining the complementary properties they describe without drawing causal conclusions."
+        evidence: "Cite both reports, linking each observation to the source that supports it."
+  T2-MC-08:
+    fact_ids: []
+    requirements:
+      - id: report_comparison
+        report_ids: [1iu4_wt_pocket, 1iu4_wt_hydrocluster]
+        acceptance: "Compare a supported pocket observation with a supported hydrophobic-cluster observation. Distinguish the two evidence types and avoid unsupported claims about spatial overlap."
+        evidence: "Cite both reports, linking each observation to the source that supports it."
+  T2-MC-09:
+    rationale: Compare the main energy result across both sides and confirm the requested mutation mapping. No particular component energy is requested.
+    fact_ids: [1tca_wt_energy:metric:1, 1tca_mut_energy:metric:1, "T2-MC-09:comparison:total_potential_energy", 1tca_mut_clean:mutation_identity]
+  T2-MC-10:
+    fact_ids: []
+    requirements:
+      - id: pocket_comparison
+        report_ids: [1tca_wt_pocket, 1tca_mut_pocket]
+        acceptance: "Compare at least one corresponding pocket prediction across WT and G107A, such as count or size, with sides correctly labeled. Do not infer a shared pocket identity without evidence."
+        evidence: "Cite the matching WT and mutant sources for the comparison, directly or through calculated evidence traceable to both."
+  T2-MC-11:
+    rationale: Compare the docking scores for the named ligand across both sides. Internal complex identifiers are optional.
+    fact_ids: [1tca_wt_dock:metric:1, 1tca_mut_dock:metric:1, "T2-MC-11:comparison:enzyme_substrate_binding_affinity"]
+  T2-MC-12:
+    fact_ids: []
+    requirements:
+      - id: interaction_comparison
+        report_ids: [1tca_wt_interaction, 1tca_mut_interaction]
+        acceptance: "Compare at least one corresponding protein-substrate contact type across WT and G107A, including correct side attribution and direction or equality. Any supported contact type may qualify."
+        evidence: "Cite the matching WT and mutant sources for the comparison, directly or through calculated evidence traceable to both."
+  T2-MF-01:
+    fact_ids: []
+    requirements:
+      - id: joint_scope
+        report_ids: [1mxt_wt_flexibility, 1mxt_wt_disorder]
+        acceptance: "Use the initial answer to retain the supported synthesis of flexibility and disorder. Clearly label any report-specific observations that are retained. A supported statement that the reports address complementary properties, with no demonstrated residue-level overlap, can qualify. Remove any unsupported joint claim."
+        evidence: "Cite the relevant contributions from both reports for the joint conclusion and the correct individual source for any retained report-specific result."
+  T2-MF-02:
+    fact_ids: []
+    requirements:
+      - id: rewrite_with_evidence
+        report_ids: [1mxt_wt_pocket]
+        acceptance: "Rewrite the initial answer around its material supported pocket predictions and avoid claims of experimental binding. A concise rewrite of its main conclusion can suffice. Do not require repetition of all counts or volume statistics, or reward adding unrelated report details."
+        evidence: "Give explicit evidence labels for the retained pocket conclusions. Each label must resolve to the report or field that supports the corresponding conclusion."
+  T2-MF-03:
+    rationale: Classify the previous answer's observations and hypotheses. Which claims need classification depends on that answer.
+    fact_ids: []
+    requirements:
+      - id: classify_prior_claims
+        report_ids: [1mxt_wt_disorder, 1mxt_mut_disorder]
+        acceptance: "Correctly distinguish the material report observations, calculated comparisons, and hypotheses actually stated in the initial answer. If it contains no hypothesis, say so. Do not invent or misclassify earlier claims."
+        evidence: "Link material report observations to the correct report and side. A hypothesis need not be cited as a direct observation."
+  T2-MF-04:
+    rationale: Correct an implication of measured affinity if present. Repeating report values is not required for that correction.
+    fact_ids: []
+    requirements:
+      - id: measured_affinity_correction
+        report_ids: [1mxt_wt_dock]
+        acceptance: "Correct any implication that the docking score is a measured affinity. If the initial answer already draws the distinction, correctly say no such correction is needed. Either form must identify the score as computational and not establish measured affinity."
+        evidence: "Identify the docking report or its scoring field as the basis of the computational score. The citation need not document an experiment that was not supplied."
+  T2-MF-05:
+    rationale: Summarize properties of per-residue evidence. No named residue or embedding dimension is required.
+    fact_ids: []
+    requirements:
+      - id: residue_level_summary
+        report_ids: [1iu4_wt_conservation, 1iu4_wt_embedding]
+        acceptance: "Provide at least one supported substantive observation about per-residue results. A correctly described range or variation of a per-residue conservation score is sufficient. For example, the HMM profile raw scores range from about 0.851 to 2.365, or normalized emission probabilities from about 0.094 to 0.427. Other verified residue-level observations are acceptable. Reporting only record counts, embedding dimensions, or the inability to name an individual residue is insufficient. Do not require naming specific residues."
+        evidence: "Link the observation actually made to the corresponding report and per-residue field. A range can cite the report's derived minimum and maximum with the same underlying metric."
+  T2-MF-06:
+    rationale: Identify and explain the least certain conclusion in the previous answer. The target conclusion depends on that answer.
+    fact_ids: []
+    requirements:
+      - id: least_certain_prior_conclusion
+        report_ids: [1iu4_wt_energy, 1iu4_wt_flexibility, 1iu4_wt_disorder]
+        acceptance: "Identify a material conclusion actually made in the initial answer and explain why it is among the least certain. Accept any defensible choice when the explanation identifies a specific evidentiary limitation."
+        evidence: "Link the evidence used to explain the uncertainty to the report that supports the stated observation. A calculated result is not direct validation of the uncertain interpretation."
+  T2-MF-07:
+    fact_ids: []
+    requirements:
+      - id: conservation_validation_boundary
+        report_ids: [1iu4_wt_conservation, 1iu4_mut_conservation]
+        acceptance: "Retain a material, supported WT/S72N conservation comparison from the initial answer and state explicitly that the results are not functional validation. The earlier comparison can be summarized without repeating every statistic."
+        evidence: "Cite the applicable WT and mutant report sources for the comparison actually retained."
+  T2-MF-08:
+    rationale: Preserve supported facts from the previous answer while reorganizing them. The required set depends on that answer.
+    fact_ids: []
+    requirements:
+      - id: preserve_supported_claims_by_source
+        report_ids: [1iu4_wt_dock, 1iu4_wt_interaction]
+        acceptance: "Reorganize the initial answer's material supported scientific facts by evidence source. Preserve their meaning, value, and source attribution, allowing concise paraphrase. Do not require repetition of unsupported claims or unrelated appendix details."
+        evidence: "Link the retained claims to the correct source reports or fields. The initial answer identifies what to carry forward but is not a substitute for report evidence."
+  T2-MF-09:
+    rationale: Select and cite the highest-priority structural evidence. The question allows a justified choice rather than prescribing fixed statistics from both reports.
+    fact_ids: []
+    requirements:
+      - id: prioritized_structural_finding
+        report_ids: [1tca_wt_pocket, 1tca_wt_hydrocluster]
+        acceptance: "Clearly identify a supported structural finding as the priority in the context of the supplied evidence. A supported pocket observation or a supported hydrophobic-cluster observation can qualify. A list without a priority, or a bare assertion of importance unsupported by the observation, does not qualify."
+        evidence: "Identify the source that supports the chosen finding. A pocket finding must cite the pocket report and a hydrophobic-cluster finding the hydrocluster report. Do not substitute the source for another acceptable finding."
+  T2-MF-10:
+    rationale: Explain the limit of an actual prior energy comparison when interpreting activity.
+    fact_ids: []
+    requirements:
+      - id: energy_activity_boundary
+        report_ids: [1tca_wt_energy, 1tca_mut_energy]
+        acceptance: "Refer back to at least one correct WT/G107A energy comparison from the initial answer and explain that it does not establish an activity difference or its direction. The correct direction of the energy comparison is sufficient. Repeating specific component energies is optional."
+        evidence: "Link the energy comparison to the applicable WT and mutant energy reports or to calculated evidence traceable to both reports."
+  T2-MF-11:
+    rationale: Preserve a concise evidence chain with one anchor from preparation, docking, and protein-substrate contacts.
+    fact_ids: []
+    requirements:
+      - id: substrate_preparation
+        report_ids: [1tca_wt_substrate]
+        acceptance: "State a correct preparation result as the first part of the evidence chain. The prepared substrate count or another supported preparation detail is acceptable."
+        evidence: "Link the preparation result to the substrate report or its relevant field."
+      - id: docking
+        report_ids: [1tca_wt_dock]
+        acceptance: "State a correct docking result after the preparation stage. The ligand identity, docking score, or another supported docking result is acceptable."
+        evidence: "Link the docking result to the docking report or its relevant field."
+      - id: protein_substrate_contacts
+        report_ids: [1tca_wt_interaction]
+        acceptance: "State at least one correct protein-substrate contact result after the docking stage. Accept zero protein-substrate hydrogen bonds, four protein-substrate van der Waals contacts, or another verified protein-substrate contact result. An overall or intra-enzyme count alone does not meet this requirement."
+        evidence: "Link the specific contact result stated to the corresponding protein-substrate field in the interaction report. Evidence for a different acceptable contact result does not count."
+  T2-MF-12:
+    rationale: Verify any side assignments made in the previous answer and correct swaps if present. The required evidence depends on the claims being checked.
+    fact_ids: []
+    requirements:
+      - id: verify_wt_mut_attribution
+        report_ids: [1tca_wt_interaction, 1tca_mut_interaction]
+        acceptance: "Check the material side-specific claims in the initial answer against the reports. If an attribution was swapped, correct every material swap. If none was swapped, an explicit confirmation with at least one correct side-specific example from the initial answer is sufficient. Correct attributions do not have to be repeated individually."
+        evidence: "Cite the applicable WT and MUT reports or fields for the corrections made or the examples used to confirm correct attribution. Side labels in the question or initial answer are not evidence."
+  T2-EL-01:
+    fact_ids: []
+    requirements:
+      - id: flexibility_provenance
+        report_ids: [1mxt_wt_flexibility]
+        acceptance: "Identify at least one principal flexibility conclusion that is supported by the report, such as an RMSF statistic or regional observation."
+        evidence: "Identify the report and matching field for each main conclusion actually stated."
+  T2-EL-02:
+    fact_ids: []
+    requirements:
+      - id: pocket_provenance
+        report_ids: [1mxt_wt_pocket]
+        acceptance: "Identify a substantive cholesterol oxidase pocket conclusion that can be traced to the report."
+        evidence: "Identify the report, artifact, and field that support the stated pocket conclusion."
+  T2-EL-03:
+    fact_ids: []
+    requirements:
+      - id: substrate
+        report_ids: [1mxt_wt_substrate]
+        acceptance: "Identify a supported preparation-stage result, such as the prepared substrate identity, entry count, or a reported molecular property."
+        evidence: "Identify the substrate report or its relevant field as the source for the result actually stated."
+      - id: dock
+        report_ids: [1mxt_wt_dock]
+        acceptance: "Identify the actual docked ligand and state a supported docking result, such as its score. The internal complex identifier is optional."
+        evidence: "Identify the dock report or its relevant field as the source for the result actually stated."
+  T2-EL-04:
+    fact_ids: []
+    requirements:
+      - id: disorder_comparison
+        report_ids: [1mxt_wt_disorder, 1mxt_mut_disorder]
+        acceptance: "State at least one supported WT/T244M disorder comparison that can be traced to the reports. A comparison of counts, extents, or locations is acceptable."
+        evidence: "Locate the source for each side of the comparison. Evidence traceable to matching fields on both sides counts."
+  T2-EL-05:
+    fact_ids: []
+    requirements:
+      - id: conservation_provenance
+        report_ids: [1iu4_wt_conservation]
+        acceptance: "Identify at least one supported conservation conclusion from the interpretation, such as a named score result or residue-level pattern."
+        evidence: "Identify the report and matching field for each main conclusion actually stated."
+  T2-EL-06:
+    fact_ids: []
+    requirements:
+      - id: aaprops
+        report_ids: [1iu4_wt_aaprops]
+        acceptance: "Describe a supported residue property, such as accessibility or a backbone-angle observation. A record count alone is insufficient."
+        evidence: "Identify the aaprops report or its relevant field as the source for the result actually stated."
+      - id: hydrocluster
+        report_ids: [1iu4_wt_hydrocluster]
+        acceptance: "Describe a supported hydrophobic-cluster finding, such as the reported count or area of prominent clusters."
+        evidence: "Identify the hydrocluster report or its relevant field as the source for the result actually stated."
+      - id: pocket
+        report_ids: [1iu4_wt_pocket]
+        acceptance: "Describe a supported pocket prediction, such as a prominent pocket size, location, or count."
+        evidence: "Identify the pocket report or its relevant field as the source for the result actually stated."
+  T2-EL-07:
+    fact_ids: []
+    requirements:
+      - id: conservation_comparison
+        report_ids: [1iu4_wt_conservation, 1iu4_mut_conservation]
+        acceptance: "State at least one supported WT/S72N conservation comparison. A difference in a named score or a supported similarity can qualify. Keep the sides distinct."
+        evidence: "Locate the source for each side of the comparison. Evidence traceable to matching fields on both sides counts."
+  T2-EL-08:
+    fact_ids: []
+    requirements:
+      - id: substrate
+        report_ids: [1iu4_wt_substrate]
+        acceptance: "Identify a supported preparation-stage result, such as the prepared substrate identity, entry count, or a reported molecular property. Place it in the preparation-to-docking-to-contacts evidence sequence."
+        evidence: "Identify the substrate report or its relevant field as the source for the result actually stated."
+      - id: dock
+        report_ids: [1iu4_wt_dock]
+        acceptance: "Identify the actual docked ligand and state a supported docking result, such as its score. The internal complex identifier is optional. Place it in the preparation-to-docking-to-contacts evidence sequence."
+        evidence: "Identify the dock report or its relevant field as the source for the result actually stated."
+      - id: interaction
+        report_ids: [1iu4_wt_interaction]
+        acceptance: "State at least one supported modeled contact result for the ligand. Any verified protein-substrate contact can qualify, including a reported absence of a contact type. Overall or intra-enzyme counts alone are insufficient. Place it in the preparation-to-docking-to-contacts evidence sequence."
+        evidence: "Identify the interaction report or its relevant field as the source for the result actually stated."
+  T2-EL-09:
+    fact_ids: []
+    requirements:
+      - id: flexibility_provenance
+        report_ids: [1tca_wt_flexibility]
+        acceptance: "Identify at least one principal CALB flexibility conclusion that is supported by the report, such as a correctly identified RMSF statistic or region."
+        evidence: "Identify the report and matching field for each main conclusion actually stated."
+  T2-EL-10:
+    fact_ids: []
+    requirements:
+      - id: energy_comparison
+        report_ids: [1tca_wt_energy, 1tca_mut_energy]
+        acceptance: "State at least one supported WT/G107A energy comparison. Total potential energy or another corresponding energy term is acceptable if the sides and comparison are clear."
+        evidence: "Locate the source for each side of the comparison. Evidence traceable to matching fields on both sides counts."
+  T2-EL-11:
+    rationale: Trace modeled contacts between CALB and the named ligand to their fields.
+    fact_ids: []
+    requirements:
+      - id: protein_substrate_contact_location
+        report_ids: [1tca_wt_interaction]
+        acceptance: "State at least one correct modeled protein-substrate contact observation for 4-nitrophenyl butyrate, such as four van der Waals contacts or zero hydrogen bonds. Overall or intra-enzyme totals alone are insufficient."
+        evidence: "Identify the interaction report and the matching enzyme-substrate statistics field. Additional contact claims also need field-level attribution, as evaluated by evidence precision."
+  T2-EL-12:
+    fact_ids: []
+    requirements:
+      - id: dock_comparison
+        report_ids: [1tca_wt_dock, 1tca_mut_dock]
+        acceptance: "State a supported WT/G107A docking comparison for the specified ligand. The score comparison or another supported side-specific docking result is acceptable. The internal complex identifiers are optional."
+        evidence: "Identify both side-specific docking reports and their artifacts, directly or through evidence traceable to them."
+
+report_side_policy:
+  paired_case: "Assign references containing _wt_ to wt, references containing _mut_ to mut, and mut_clean reports to shared."
+  single_case: "Assign a sole WT report to single and a sole mutant report to mut."
+  mixed_single_case: "Assign WT-only multi-report inputs to single."
+
+categories:
+  single_report_interpretation: {case_count: 12, enzyme_balanced: true}
+  multi_report_integration: {case_count: 12, enzyme_balanced: true}
+  multi_report_comparison: {case_count: 12, enzyme_balanced: true}
+  multi_turn_follow_up_revision: {case_count: 12, enzyme_balanced: true}
+  report_evidence_localization: {case_count: 12, enzyme_balanced: true}
+
+enzymes:
+  1MXT:
+    name: "Streptomyces cholesterol oxidase"
+    mutation: T244M
+    substrate: Cholesterol
+  1IU4:
+    name: "Streptomyces mobaraensis microbial transglutaminase"
+    mutation: S72N
+    substrate: Z-Gln-Gly
+  1TCA:
+    name: "Moesziomyces antarcticus lipase B (CALB)"
+    mutation: G107A
+    substrate: 4-nitrophenyl butyrate
+
+# A report reference is immutable benchmark evidence. Cases assign its semantic side
+# (single, wt, mut, or shared) and conversational turn when constructing artifacts.
+reports:
+  1mxt_wt_energy: {path: resources/reports/1MXT/wt/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1mxt_wt_flexibility: {path: resources/reports/1MXT/wt/flexibility.json, artifact_type: flexibility_report_json, source_tool: enzywizard-flexibility, report_type: enzywizard_flexibility}
+  1mxt_wt_disorder: {path: resources/reports/1MXT/wt/disorder.json, artifact_type: disorder_report_json, source_tool: enzywizard-disorder, report_type: enzywizard_disorder}
+  1mxt_wt_aaprops: {path: resources/reports/1MXT/wt/aaprops.json, artifact_type: aaprops_report_json, source_tool: enzywizard-aaprops, report_type: enzywizard_aaprops}
+  1mxt_wt_hydrocluster: {path: resources/reports/1MXT/wt/hydrocluster.json, artifact_type: hydrocluster_report_json, source_tool: enzywizard-hydrocluster, report_type: enzywizard_hydrocluster}
+  1mxt_wt_pocket: {path: resources/reports/1MXT/wt/pocket.json, artifact_type: pocket_report_json, source_tool: enzywizard-pocket, report_type: enzywizard_pocket}
+  1mxt_wt_conservation: {path: resources/reports/1MXT/wt/conservation.json, artifact_type: conservation_report_json, source_tool: enzywizard-conservation, report_type: enzywizard_conservation}
+  1mxt_wt_embedding: {path: resources/reports/1MXT/wt/embedding.json, artifact_type: embedding_report_json, source_tool: enzywizard-embedding, report_type: enzywizard_embedding}
+  1mxt_wt_substrate: {path: resources/reports/1MXT/wt/substrate.json, artifact_type: substrate_report_json, source_tool: enzywizard-substrate, report_type: enzywizard_substrate}
+  1mxt_wt_dock: {path: resources/reports/1MXT/wt/dock.json, artifact_type: dock_report_json, source_tool: enzywizard-dock, report_type: enzywizard_dock}
+  1mxt_wt_interaction: {path: resources/reports/1MXT/wt/interaction.json, artifact_type: interaction_report_json, source_tool: enzywizard-interaction, report_type: enzywizard_interaction}
+  1mxt_mut_clean: {path: resources/reports/1MXT/mut/mut_clean.json, artifact_type: mut_clean_report_json, source_tool: enzywizard-mut-clean, report_type: enzywizard_mut_clean}
+  1mxt_mut_energy: {path: resources/reports/1MXT/mut/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1mxt_mut_flexibility: {path: resources/reports/1MXT/mut/flexibility.json, artifact_type: flexibility_report_json, source_tool: enzywizard-flexibility, report_type: enzywizard_flexibility}
+  1mxt_mut_disorder: {path: resources/reports/1MXT/mut/disorder.json, artifact_type: disorder_report_json, source_tool: enzywizard-disorder, report_type: enzywizard_disorder}
+
+  1iu4_wt_energy: {path: resources/reports/1IU4/wt/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1iu4_wt_flexibility: {path: resources/reports/1IU4/wt/flexibility.json, artifact_type: flexibility_report_json, source_tool: enzywizard-flexibility, report_type: enzywizard_flexibility}
+  1iu4_wt_disorder: {path: resources/reports/1IU4/wt/disorder.json, artifact_type: disorder_report_json, source_tool: enzywizard-disorder, report_type: enzywizard_disorder}
+  1iu4_wt_aaprops: {path: resources/reports/1IU4/wt/aaprops.json, artifact_type: aaprops_report_json, source_tool: enzywizard-aaprops, report_type: enzywizard_aaprops}
+  1iu4_wt_hydrocluster: {path: resources/reports/1IU4/wt/hydrocluster.json, artifact_type: hydrocluster_report_json, source_tool: enzywizard-hydrocluster, report_type: enzywizard_hydrocluster}
+  1iu4_wt_pocket: {path: resources/reports/1IU4/wt/pocket.json, artifact_type: pocket_report_json, source_tool: enzywizard-pocket, report_type: enzywizard_pocket}
+  1iu4_wt_conservation: {path: resources/reports/1IU4/wt/conservation.json, artifact_type: conservation_report_json, source_tool: enzywizard-conservation, report_type: enzywizard_conservation}
+  1iu4_wt_embedding: {path: resources/reports/1IU4/wt/embedding.json, artifact_type: embedding_report_json, source_tool: enzywizard-embedding, report_type: enzywizard_embedding}
+  1iu4_wt_substrate: {path: resources/reports/1IU4/wt/substrate.json, artifact_type: substrate_report_json, source_tool: enzywizard-substrate, report_type: enzywizard_substrate}
+  1iu4_wt_dock: {path: resources/reports/1IU4/wt/dock.json, artifact_type: dock_report_json, source_tool: enzywizard-dock, report_type: enzywizard_dock}
+  1iu4_wt_interaction: {path: resources/reports/1IU4/wt/interaction.json, artifact_type: interaction_report_json, source_tool: enzywizard-interaction, report_type: enzywizard_interaction}
+  1iu4_mut_clean: {path: resources/reports/1IU4/mut/mut_clean.json, artifact_type: mut_clean_report_json, source_tool: enzywizard-mut-clean, report_type: enzywizard_mut_clean}
+  1iu4_mut_conservation: {path: resources/reports/1IU4/mut/conservation.json, artifact_type: conservation_report_json, source_tool: enzywizard-conservation, report_type: enzywizard_conservation}
+  1iu4_mut_embedding: {path: resources/reports/1IU4/mut/embedding.json, artifact_type: embedding_report_json, source_tool: enzywizard-embedding, report_type: enzywizard_embedding}
+
+  1tca_wt_energy: {path: resources/reports/1TCA/wt/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1tca_wt_flexibility: {path: resources/reports/1TCA/wt/flexibility.json, artifact_type: flexibility_report_json, source_tool: enzywizard-flexibility, report_type: enzywizard_flexibility}
+  1tca_wt_disorder: {path: resources/reports/1TCA/wt/disorder.json, artifact_type: disorder_report_json, source_tool: enzywizard-disorder, report_type: enzywizard_disorder}
+  1tca_wt_aaprops: {path: resources/reports/1TCA/wt/aaprops.json, artifact_type: aaprops_report_json, source_tool: enzywizard-aaprops, report_type: enzywizard_aaprops}
+  1tca_wt_hydrocluster: {path: resources/reports/1TCA/wt/hydrocluster.json, artifact_type: hydrocluster_report_json, source_tool: enzywizard-hydrocluster, report_type: enzywizard_hydrocluster}
+  1tca_wt_pocket: {path: resources/reports/1TCA/wt/pocket.json, artifact_type: pocket_report_json, source_tool: enzywizard-pocket, report_type: enzywizard_pocket}
+  1tca_wt_conservation: {path: resources/reports/1TCA/wt/conservation.json, artifact_type: conservation_report_json, source_tool: enzywizard-conservation, report_type: enzywizard_conservation}
+  1tca_wt_embedding: {path: resources/reports/1TCA/wt/embedding.json, artifact_type: embedding_report_json, source_tool: enzywizard-embedding, report_type: enzywizard_embedding}
+  1tca_wt_substrate: {path: resources/reports/1TCA/wt/substrate.json, artifact_type: substrate_report_json, source_tool: enzywizard-substrate, report_type: enzywizard_substrate}
+  1tca_wt_dock: {path: resources/reports/1TCA/wt/dock.json, artifact_type: dock_report_json, source_tool: enzywizard-dock, report_type: enzywizard_dock}
+  1tca_wt_interaction: {path: resources/reports/1TCA/wt/interaction.json, artifact_type: interaction_report_json, source_tool: enzywizard-interaction, report_type: enzywizard_interaction}
+  1tca_mut_clean: {path: resources/reports/1TCA/mut/mut_clean.json, artifact_type: mut_clean_report_json, source_tool: enzywizard-mut-clean, report_type: enzywizard_mut_clean}
+  1tca_mut_energy: {path: resources/reports/1TCA/mut/energy.json, artifact_type: energy_report_json, source_tool: enzywizard-energy, report_type: enzywizard_energy}
+  1tca_mut_pocket: {path: resources/reports/1TCA/mut/pocket.json, artifact_type: pocket_report_json, source_tool: enzywizard-pocket, report_type: enzywizard_pocket}
+  1tca_mut_dock: {path: resources/reports/1TCA/mut/dock.json, artifact_type: dock_report_json, source_tool: enzywizard-dock, report_type: enzywizard_dock}
+  1tca_mut_interaction: {path: resources/reports/1TCA/mut/interaction.json, artifact_type: interaction_report_json, source_tool: enzywizard-interaction, report_type: enzywizard_interaction}
+
+evidence_path_roots:
+  enzywizard_energy: [$.energy_terms]
+  enzywizard_flexibility: [$.protein_flexibility]
+  enzywizard_disorder: [$.disordered_region_statistics, $.disordered_regions]
+  enzywizard_aaprops: [$.residue_properties_statistics, $.amino_acid_residue_properties]
+  enzywizard_hydrocluster: [$.hydrophobic_cluster_statistics, $.hydrophobic_clusters]
+  enzywizard_pocket: [$.binding_pocket_statistics, $.binding_pockets]
+  enzywizard_conservation: [$.sequence_conservation_scores]
+  enzywizard_embedding: [$.sequence_embeddings]
+  enzywizard_substrate: [$.substrates]
+  enzywizard_dock: [$.enzyme_substrate_docking_result]
+  enzywizard_interaction: [$.molecular_interaction_statistics, $.molecular_interactions]
+  enzywizard_mut_clean: [$.amino_acid_substitution, $.cleaned_amino_acid_substitution]

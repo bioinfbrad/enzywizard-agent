@@ -1,0 +1,258 @@
+{
+  "report_type": "enzywizard_pocket",
+  "binding_pocket_statistics": {
+    "binding_pocket_count": 7,
+    "max_binding_pocket_volume": 411.5365158496667,
+    "total_binding_pocket_volume": 2067.6620791510004
+  },
+  "binding_pockets": [
+    {
+      "binding_pocket_volume": 411.5365158496667,
+      "binding_pocket_sphere_count": 149,
+      "residues": [
+        {
+          "residue_index": 45,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 56,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 73,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 179,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 184,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 185,
+          "residue_name": "G"
+        }
+      ],
+      "binding_pocket_center_coordinate": [14.971899999999998, 12.175400000000002, -4.5704],
+      "binding_pocket_box_size": [10.8166, 13.113600000000002, 12.626400000000002]
+    },
+    {
+      "binding_pocket_volume": 393.57723775016666,
+      "binding_pocket_sphere_count": 85,
+      "residues": [
+        {
+          "residue_index": 127,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 131,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 134,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 194,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 195,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 261,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 263,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 324,
+          "residue_name": "D"
+        }
+      ],
+      "binding_pocket_center_coordinate": [3.4789, 12.9322, -21.025799999999997],
+      "binding_pocket_box_size": [12.882200000000001, 10.018400000000003, 8.747600000000002]
+    },
+    {
+      "binding_pocket_volume": 300.1275427643334,
+      "binding_pocket_sphere_count": 66,
+      "residues": [
+        {
+          "residue_index": 115,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 117,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 118,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 299,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 300,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 301,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 302,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 305,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 306,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 307,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 308,
+          "residue_name": "G"
+        }
+      ],
+      "binding_pocket_center_coordinate": [-11.5538, 30.101999999999997, -10.91],
+      "binding_pocket_box_size": [10.154399999999999, 7.883999999999997, 10.442]
+    },
+    {
+      "binding_pocket_volume": 287.7235177556666,
+      "binding_pocket_sphere_count": 75,
+      "residues": [
+        {
+          "residue_index": 107,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 111,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 217,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 303,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 306,
+          "residue_name": "D"
+        }
+      ],
+      "binding_pocket_center_coordinate": [-15.1389, 37.9003, -6.042400000000001],
+      "binding_pocket_box_size": [9.834600000000002, 10.14139999999999, 8.831200000000003]
+    },
+    {
+      "binding_pocket_volume": 269.354303365,
+      "binding_pocket_sphere_count": 101,
+      "residues": [
+        {
+          "residue_index": 74,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 76,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 77,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 79,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 80,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 173,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 176,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 177,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 313,
+          "residue_name": "T"
+        }
+      ],
+      "binding_pocket_center_coordinate": [11.7822, 24.980200000000004, -11.0739],
+      "binding_pocket_box_size": [8.6736, 9.332400000000003, 9.9774]
+    },
+    {
+      "binding_pocket_volume": 203.56026839850003,
+      "binding_pocket_sphere_count": 48,
+      "residues": [
+        {
+          "residue_index": 62,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 63,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 252,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 253,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 277,
+          "residue_name": "H"
+        },
+        {
+          "residue_index": 278,
+          "residue_name": "Y"
+        }
+      ],
+      "binding_pocket_center_coordinate": [-0.5914000000000001, 26.9393, 5.1549000000000005],
+      "binding_pocket_box_size": [11.2456, 7.255000000000003, 7.556200000000001]
+    },
+    {
+      "binding_pocket_volume": 201.78269326766667,
+      "binding_pocket_sphere_count": 67,
+      "residues": [
+        {
+          "residue_index": 255,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 276,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 277,
+          "residue_name": "H"
+        }
+      ],
+      "binding_pocket_center_coordinate": [-7.7485, 22.9336, 0.9605000000000001],
+      "binding_pocket_box_size": [7.977, 9.901600000000006, 6.6458]
+    }
+  ]
+}

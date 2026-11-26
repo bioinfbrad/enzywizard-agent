@@ -1,0 +1,7 @@
+schema_version: 1
+case_files:
+  - 01_single_report_interpretation.yaml
+  - 02_multi_report_integration.yaml
+  - 03_multi_report_comparison.yaml
+  - 04_multi_turn_follow_up_revision.yaml
+  - 05_report_evidence_localization.yaml

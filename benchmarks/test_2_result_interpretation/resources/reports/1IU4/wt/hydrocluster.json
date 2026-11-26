@@ -1,0 +1,136 @@
+{
+  "report_type": "enzywizard_hydrocluster",
+  "hydrophobic_cluster_statistics": {
+    "hydrophobic_cluster_count": 6,
+    "max_hydrophobic_cluster_area": 793.4338835913567,
+    "total_hydrophobic_cluster_area": 1583.7649531128031
+  },
+  "hydrophobic_clusters": [
+    {
+      "hydrophobic_cluster_area": 793.4338835913567,
+      "residues": [
+        {
+          "residue_index": 80,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 129,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 132,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 147,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 150,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 154,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 161,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 197,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 231,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 312,
+          "residue_name": "I"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 396.2736826428341,
+      "residues": [
+        {
+          "residue_index": 31,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 35,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 60,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 67,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 70,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 290,
+          "residue_name": "V"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 144.5024838272527,
+      "residues": [
+        {
+          "residue_index": 315,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 196,
+          "residue_name": "V"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 134.30752331183302,
+      "residues": [
+        {
+          "residue_index": 326,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 271,
+          "residue_name": "V"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 74.46753767784801,
+      "residues": [
+        {
+          "residue_index": 94,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 112,
+          "residue_name": "V"
+        }
+      ]
+    },
+    {
+      "hydrophobic_cluster_area": 40.77984206167868,
+      "residues": [
+        {
+          "residue_index": 174,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 137,
+          "residue_name": "L"
+        }
+      ]
+    }
+  ]
+}

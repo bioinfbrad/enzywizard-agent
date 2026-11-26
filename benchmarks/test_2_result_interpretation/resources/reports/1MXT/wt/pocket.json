@@ -1,0 +1,210 @@
+{
+  "report_type": "enzywizard_pocket",
+  "binding_pocket_statistics": {
+    "binding_pocket_count": 2,
+    "max_binding_pocket_volume": 1722.5731972803333,
+    "total_binding_pocket_volume": 2064.2868170746665
+  },
+  "binding_pockets": [
+    {
+      "binding_pocket_volume": 1722.5731972803333,
+      "binding_pocket_sphere_count": 454,
+      "residues": [
+        {
+          "residue_index": 9,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 11,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 12,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 32,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 60,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 67,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 68,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 91,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 99,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 100,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 102,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 106,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 107,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 111,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 112,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 114,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 210,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 241,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 242,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 243,
+          "residue_name": "K"
+        },
+        {
+          "residue_index": 264,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 281,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 282,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 284,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 285,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 289,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 334,
+          "residue_name": "S"
+        },
+        {
+          "residue_index": 355,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 356,
+          "residue_name": "P"
+        },
+        {
+          "residue_index": 357,
+          "residue_name": "M"
+        },
+        {
+          "residue_index": 369,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 388,
+          "residue_name": "R"
+        },
+        {
+          "residue_index": 438,
+          "residue_name": "Y"
+        },
+        {
+          "residue_index": 439,
+          "residue_name": "H"
+        },
+        {
+          "residue_index": 466,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 467,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 477,
+          "residue_name": "N"
+        },
+        {
+          "residue_index": 479,
+          "residue_name": "F"
+        }
+      ],
+      "binding_pocket_center_coordinate": [16.506500000000003, 4.876900000000001, 20.213199999999997],
+      "binding_pocket_box_size": [20.945800000000002, 21.0862, 28.510399999999997]
+    },
+    {
+      "binding_pocket_volume": 341.7136197943333,
+      "binding_pocket_sphere_count": 87,
+      "residues": [
+        {
+          "residue_index": 65,
+          "residue_name": "E"
+        },
+        {
+          "residue_index": 66,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 68,
+          "residue_name": "L"
+        },
+        {
+          "residue_index": 71,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 425,
+          "residue_name": "F"
+        },
+        {
+          "residue_index": 433,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 435,
+          "residue_name": "D"
+        },
+        {
+          "residue_index": 436,
+          "residue_name": "F"
+        }
+      ],
+      "binding_pocket_center_coordinate": [9.4906, 12.4908, 10.281500000000001],
+      "binding_pocket_box_size": [12.118400000000001, 9.4176, 10.0814]
+    }
+  ]
+}
