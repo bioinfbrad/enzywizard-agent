@@ -1,0 +1,23 @@
+# STOCKHOLM 1.0
+#=GF ID wt_cleaned_1IU4-assembly1-i2
+#=GF AU jackhmmer (HMMER 3.4)
+
+#=GS sp|P81453|TGAS_STRMB/77-407 DE [subseq from] Protein-glutamine gamma-glutamyltransferase OS=Streptomyces mobaraensis OX=35621 PE=1 SV=2
+#=GS sp|Q8GR90|TGAS_STRCJ/87-416 DE [subseq from] Protein-glutamine gamma-glutamyltransferase OS=Streptomyces cinnamoneus OX=53446 PE=3 SV=1
+
+wt_cleaned_1IU4-assembly1           DSDDRVTPPAEPLDRMPDPYRPSYGRAETVVNNYIRKWQQVYSHRDGRKQQMTEEQREWLSYGCVGVTWVNSGQYPTNRLAFASFDEDRFKNELKNGRPRSGETRAEFEGRVAKESFDEEKGFQRAREVASVMNRALENAHDESAYLDNLKKELANGNDALRNEDARSPFYSALRNTPSFKERNGGNHDPSRMKAVIYSK
+sp|P81453|TGAS_STRMB/77-407         DSDDRVTPPAEPLDRMPDPYRPSYGRAETVVNNYIRKWQQVYSHRDGRKQQMTEEQREWLSYGCVGVTWVNSGQYPTNRLAFASFDEDRFKNELKNGRPRSGETRAEFEGRVAKESFDEEKGFQRAREVASVMNRALENAHDESAYLDNLKKELANGNDALRNEDARSPFYSALRNTPSFKERNGGNHDPSRMKAVIYSK
+#=GR sp|P81453|TGAS_STRMB/77-407 PP 8*******************************************************************************************************************************************************************************************************
+sp|Q8GR90|TGAS_STRCJ/87-416         -SDDRETPPAEPLDRMPEAYRAYGGRATTVVNNYIRKWQQVYSHRDGKKQQMTEEQREKLSYGCVGVTWVNSGPYPTNRLAFASFDENKYKNDLKNTSPRPDETRAEFEGRIAKGSFDEGKGFKRARDVASVMNKALENAHDEGTYINNLKTELTNNNDALLREDSRSNFYSALRNTPSFKERDGGNYDPSKMKAVIYSK
+#=GR sp|Q8GR90|TGAS_STRCJ/87-416 PP .8******************************************************************************************************************************************************************************************************
+#=GC PP_cons                        89******************************************************************************************************************************************************************************************************
+#=GC RF                             xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+wt_cleaned_1IU4-assembly1           HFWSGQDRSSSADKRKYGDPDAFRPAPGTGLVDMSRDRNIPRSPTSPGEGFVNFDYGWFGAQTEADADKTVWTHGNHYHAPNGSLGAMHVYESKFRNWSEGYSDFDRGAYVITFIPKSWNTAPDKVKQGWP
+sp|P81453|TGAS_STRMB/77-407         HFWSGQDRSSSADKRKYGDPDAFRPAPGTGLVDMSRDRNIPRSPTSPGEGFVNFDYGWFGAQTEADADKTVWTHGNHYHAPNGSLGAMHVYESKFRNWSEGYSDFDRGAYVITFIPKSWNTAPDKVKQGWP
+#=GR sp|P81453|TGAS_STRMB/77-407 PP **********************************************************************************************************************************9
+sp|Q8GR90|TGAS_STRCJ/87-416         HFWSGQDQRGSSDKRKYGDPEAFRPDQGTGLVDMSKDRSIPRSPAKPGEGWVNFDYGWFGAQTEADADKTTWTHGDHYHAPNSDLGPMHVHESKFRKWSAGYADFDRGAYVITFIPKSWNTAPAKVEQGWP
+#=GR sp|Q8GR90|TGAS_STRCJ/87-416 PP **********************************************************************************************************************************9
+#=GC PP_cons                        **********************************************************************************************************************************9
+#=GC RF                             xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//

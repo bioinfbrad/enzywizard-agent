@@ -1,0 +1,10 @@
+[2026-11-10 11:35:39] [INFO] Dock processing started: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/representative_enzymes/cleaned_structures/1MXT/cleaned_1MXT-assembly1.cif
+[2026-11-10 11:35:39] [INFO] Protein name resolved: cleaned_1MXT-assembly1
+[2026-11-10 11:35:39] [INFO] Structure loaded
+[2026-11-10 11:35:40] [INFO] Structure checked
+[2026-11-10 11:35:40] [INFO] Docking workflow started
+[2026-11-10 11:36:09] [INFO] Docking succeeded and early_stop=True, returning the first successful result.
+[2026-11-10 11:36:09] [INFO] Docking finished
+[2026-11-10 11:36:09] [INFO] Saving docking results and generating report
+[2026-11-10 11:37:39] [INFO] Report JSON saved: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/benchmark_results/dock/outputs/1MXT/dock_report_cleaned_1MXT-assembly1_Cholesterol.json
+[2026-11-10 11:37:39] [INFO] Dock processing finished

@@ -1,0 +1,7 @@
+[2026-11-09 18:06:39] [INFO] Energy processing started: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/representative_enzymes/cleaned_structures/1TCA/cleaned_1TCA-assembly1.cif
+[2026-11-09 18:06:39] [INFO] Protein name resolved: cleaned_1TCA-assembly1
+[2026-11-09 18:06:40] [INFO] Structure loaded
+[2026-11-09 18:06:40] [INFO] Structure checked
+[2026-11-09 18:06:40] [INFO] Energy calculation started
+[2026-11-09 18:07:39] [INFO] Report JSON saved: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/benchmark_results/energy/outputs/1TCA/energy_report_cleaned_1TCA-assembly1.json
+[2026-11-09 18:07:39] [INFO] Energy processing finished

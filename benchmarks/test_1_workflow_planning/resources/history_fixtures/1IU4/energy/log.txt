@@ -1,0 +1,7 @@
+[2026-11-09 18:00:05] [INFO] Energy processing started: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/representative_enzymes/cleaned_structures/1IU4/cleaned_1IU4-assembly1.cif
+[2026-11-09 18:00:05] [INFO] Protein name resolved: cleaned_1IU4-assembly1
+[2026-11-09 18:00:05] [INFO] Structure loaded
+[2026-11-09 18:00:05] [INFO] Structure checked
+[2026-11-09 18:00:05] [INFO] Energy calculation started
+[2026-11-09 18:01:07] [INFO] Report JSON saved: /home/wmk/Python_Pro/enzywizard_runtime_evaluation/benchmark_results/energy/outputs/1IU4/energy_report_cleaned_1IU4-assembly1.json
+[2026-11-09 18:01:07] [INFO] Energy processing finished

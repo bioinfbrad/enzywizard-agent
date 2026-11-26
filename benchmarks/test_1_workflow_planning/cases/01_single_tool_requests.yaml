@@ -1,0 +1,815 @@
+schema_version: 1
+category_id: single_tool_requests
+title: "Single-tool requests"
+description: "One explicitly requested preparation or analysis capability, including required system-added preparation and integration steps."
+expected_case_count: 12
+cases:
+- case_id: T1-ST01
+  description: "Clean one cholesterol oxidase structure"
+  enzyme_id: 1MXT
+  request: "Clean the supplied enzyme structure only."
+  input_profile: 1mxt_single
+  reference_answers:
+  - {workflow: [clean], answer: "Run enzywizard-clean. Produce the required artifacts: cleaned_structure_cif (single), cleaned_structure_pdb (single), cleaned_sequence_fasta
+      (single), clean_report_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - clean
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - clean
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'artifact/cleaned_structure_cif:single/1.1', 'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1',
+          'artifact/clean_report_json:single/4.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      forbidden_executions: []
+      exclusive_execution_tools:
+      - enzywizard-clean:single
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST02
+  description: "Cholesterol oxidase energy analysis"
+  enzyme_id: 1MXT
+  request: "Evaluate the energetic state of this enzyme."
+  input_profile: 1mxt_single
+  reference_answers:
+  - {workflow: [energy], answer: "Run enzywizard-clean -> enzywizard-energy -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif (single),
+      cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), energy_report_json (single),
+      integrate_report_json (single), integrate_nodes_json (single), integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - energy
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-energy -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - energy
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-energy:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-energy:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-energy:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-energy:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-energy:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-energy:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-energy:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-energy:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-energy:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-energy:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/energy_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-energy:single'], artifact_type: energy_report_json, side: single, producers: ['enzywizard-energy:single']}
+      artifact/integrate_report_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-energy:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/energy_report_json:single/5.1',
+          'artifact/integrate_report_json:single/6.1', 'artifact/integrate_nodes_json:single/7.1', 'artifact/integrate_edges_json:single/8.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-energy:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: energy_report_json, side: single, count: 1, producers: ['enzywizard-energy:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST03
+  description: "Cholesterol oxidase pocket analysis"
+  enzyme_id: 1MXT
+  request: "Identify potential binding pockets."
+  input_profile: 1mxt_single
+  reference_answers:
+  - {workflow: [pocket], answer: "Run enzywizard-clean -> enzywizard-pocket -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif (single),
+      cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), pocket_report_json (single),
+      integrate_report_json (single), integrate_nodes_json (single), integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - pocket
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-pocket -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - pocket
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-pocket:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-pocket:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-pocket:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-pocket:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-pocket:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-pocket:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-pocket:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-pocket:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-pocket:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-pocket:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/pocket_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-pocket:single'], artifact_type: pocket_report_json, side: single, producers: ['enzywizard-pocket:single']}
+      artifact/integrate_report_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-pocket:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/pocket_report_json:single/5.1',
+          'artifact/integrate_report_json:single/6.1', 'artifact/integrate_nodes_json:single/7.1', 'artifact/integrate_edges_json:single/8.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-pocket:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: pocket_report_json, side: single, count: 1, producers: ['enzywizard-pocket:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST04
+  description: "Cholesterol oxidase conservation analysis"
+  enzyme_id: 1MXT
+  request: "Assess residue conservation using the alignment."
+  input_profile: 1mxt_single_msa
+  reference_answers:
+  - {workflow: [conservation], answer: "Run enzywizard-clean -> enzywizard-conservation -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif
+      (single), cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), cleaned_msa_sto (single),
+      hmm_profile (single), conservation_report_json (single), integrate_report_json (single), integrate_nodes_json (single),
+      integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - conservation
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-conservation -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - conservation
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-conservation:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-conservation:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-conservation:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-conservation:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-conservation:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-conservation:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-conservation:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-conservation:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-conservation:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-conservation:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_msa_sto:single/5.1: {kind: artifact, after: ['execute/enzywizard-conservation:single'], artifact_type: cleaned_msa_sto, side: single, producers: ['enzywizard-conservation:single']}
+      artifact/hmm_profile:single/6.1: {kind: artifact, after: ['execute/enzywizard-conservation:single'], artifact_type: hmm_profile, side: single, producers: ['enzywizard-conservation:single']}
+      artifact/conservation_report_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-conservation:single'], artifact_type: conservation_report_json, side: single, producers: [
+          'enzywizard-conservation:single']}
+      artifact/integrate_report_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/9.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/10.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-conservation:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/cleaned_msa_sto:single/5.1', 'artifact/hmm_profile:single/6.1',
+          'artifact/conservation_report_json:single/7.1', 'artifact/integrate_report_json:single/8.1', 'artifact/integrate_nodes_json:single/9.1', 'artifact/integrate_edges_json:single/10.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-conservation:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_msa_sto, side: single, count: 1, producers: ['enzywizard-conservation:single']}
+      - {artifact_type: hmm_profile, side: single, count: 1, producers: ['enzywizard-conservation:single']}
+      - {artifact_type: conservation_report_json, side: single, count: 1, producers: ['enzywizard-conservation:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST05
+  description: "Transglutaminase flexibility analysis"
+  enzyme_id: 1IU4
+  request: "Analyze collective motions and local flexibility."
+  input_profile: 1iu4_single
+  reference_answers:
+  - {workflow: [flexibility], answer: "Run enzywizard-clean -> enzywizard-flexibility -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif (single),
+      cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), flexibility_report_json (single),
+      integrate_report_json (single), integrate_nodes_json (single), integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - flexibility
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-flexibility -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - flexibility
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-flexibility:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-flexibility:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-flexibility:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-flexibility:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-flexibility:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-flexibility:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-flexibility:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-flexibility:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-flexibility:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-flexibility:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/flexibility_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-flexibility:single'], artifact_type: flexibility_report_json, side: single, producers: [
+          'enzywizard-flexibility:single']}
+      artifact/integrate_report_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-flexibility:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/flexibility_report_json:single/5.1',
+          'artifact/integrate_report_json:single/6.1', 'artifact/integrate_nodes_json:single/7.1', 'artifact/integrate_edges_json:single/8.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-flexibility:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: flexibility_report_json, side: single, count: 1, producers: ['enzywizard-flexibility:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST06
+  description: "Transglutaminase disorder analysis"
+  enzyme_id: 1IU4
+  request: "Identify intrinsically disordered regions."
+  input_profile: 1iu4_single
+  reference_answers:
+  - {workflow: [disorder], answer: "Run enzywizard-clean -> enzywizard-disorder -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif (single),
+      cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), disorder_report_json (single),
+      integrate_report_json (single), integrate_nodes_json (single), integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - disorder
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-disorder -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - disorder
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-disorder:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-disorder:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-disorder:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-disorder:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-disorder:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-disorder:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-disorder:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-disorder:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-disorder:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-disorder:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/disorder_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-disorder:single'], artifact_type: disorder_report_json, side: single, producers: ['enzywizard-disorder:single']}
+      artifact/integrate_report_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-disorder:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/disorder_report_json:single/5.1',
+          'artifact/integrate_report_json:single/6.1', 'artifact/integrate_nodes_json:single/7.1', 'artifact/integrate_edges_json:single/8.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-disorder:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: disorder_report_json, side: single, count: 1, producers: ['enzywizard-disorder:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST07
+  description: "Transglutaminase embedding analysis"
+  enzyme_id: 1IU4
+  request: "Generate residue-level protein embeddings."
+  input_profile: 1iu4_single
+  reference_answers:
+  - {workflow: [embedding], answer: "Run enzywizard-clean -> enzywizard-embedding -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif (single),
+      cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), embedding_report_json (single),
+      integrate_report_json (single), integrate_nodes_json (single), integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - embedding
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-embedding -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - embedding
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-embedding:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-embedding:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-embedding:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-embedding:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-embedding:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-embedding:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-embedding:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-embedding:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-embedding:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-embedding:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/embedding_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-embedding:single'], artifact_type: embedding_report_json, side: single, producers: ['enzywizard-embedding:single']}
+      artifact/integrate_report_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-embedding:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/embedding_report_json:single/5.1',
+          'artifact/integrate_report_json:single/6.1', 'artifact/integrate_nodes_json:single/7.1', 'artifact/integrate_edges_json:single/8.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-embedding:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: embedding_report_json, side: single, count: 1, producers: ['enzywizard-embedding:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST08
+  description: "Transglutaminase amino-acid property analysis"
+  enzyme_id: 1IU4
+  request: "Calculate residue physicochemical properties."
+  input_profile: 1iu4_single
+  reference_answers:
+  - {workflow: [aaprops], answer: "Run enzywizard-clean -> enzywizard-aaprops -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif (single),
+      cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), aaprops_report_json (single),
+      integrate_report_json (single), integrate_nodes_json (single), integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - aaprops
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-aaprops -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - aaprops
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-aaprops:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-aaprops:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-aaprops:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-aaprops:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-aaprops:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-aaprops:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-aaprops:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-aaprops:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-aaprops:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-aaprops:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/aaprops_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-aaprops:single'], artifact_type: aaprops_report_json, side: single, producers: ['enzywizard-aaprops:single']}
+      artifact/integrate_report_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-aaprops:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/aaprops_report_json:single/5.1',
+          'artifact/integrate_report_json:single/6.1', 'artifact/integrate_nodes_json:single/7.1', 'artifact/integrate_edges_json:single/8.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-aaprops:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: aaprops_report_json, side: single, count: 1, producers: ['enzywizard-aaprops:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST09
+  description: "CALB hydrophobic-cluster analysis"
+  enzyme_id: 1TCA
+  request: "Find connected hydrophobic residue clusters."
+  input_profile: 1tca_single
+  reference_answers:
+  - {workflow: [hydrocluster], answer: "Run enzywizard-clean -> enzywizard-hydrocluster -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif
+      (single), cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), hydrocluster_report_json
+      (single), integrate_report_json (single), integrate_nodes_json (single), integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - hydrocluster
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-hydrocluster -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - hydrocluster
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-hydrocluster:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-hydrocluster:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-hydrocluster:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-hydrocluster:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-hydrocluster:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-hydrocluster:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-hydrocluster:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-hydrocluster:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-hydrocluster:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-hydrocluster:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/hydrocluster_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-hydrocluster:single'], artifact_type: hydrocluster_report_json, side: single, producers: [
+          'enzywizard-hydrocluster:single']}
+      artifact/integrate_report_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-hydrocluster:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/hydrocluster_report_json:single/5.1',
+          'artifact/integrate_report_json:single/6.1', 'artifact/integrate_nodes_json:single/7.1', 'artifact/integrate_edges_json:single/8.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-hydrocluster:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: hydrocluster_report_json, side: single, count: 1, producers: ['enzywizard-hydrocluster:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST10
+  description: "CALB internal interaction analysis"
+  enzyme_id: 1TCA
+  request: "Analyze internal noncovalent protein interactions without a substrate."
+  input_profile: 1tca_single
+  reference_answers:
+  - {workflow: [internal_interaction], answer: "Run enzywizard-clean -> enzywizard-interaction -> enzywizard-integrate. Produce the required artifacts: cleaned_structure_cif
+      (single), cleaned_structure_pdb (single), cleaned_sequence_fasta (single), clean_report_json (single), interaction_report_json
+      (single), integrate_report_json (single), integrate_nodes_json (single), integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - internal_interaction
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-interaction -> enzywizard-integrate."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - internal_interaction
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-interaction:single', 'enzywizard-integrate:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-interaction:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-interaction:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-integrate:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-interaction:single'], stage: 1, key: 'enzywizard-integrate:single', dependencies: ['enzywizard-interaction:single'],
+        parameters: [], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-interaction:single', 'plan1/enzywizard-integrate:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-interaction:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-interaction:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [], reuse_inputs: {}}
+      execute/enzywizard-integrate:single: {kind: execution_call, after: [approval, 'execute/enzywizard-interaction:single'], key: 'enzywizard-integrate:single', dependencies: ['enzywizard-interaction:single'],
+        parameters: [], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/interaction_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-interaction:single'], artifact_type: interaction_report_json, side: single, producers: [
+          'enzywizard-interaction:single']}
+      artifact/integrate_report_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_nodes_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-integrate:single']}
+      artifact/integrate_edges_json:single/8.1: {kind: artifact, after: ['execute/enzywizard-integrate:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-integrate:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-interaction:single', 'execute/enzywizard-integrate:single', 'artifact/cleaned_structure_cif:single/1.1',
+          'artifact/cleaned_structure_pdb:single/2.1', 'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/interaction_report_json:single/5.1',
+          'artifact/integrate_report_json:single/6.1', 'artifact/integrate_nodes_json:single/7.1', 'artifact/integrate_edges_json:single/8.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - - enzywizard-dock
+        - enzywizard-substrate
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-interaction:single': 1, 'enzywizard-integrate:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: interaction_report_json, side: single, count: 1, producers: ['enzywizard-interaction:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-integrate:single']}
+      forbidden_executions:
+      - enzywizard-dock
+      - enzywizard-substrate
+      exclusive_execution_tools: []
+      required_parameters: []
+      required_historical_input: null
+- case_id: T1-ST11
+  description: "Complete single-protein CALB analysis"
+  enzyme_id: 1TCA
+  request: "Run the complete EnzyWizard analysis for this enzyme."
+  input_profile: 1tca_full
+  reference_answers:
+  - {workflow: [full_single], answer: "Run enzywizard-clean -> enzywizard-batch. Use 4-nitrophenyl butyrate and include docking and interaction statistics in the integrated report.
+      Produce the required artifacts: cleaned_structure_cif (single), cleaned_structure_pdb
+      (single), cleaned_sequence_fasta (single), clean_report_json (single), integrate_report_json (single), integrate_nodes_json (single),
+      integrate_edges_json (single)."}
+  expected_trajectories:
+  - workflow:
+    - full_single
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-clean -> enzywizard-batch."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - full_single
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-clean:single', 'enzywizard-batch:single']}
+      plan1/enzywizard-clean:single: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-batch:single: {kind: plan_call, after: [plan1, 'plan1/enzywizard-clean:single'], stage: 1, key: 'enzywizard-batch:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [{tool: enzywizard-batch, side: single, parameter: substrate_names,
+          accepted_values: ["4-nitrophenyl butyrate", "4-Nitrophenyl butyrate", "4-Nitrophenyl Butyrate", "p-nitrophenyl butyrate", "4-nitrophenyl butanoate",
+            "CCCC(=O)OC1=CC=C(C=C1)[N+](=O)[O-]", "CCCC(=O)Oc1ccc([N+](=O)[O-])cc1"]}], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-clean:single', 'plan1/enzywizard-batch:single'], stage: 1}
+      execute/enzywizard-clean:single: {kind: execution_call, after: [approval], key: 'enzywizard-clean:single', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-batch:single: {kind: execution_call, after: [approval, 'execute/enzywizard-clean:single'], key: 'enzywizard-batch:single', dependencies: ['enzywizard-clean:single'],
+        parameters: [{tool: enzywizard-batch, side: single, parameter: substrate_names,
+          accepted_values: ["4-nitrophenyl butyrate", "4-Nitrophenyl butyrate", "4-Nitrophenyl Butyrate", "p-nitrophenyl butyrate", "4-nitrophenyl butanoate",
+            "CCCC(=O)OC1=CC=C(C=C1)[N+](=O)[O-]", "CCCC(=O)Oc1ccc([N+](=O)[O-])cc1"]}], reuse_inputs: {}}
+      artifact/cleaned_structure_cif:single/1.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_cif, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_structure_pdb:single/2.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_structure_pdb, side: single, producers: ['enzywizard-clean:single']}
+      artifact/cleaned_sequence_fasta:single/3.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: cleaned_sequence_fasta, side: single, producers: ['enzywizard-clean:single']}
+      artifact/clean_report_json:single/4.1: {kind: artifact, after: ['execute/enzywizard-clean:single'], artifact_type: clean_report_json, side: single, producers: ['enzywizard-clean:single']}
+      artifact/integrate_report_json:single/5.1: {kind: artifact, after: ['execute/enzywizard-batch:single'], artifact_type: integrate_report_json, side: single, producers: ['enzywizard-batch:single'],
+        required_statistics: [enzyme_substrate_binding_affinity, hydrogen_bond_count]}
+      artifact/integrate_nodes_json:single/6.1: {kind: artifact, after: ['execute/enzywizard-batch:single'], artifact_type: integrate_nodes_json, side: single, producers: ['enzywizard-batch:single']}
+      artifact/integrate_edges_json:single/7.1: {kind: artifact, after: ['execute/enzywizard-batch:single'], artifact_type: integrate_edges_json, side: single, producers: ['enzywizard-batch:single']}
+      complete: {kind: terminal, after: ['execute/enzywizard-clean:single', 'execute/enzywizard-batch:single', 'artifact/cleaned_structure_cif:single/1.1', 'artifact/cleaned_structure_pdb:single/2.1',
+          'artifact/cleaned_sequence_fasta:single/3.1', 'artifact/clean_report_json:single/4.1', 'artifact/integrate_report_json:single/5.1', 'artifact/integrate_nodes_json:single/6.1',
+          'artifact/integrate_edges_json:single/7.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-clean:single': 1, 'enzywizard-batch:single': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: cleaned_structure_cif, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_structure_pdb, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: cleaned_sequence_fasta, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: clean_report_json, side: single, count: 1, producers: ['enzywizard-clean:single']}
+      - {artifact_type: integrate_report_json, side: single, count: 1, producers: ['enzywizard-batch:single'],
+        required_statistics: [enzyme_substrate_binding_affinity, hydrogen_bond_count]}
+      - {artifact_type: integrate_nodes_json, side: single, count: 1, producers: ['enzywizard-batch:single']}
+      - {artifact_type: integrate_edges_json, side: single, count: 1, producers: ['enzywizard-batch:single']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters:
+      - {key: 'enzywizard-batch:single', requirements: [{tool: enzywizard-batch, side: single, parameter: substrate_names,
+          accepted_values: ["4-nitrophenyl butyrate", "4-Nitrophenyl butyrate", "4-Nitrophenyl Butyrate", "p-nitrophenyl butyrate", "4-nitrophenyl butanoate",
+            "CCCC(=O)OC1=CC=C(C=C1)[N+](=O)[O-]", "CCCC(=O)Oc1ccc([N+](=O)[O-])cc1"]}]}
+      required_historical_input: null
+- case_id: T1-ST12
+  description: "Complete CALB WT/G107A comparison"
+  enzyme_id: 1TCA
+  request: "Run the complete paired EnzyWizard comparison for wild type and G107A."
+  input_profile: 1tca_pair_full
+  reference_answers:
+  - {workflow: [full_pair], answer: "Run enzywizard-mut-clean (SHARED) -> enzywizard-mut-batch (SHARED). Use 4-nitrophenyl butyrate and include docking and interaction statistics for both proteins in the integrated report.
+      Produce the required artifacts: wt_cleaned_structure_cif (wt),
+      wt_cleaned_structure_pdb (wt), wt_cleaned_sequence_fasta (wt), mut_cleaned_structure_cif (mut), mut_cleaned_structure_pdb (mut),
+      mut_cleaned_sequence_fasta (mut), mut_clean_report_json (shared), mut_integrate_report_json (shared), wt_integrate_nodes_json (wt),
+      wt_integrate_edges_json (wt), mut_integrate_nodes_json (mut), mut_integrate_edges_json (mut)."}
+  expected_trajectories:
+  - workflow:
+    - full_pair
+    events:
+    - "Record the routed request."
+    - "Record and approve the final plan: enzywizard-mut-clean (SHARED) -> enzywizard-mut-batch (SHARED)."
+    - "Execute the final plan with the milestone dependencies respected."
+    - "Record the produced files and terminal execution status."
+  scoring:
+  - profiles:
+    - full_pair
+    milestones:
+      request: {kind: routing, after: [], stage: 1, actions: [run_tool_workflow]}
+      plan1: {kind: plan, after: [request], stage: 1, allowed: ['enzywizard-mut-clean:shared', 'enzywizard-mut-batch:shared']}
+      plan1/enzywizard-mut-clean:shared: {kind: plan_call, after: [plan1], stage: 1, key: 'enzywizard-mut-clean:shared', dependencies: [], parameters: [], reuse_inputs: {}}
+      plan1/enzywizard-mut-batch:shared: {kind: plan_call, after: [plan1, 'plan1/enzywizard-mut-clean:shared'], stage: 1, key: 'enzywizard-mut-batch:shared', dependencies: ['enzywizard-mut-clean:shared'],
+        parameters: [{tool: enzywizard-mut-batch, side: shared, parameter: substrate_names,
+          accepted_values: ["4-nitrophenyl butyrate", "4-Nitrophenyl butyrate", "4-Nitrophenyl Butyrate", "p-nitrophenyl butyrate", "4-nitrophenyl butanoate",
+            "CCCC(=O)OC1=CC=C(C=C1)[N+](=O)[O-]", "CCCC(=O)Oc1ccc([N+](=O)[O-])cc1"]}], reuse_inputs: {}}
+      approval: {kind: approval, after: ['plan1/enzywizard-mut-clean:shared', 'plan1/enzywizard-mut-batch:shared'], stage: 1}
+      execute/enzywizard-mut-clean:shared: {kind: execution_call, after: [approval], key: 'enzywizard-mut-clean:shared', dependencies: [], parameters: [], reuse_inputs: {}}
+      execute/enzywizard-mut-batch:shared: {kind: execution_call, after: [approval, 'execute/enzywizard-mut-clean:shared'], key: 'enzywizard-mut-batch:shared', dependencies: ['enzywizard-mut-clean:shared'],
+        parameters: [{tool: enzywizard-mut-batch, side: shared, parameter: substrate_names,
+          accepted_values: ["4-nitrophenyl butyrate", "4-Nitrophenyl butyrate", "4-Nitrophenyl Butyrate", "p-nitrophenyl butyrate", "4-nitrophenyl butanoate",
+            "CCCC(=O)OC1=CC=C(C=C1)[N+](=O)[O-]", "CCCC(=O)Oc1ccc([N+](=O)[O-])cc1"]}], reuse_inputs: {}}
+      artifact/wt_cleaned_structure_cif:wt/1.1: {kind: artifact, after: ['execute/enzywizard-mut-clean:shared'], artifact_type: wt_cleaned_structure_cif, side: wt, producers: ['enzywizard-mut-clean:shared']}
+      artifact/wt_cleaned_structure_pdb:wt/2.1: {kind: artifact, after: ['execute/enzywizard-mut-clean:shared'], artifact_type: wt_cleaned_structure_pdb, side: wt, producers: ['enzywizard-mut-clean:shared']}
+      artifact/wt_cleaned_sequence_fasta:wt/3.1: {kind: artifact, after: ['execute/enzywizard-mut-clean:shared'], artifact_type: wt_cleaned_sequence_fasta, side: wt, producers: ['enzywizard-mut-clean:shared']}
+      artifact/mut_cleaned_structure_cif:mut/4.1: {kind: artifact, after: ['execute/enzywizard-mut-clean:shared'], artifact_type: mut_cleaned_structure_cif, side: mut, producers: ['enzywizard-mut-clean:shared']}
+      artifact/mut_cleaned_structure_pdb:mut/5.1: {kind: artifact, after: ['execute/enzywizard-mut-clean:shared'], artifact_type: mut_cleaned_structure_pdb, side: mut, producers: ['enzywizard-mut-clean:shared']}
+      artifact/mut_cleaned_sequence_fasta:mut/6.1: {kind: artifact, after: ['execute/enzywizard-mut-clean:shared'], artifact_type: mut_cleaned_sequence_fasta, side: mut, producers: [
+          'enzywizard-mut-clean:shared']}
+      artifact/mut_clean_report_json:shared/7.1: {kind: artifact, after: ['execute/enzywizard-mut-clean:shared'], artifact_type: mut_clean_report_json, side: shared, producers: ['enzywizard-mut-clean:shared']}
+      artifact/mut_integrate_report_json:shared/8.1: {kind: artifact, after: ['execute/enzywizard-mut-batch:shared'], artifact_type: mut_integrate_report_json, side: shared, producers: [
+          'enzywizard-mut-batch:shared'],
+        required_statistics: [wild_type_enzyme_substrate_binding_affinity, wild_type_hydrogen_bond_count, mutant_enzyme_substrate_binding_affinity, mutant_hydrogen_bond_count]}
+      artifact/wt_integrate_nodes_json:wt/9.1: {kind: artifact, after: ['execute/enzywizard-mut-batch:shared'], artifact_type: wt_integrate_nodes_json, side: wt, producers: ['enzywizard-mut-batch:shared']}
+      artifact/wt_integrate_edges_json:wt/10.1: {kind: artifact, after: ['execute/enzywizard-mut-batch:shared'], artifact_type: wt_integrate_edges_json, side: wt, producers: ['enzywizard-mut-batch:shared']}
+      artifact/mut_integrate_nodes_json:mut/11.1: {kind: artifact, after: ['execute/enzywizard-mut-batch:shared'], artifact_type: mut_integrate_nodes_json, side: mut, producers: ['enzywizard-mut-batch:shared']}
+      artifact/mut_integrate_edges_json:mut/12.1: {kind: artifact, after: ['execute/enzywizard-mut-batch:shared'], artifact_type: mut_integrate_edges_json, side: mut, producers: ['enzywizard-mut-batch:shared']}
+      complete: {kind: terminal, after: ['execute/enzywizard-mut-clean:shared', 'execute/enzywizard-mut-batch:shared', 'artifact/wt_cleaned_structure_cif:wt/1.1', 'artifact/wt_cleaned_structure_pdb:wt/2.1',
+          'artifact/wt_cleaned_sequence_fasta:wt/3.1', 'artifact/mut_cleaned_structure_cif:mut/4.1', 'artifact/mut_cleaned_structure_pdb:mut/5.1', 'artifact/mut_cleaned_sequence_fasta:mut/6.1',
+          'artifact/mut_clean_report_json:shared/7.1', 'artifact/mut_integrate_report_json:shared/8.1', 'artifact/wt_integrate_nodes_json:wt/9.1', 'artifact/wt_integrate_edges_json:wt/10.1',
+          'artifact/mut_integrate_nodes_json:mut/11.1', 'artifact/mut_integrate_edges_json:mut/12.1']}
+    minefields:
+      forbidden_tools_by_plan_stage:
+      - []
+      execution_call_limits: {'enzywizard-mut-clean:shared': 1, 'enzywizard-mut-batch:shared': 1}
+      executed_revoked_plan: true
+      wrong_historical_source: true
+      wrong_historical_input: null
+    success:
+      required_artifacts:
+      - {artifact_type: wt_cleaned_structure_cif, side: wt, count: 1, producers: ['enzywizard-mut-clean:shared']}
+      - {artifact_type: wt_cleaned_structure_pdb, side: wt, count: 1, producers: ['enzywizard-mut-clean:shared']}
+      - {artifact_type: wt_cleaned_sequence_fasta, side: wt, count: 1, producers: ['enzywizard-mut-clean:shared']}
+      - {artifact_type: mut_cleaned_structure_cif, side: mut, count: 1, producers: ['enzywizard-mut-clean:shared']}
+      - {artifact_type: mut_cleaned_structure_pdb, side: mut, count: 1, producers: ['enzywizard-mut-clean:shared']}
+      - {artifact_type: mut_cleaned_sequence_fasta, side: mut, count: 1, producers: ['enzywizard-mut-clean:shared']}
+      - {artifact_type: mut_clean_report_json, side: shared, count: 1, producers: ['enzywizard-mut-clean:shared']}
+      - {artifact_type: mut_integrate_report_json, side: shared, count: 1, producers: ['enzywizard-mut-batch:shared'],
+        required_statistics: [wild_type_enzyme_substrate_binding_affinity, wild_type_hydrogen_bond_count, mutant_enzyme_substrate_binding_affinity, mutant_hydrogen_bond_count]}
+      - {artifact_type: wt_integrate_nodes_json, side: wt, count: 1, producers: ['enzywizard-mut-batch:shared']}
+      - {artifact_type: wt_integrate_edges_json, side: wt, count: 1, producers: ['enzywizard-mut-batch:shared']}
+      - {artifact_type: mut_integrate_nodes_json, side: mut, count: 1, producers: ['enzywizard-mut-batch:shared']}
+      - {artifact_type: mut_integrate_edges_json, side: mut, count: 1, producers: ['enzywizard-mut-batch:shared']}
+      forbidden_executions: []
+      exclusive_execution_tools: []
+      required_parameters:
+      - {key: 'enzywizard-mut-batch:shared', requirements: [{tool: enzywizard-mut-batch, side: shared, parameter: substrate_names,
+          accepted_values: ["4-nitrophenyl butyrate", "4-Nitrophenyl butyrate", "4-Nitrophenyl Butyrate", "p-nitrophenyl butyrate", "4-nitrophenyl butanoate",
+            "CCCC(=O)OC1=CC=C(C=C1)[N+](=O)[O-]", "CCCC(=O)Oc1ccc([N+](=O)[O-])cc1"]}]}
+      required_historical_input: null

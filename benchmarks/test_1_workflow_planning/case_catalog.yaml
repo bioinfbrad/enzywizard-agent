@@ -1,0 +1,101 @@
+schema_version: 1
+input_profiles:
+  1mxt_single:
+    structure_file: resources/enzymes/1MXT/single/structure.cif
+  1mxt_single_msa:
+    structure_file: resources/enzymes/1MXT/single/structure.cif
+    msa_file: resources/enzymes/1MXT/single/alignment.sto
+  1mxt_ligand:
+    structure_file: resources/enzymes/1MXT/single/structure.cif
+    substrate_name: Cholesterol
+  1mxt_pair:
+    structure_file: resources/enzymes/1MXT/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1MXT/paired/mutant_structure.cif
+    amino_acid_substitution: T244M
+  1mxt_pair_msa:
+    structure_file: resources/enzymes/1MXT/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1MXT/paired/mutant_structure.cif
+    amino_acid_substitution: T244M
+    msa_file: resources/enzymes/1MXT/paired/wt_alignment.sto
+    mut_msa_file: resources/enzymes/1MXT/paired/mutant_alignment.sto
+  1mxt_pair_ligand:
+    structure_file: resources/enzymes/1MXT/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1MXT/paired/mutant_structure.cif
+    amino_acid_substitution: T244M
+    substrate_name: Cholesterol
+  1iu4_single:
+    structure_file: resources/enzymes/1IU4/single/structure.cif
+  1iu4_single_msa:
+    structure_file: resources/enzymes/1IU4/single/structure.cif
+    msa_file: resources/enzymes/1IU4/single/alignment.sto
+  1iu4_ligand:
+    structure_file: resources/enzymes/1IU4/single/structure.cif
+    substrate_name: Z-Gln-Gly
+  1iu4_pair:
+    structure_file: resources/enzymes/1IU4/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1IU4/paired/mutant_structure.cif
+    amino_acid_substitution: S72N
+  1iu4_pair_msa:
+    structure_file: resources/enzymes/1IU4/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1IU4/paired/mutant_structure.cif
+    amino_acid_substitution: S72N
+    msa_file: resources/enzymes/1IU4/paired/wt_alignment.sto
+    mut_msa_file: resources/enzymes/1IU4/paired/mutant_alignment.sto
+  1iu4_pair_ligand:
+    structure_file: resources/enzymes/1IU4/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1IU4/paired/mutant_structure.cif
+    amino_acid_substitution: S72N
+    substrate_name: Z-Gln-Gly
+  1tca_single:
+    structure_file: resources/enzymes/1TCA/single/structure.cif
+  1tca_single_msa:
+    structure_file: resources/enzymes/1TCA/single/structure.cif
+    msa_file: resources/enzymes/1TCA/single/alignment.sto
+  1tca_ligand:
+    structure_file: resources/enzymes/1TCA/single/structure.cif
+    substrate_name: 4-nitrophenyl butyrate
+  1tca_full:
+    structure_file: resources/enzymes/1TCA/single/structure.cif
+    msa_file: resources/enzymes/1TCA/single/alignment.sto
+    substrate_name: 4-nitrophenyl butyrate
+  1tca_pair:
+    structure_file: resources/enzymes/1TCA/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1TCA/paired/mutant_structure.cif
+    amino_acid_substitution: G107A
+  1tca_pair_msa:
+    structure_file: resources/enzymes/1TCA/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1TCA/paired/mutant_structure.cif
+    amino_acid_substitution: G107A
+    msa_file: resources/enzymes/1TCA/paired/wt_alignment.sto
+    mut_msa_file: resources/enzymes/1TCA/paired/mutant_alignment.sto
+  1tca_pair_ligand:
+    structure_file: resources/enzymes/1TCA/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1TCA/paired/mutant_structure.cif
+    amino_acid_substitution: G107A
+    substrate_name: 4-nitrophenyl butyrate
+  1tca_pair_full:
+    structure_file: resources/enzymes/1TCA/paired/wt_structure.cif
+    mut_structure_file: resources/enzymes/1TCA/paired/mutant_structure.cif
+    amino_acid_substitution: G107A
+    msa_file: resources/enzymes/1TCA/paired/wt_alignment.sto
+    mut_msa_file: resources/enzymes/1TCA/paired/mutant_alignment.sto
+    substrate_name: 4-nitrophenyl butyrate
+prior_plan_profiles:
+  energy:
+    expected_calls:
+    - tool: enzywizard-clean
+      side: single
+    - tool: enzywizard-energy
+      side: single
+    - tool: enzywizard-integrate
+      side: single
+  energy_flexibility:
+    expected_calls:
+    - tool: enzywizard-clean
+      side: single
+    - tool: enzywizard-energy
+      side: single
+    - tool: enzywizard-flexibility
+      side: single
+    - tool: enzywizard-integrate
+      side: single
