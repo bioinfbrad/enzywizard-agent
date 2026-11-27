@@ -70,14 +70,14 @@ def summarize_metrics(rows, case_ids, repetitions, *, iterations, seed):
             "complete_reviews": complete,
             "scored_or_inapplicable_reviews": sum(map(len, usable.values())),
         }
-        if complete and iterations and len(scores) == repetitions:
+        if iterations and len(scores) == repetitions:
             # Restart with the same seed so the two metrics use the same case draws.
             rng = random.Random(seed)
             distribution = []
             for _ in range(iterations):
                 sample = rng.choices(case_ids, k=len(case_ids))
                 drawn = [
-                    macro_rates(usable[rep][case_id] for case_id in sample)["f1"]
+                    macro_rates(usable[rep].get(case_id) for case_id in sample)["f1"]
                     for rep in range(1, repetitions + 1)
                 ]
                 if all(score is not None for score in drawn):

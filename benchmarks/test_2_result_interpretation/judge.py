@@ -172,7 +172,7 @@ def normalize_review(packet, raw, index):
     return {"claims": claims, "required_claims": required_claims, "citation_errors": citation_errors}
 
 
-def review_case(packet, api_key, timeout, *, save_raw=None):
+def _review_once(packet, api_key, timeout, *, save_raw):
     index = evidence_index(packet)
     augmented = {**packet, "evidence_keys": index.selectable}
     response = _post("/v1/messages", api_key, {
@@ -193,3 +193,21 @@ def review_case(packet, api_key, timeout, *, save_raw=None):
     if response.get("stop_reason") != "end_turn":
         raise ValueError(f"Claude review ended with stop reason {response.get('stop_reason')!r}")
     return normalize_review(packet, json.loads(text), index), usage
+
+
+def review_case(packet, api_key, timeout, *, save_raw=None, save_retry_raw=None):
+    try:
+        initial = _review_once(packet, api_key, timeout, save_raw=save_raw)
+    except ValueError:
+        return _review_once(packet, api_key, timeout, save_raw=save_retry_raw)
+    if not initial[0]["citation_errors"]:
+        return initial
+
+    try:
+        retry = _review_once(packet, api_key, timeout, save_raw=save_retry_raw)
+    except (ValueError, RuntimeError, OSError) as error:
+        initial[0]["citation_errors"].append(f"Judge retry failed: {error}")
+        return initial
+    if not retry[0]["citation_errors"]:
+        return retry
+    return initial

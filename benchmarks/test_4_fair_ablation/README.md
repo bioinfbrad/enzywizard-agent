@@ -17,8 +17,13 @@ Concept Definition Accuracy (CDA) is the number of correct final definitions
 divided by the number of applicable cases. Claude Haiku 5.5 gives a binary
 judgment for the final definition. Equivalent wording earns full credit
 when it conveys the reference's complete core meaning without a substantive
-error. A missing definition scores zero. An unavailable Judge review leaves
-the aggregate incomplete. Original report answers supply conversation history.
+error. A missing definition scores zero. The evaluator retries an invalid Judge
+decision once on the same answer. If a review is still unavailable, the run
+reports CDA over scored answers and marks review coverage as incomplete. The
+interval samples the same case IDs across repetitions and skips draws with no
+scored answer in any repetition. The three-condition comparison requires
+complete paired scores and valid retrieval audits. Original report answers
+supply conversation history.
 
 The task follows contextual definition generation and semantic answer
 equivalence. [Generationary](https://doi.org/10.18653/v1/2020.emnlp-main.585)

@@ -35,8 +35,12 @@ and metrics in the run directory. If a review fails, the run records the error
 and available estimates with incomplete review coverage. An invalid citation
 review preserves usable claim judgments and is recorded separately from a case
 with no applicable citations. Check
-`complete_reviews` before reporting the aggregate. A bootstrap interval requires
-complete reviews. For a single repetition, sample SD is `null`.
+`complete_reviews` and `scored_or_inapplicable_reviews` before reporting the
+aggregate. The evaluator retries an invalid Judge output once on the same
+answer. If an assessment is still missing, the interval uses available
+assessments and retains the same sampled case IDs across repetitions. A draw
+without an applicable score in any repetition is skipped. For a single
+repetition, sample SD is `null`.
 
 ## Scoring
 

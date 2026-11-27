@@ -19,7 +19,7 @@ SCHEMA = {
 PROTOCOL = sha256(json.dumps([MODEL, API_VERSION, PROMPT, SCHEMA], sort_keys=True).encode()).hexdigest()
 
 
-def review(packet, api_key, timeout, *, save_raw):
+def _review_once(packet, api_key, timeout, *, save_raw):
     request = Request(
         BASE_URL + "/v1/messages",
         data=json.dumps({
@@ -56,3 +56,10 @@ def review(packet, api_key, timeout, *, save_raw):
     ):
         raise ValueError("Claude did not return a binary decision and reason.")
     return value, usage
+
+
+def review(packet, api_key, timeout, *, save_raw, save_retry_raw=None):
+    try:
+        return _review_once(packet, api_key, timeout, save_raw=save_raw)
+    except ValueError:
+        return _review_once(packet, api_key, timeout, save_raw=save_retry_raw or save_raw)

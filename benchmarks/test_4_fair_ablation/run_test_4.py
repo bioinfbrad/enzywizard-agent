@@ -135,6 +135,7 @@ def run_case(catalog, case, repetition, args, run_dir):
         decision, usage = judge.review(
             packet, args.judge_api_key, args.judge_timeout_seconds,
             save_raw=lambda value: _write(workdir / "judge_response.json", value),
+            save_retry_raw=lambda value: _write(workdir / "judge_retry_response.json", value),
         )
         row.update(score=decision["correct"], judge=decision, judge_usage=usage, scoring_source="judge")
     except Exception as error:

@@ -39,7 +39,20 @@ class DefinitionBenchmarkTests(unittest.TestCase):
         rows[-1]["score"] = None
         stat = summarize(rows, ["A", "B"], 3, iterations=100, seed=42)
         self.assertFalse(stat["complete_reviews"])
-        self.assertIsNone(stat["mean"])
+        self.assertEqual(stat["scored_case_runs"], 5)
+        self.assertAlmostEqual(stat["mean"], 1 / 3)
+        self.assertEqual(stat["bootstrap_95_ci"], {"lower": 1 / 3, "upper": 1 / 3})
+        rows[-2]["score"] = None
+        stat = summarize(rows, ["A", "B"], 3, iterations=100, seed=42)
+        self.assertNotIn("bootstrap_95_ci", stat)
+
+    def test_invalid_judge_decision_is_retried_once(self):
+        answer = {"answer": "A definition."}
+        decision = {"correct": 0, "reason": "Incomplete."}
+        with patch.object(runner.judge, "_review_once", side_effect=[ValueError("Invalid"), (decision, {})]) as request:
+            self.assertEqual(runner.judge.review(answer, "fake", 5, save_raw=lambda data: None), (decision, {}))
+        self.assertEqual(request.call_count, 2)
+        self.assertEqual(request.call_args_list[0].args, request.call_args_list[1].args)
 
     def test_report_comparison_fixtures_read_raw_json(self):
         for case_id in ("T2-MC-01", "T2-MC-05", "T2-MC-06", "T2-MC-09"):

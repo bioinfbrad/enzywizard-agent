@@ -73,6 +73,7 @@ def run_case(catalog, case, repetition, args, case_dir):
         review, judge_usage = judge.review_case(
             packet, args.judge_api_key, args.judge_timeout_seconds,
             save_raw=lambda data: bench._atomic_json(case_dir / "judge_response.json", data),
+            save_retry_raw=lambda data: bench._atomic_json(case_dir / "judge_retry_response.json", data),
         )
         rates = case_rates(review)
         if review["citation_errors"]:

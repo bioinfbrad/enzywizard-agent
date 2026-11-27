@@ -114,7 +114,12 @@ class MetricsTest(unittest.TestCase):
             self.assertEqual(result[metric]["bootstrap_95_ci"], {"lower": 0.5, "upper": 0.5})
         partial = summarize_metrics(rows[:-1], ["A", "B"], 3, iterations=100, seed=3)
         self.assertFalse(partial["Claim F1"]["complete_reviews"])
-        self.assertNotIn("bootstrap_95_ci", partial["Claim F1"])
+        self.assertEqual(partial["Claim F1"]["scored_or_inapplicable_reviews"], 5)
+        self.assertAlmostEqual(partial["Claim F1"]["mean"], 2 / 3)
+        self.assertIn("bootstrap_95_ci", partial["Claim F1"])
+        self.assertNotIn("bootstrap_95_ci", summarize_metrics(
+            rows[:2], ["A", "B"], 3, iterations=100, seed=3,
+        )["Claim F1"])
 
 
 class JudgeTest(unittest.TestCase):
@@ -136,8 +141,9 @@ class JudgeTest(unittest.TestCase):
     def test_invalid_citation_id_keeps_claim_score(self):
         value = raw_review()
         value["claims"][0]["reference_evidence_ids"] = ["unknown"]
-        with patch.object(judge, "_post", return_value=response(value)):
+        with patch.object(judge, "_post", return_value=response(value)) as request:
             scored, _ = judge.review_case(packet(), "mock-key", 5)
+        self.assertEqual(request.call_count, 2)
         rates = case_rates(scored)
         self.assertEqual(rates["Claim F1"], {"precision": 1.0, "recall": 1.0})
         self.assertIsNone(rates["Citation F1"])
@@ -149,6 +155,15 @@ class JudgeTest(unittest.TestCase):
         self.assertTrue(result["Claim F1"]["complete_reviews"])
         self.assertFalse(result["Citation F1"]["complete_reviews"])
         self.assertNotIn("bootstrap_95_ci", result["Citation F1"])
+
+    def test_invalid_citation_is_retried_on_the_same_answer(self):
+        invalid = raw_review()
+        invalid["claims"][0]["requires_citation"] = False
+        with patch.object(judge, "_post", side_effect=[response(invalid), response(raw_review())]) as request:
+            scored, _ = judge.review_case(packet(), "mock-key", 5)
+        self.assertEqual(request.call_args_list[0], request.call_args_list[1])
+        self.assertFalse(scored["citation_errors"])
+        self.assertIsNotNone(case_rates(scored)["Citation F1"])
 
     def test_statistic_is_not_equivalent_to_another_statistic_on_same_raw_path(self):
         value = raw_review()
