@@ -1,0 +1,12 @@
+schema_version: 1
+test_id: test_3_failure_recovery
+total_cases: 40
+categories:
+  - {category_id: plan_structure_assembly, file: 01_plan_structure_assembly.yaml, count: 5, automatic_recovery_expected: true}
+  - {category_id: artifact_reference, file: 02_artifact_reference.yaml, count: 5, automatic_recovery_expected: true}
+  - {category_id: input_staging_workspace, file: 03_input_staging_workspace.yaml, count: 5, automatic_recovery_expected: true}
+  - {category_id: current_step_output_workspace, file: 04_current_step_output_workspace.yaml, count: 5, automatic_recovery_expected: true}
+  - {category_id: user_input_data_format, file: 05_user_input_data_format.yaml, count: 5, automatic_recovery_expected: false}
+  - {category_id: scientific_parameter_configuration, file: 06_scientific_parameter_configuration.yaml, count: 5, automatic_recovery_expected: false}
+  - {category_id: environment_dependency_resource, file: 07_environment_dependency_resource.yaml, count: 5, automatic_recovery_expected: false}
+  - {category_id: unknown_ambiguous_safety, file: 08_unknown_ambiguous_safety.yaml, count: 5, automatic_recovery_expected: false}

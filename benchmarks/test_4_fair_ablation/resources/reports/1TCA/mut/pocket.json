@@ -1,0 +1,50 @@
+{
+  "report_type": "enzywizard_pocket",
+  "binding_pocket_statistics": {
+    "binding_pocket_count": 1,
+    "max_binding_pocket_volume": 337.78001434649997,
+    "total_binding_pocket_volume": 337.78001434649997
+  },
+  "binding_pockets": [
+    {
+      "binding_pocket_volume": 337.78001434649997,
+      "binding_pocket_sphere_count": 91,
+      "residues": [
+        {
+          "residue_index": 39,
+          "residue_name": "G"
+        },
+        {
+          "residue_index": 40,
+          "residue_name": "T"
+        },
+        {
+          "residue_index": 141,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 154,
+          "residue_name": "V"
+        },
+        {
+          "residue_index": 157,
+          "residue_name": "Q"
+        },
+        {
+          "residue_index": 189,
+          "residue_name": "I"
+        },
+        {
+          "residue_index": 281,
+          "residue_name": "A"
+        },
+        {
+          "residue_index": 282,
+          "residue_name": "A"
+        }
+      ],
+      "binding_pocket_center_coordinate": [-4.6964, 25.1099, 21.5825],
+      "binding_pocket_box_size": [8.7004, 12.426200000000001, 11.083000000000006]
+    }
+  ]
+}

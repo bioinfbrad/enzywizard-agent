@@ -1,0 +1,76 @@
+{
+  "report_type": "enzywizard_substrate",
+  "substrates": [
+    {
+      "substrate_name": "Cholesterol",
+      "substrate_smiles": "[H][C@@]12CC=C3C[C@@H](O)CC[C@]3(C)[C@@]1([H])CC[C@@]1(C)[C@@]2([H])CC[C@]1([H])[C@H](C)CCCC(C)C",
+      "substrate_fingerprint_encoding": [0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+      "substrate_atom_count": 28,
+      "substrate_molecular_weight": 386.6640000000002,
+      "substrate_logp": 7.388700000000009,
+      "substrate_tpsa": 20.23,
+      "substrate_heavy_atom_count": 28,
+      "substrate_hbond_donor_count": 1,
+      "substrate_hbond_acceptor_count": 1,
+      "substrate_rotatable_bond_count": 5,
+      "substrate_molar_refractivity": 119.05280000000009,
+      "substrate_possible_structures": [
+        {
+          "substrate_structure_name": "Cholesterol_1",
+          "substrate_structure_energy": 83.28988553055014,
+          "substrate_structure_max_3d_diameter": 17.9457249203934,
+          "substrate_structure_mean_pairwise_atom_distance": 6.54639929397735,
+          "substrate_structure_std_pairwise_atom_distance": 3.5413184821536907,
+          "substrate_structure_asphericity": 0.7447890320203808,
+          "substrate_structure_spherocity": 0.130660900279014,
+          "substrate_structure_principal_moment_ratio": 10.627624949571825,
+          "substrate_structure_radius_of_gyration": 4.990495535630653
+        },
+        {
+          "substrate_structure_name": "Cholesterol_2",
+          "substrate_structure_energy": 92.77263801008156,
+          "substrate_structure_max_3d_diameter": 16.151431958925492,
+          "substrate_structure_mean_pairwise_atom_distance": 6.2194944907522,
+          "substrate_structure_std_pairwise_atom_distance": 3.095720329907699,
+          "substrate_structure_asphericity": 0.5532364521236707,
+          "substrate_structure_spherocity": 0.17368647004568738,
+          "substrate_structure_principal_moment_ratio": 5.532576878213025,
+          "substrate_structure_radius_of_gyration": 4.658801814358163
+        },
+        {
+          "substrate_structure_name": "Cholesterol_3",
+          "substrate_structure_energy": 98.93988288730081,
+          "substrate_structure_max_3d_diameter": 16.49235138369166,
+          "substrate_structure_mean_pairwise_atom_distance": 6.229971673830183,
+          "substrate_structure_std_pairwise_atom_distance": 3.200712728227043,
+          "substrate_structure_asphericity": 0.6631005279928429,
+          "substrate_structure_spherocity": 0.20968423419270232,
+          "substrate_structure_principal_moment_ratio": 7.704836044225276,
+          "substrate_structure_radius_of_gyration": 4.697844512319316
+        },
+        {
+          "substrate_structure_name": "Cholesterol_4",
+          "substrate_structure_energy": 99.41080465449659,
+          "substrate_structure_max_3d_diameter": 14.347157893528577,
+          "substrate_structure_mean_pairwise_atom_distance": 6.04427919480631,
+          "substrate_structure_std_pairwise_atom_distance": 2.9001436000813277,
+          "substrate_structure_asphericity": 0.48013049784212436,
+          "substrate_structure_spherocity": 0.18704907103199353,
+          "substrate_structure_principal_moment_ratio": 4.550571216917466,
+          "substrate_structure_radius_of_gyration": 4.458260214389955
+        },
+        {
+          "substrate_structure_name": "Cholesterol_5",
+          "substrate_structure_energy": 99.87549619979784,
+          "substrate_structure_max_3d_diameter": 16.617172378069046,
+          "substrate_structure_mean_pairwise_atom_distance": 6.437648547496871,
+          "substrate_structure_std_pairwise_atom_distance": 3.3688185591238344,
+          "substrate_structure_asphericity": 0.6336110441424406,
+          "substrate_structure_spherocity": 0.19073846833373856,
+          "substrate_structure_principal_moment_ratio": 7.012511930366747,
+          "substrate_structure_radius_of_gyration": 4.852404493922088
+        }
+      ]
+    }
+  ]
+}

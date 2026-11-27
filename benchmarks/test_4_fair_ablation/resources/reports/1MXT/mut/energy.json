@@ -1,0 +1,14 @@
+{
+  "report_type": "enzywizard_energy",
+  "energy_terms": {
+    "total_potential_energy": -41686.05613591067,
+    "harmonic_bond_potential_energy": 2145.7381035773255,
+    "harmonic_angle_potential_energy": 5261.371888143565,
+    "custom_bond_potential_energy": 5472.165903661177,
+    "custom_torsion_potential_energy": 232.6515387174285,
+    "custom_nonbonded_potential_energy": -16138.204166073352,
+    "nonbonded_potential_energy": -55643.19961395145,
+    "periodic_torsion_potential_energy": 18097.47351543362,
+    "cmap_torsion_potential_energy": -1114.053305418979
+  }
+}

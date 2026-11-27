@@ -1,0 +1,127 @@
+schema_version: 1
+category_id: multi_report_comparison
+case_count: 12
+cases:
+  - case_id: T2-MC-01
+    enzyme_id: 1MXT
+    scope: paired
+    question: "Using the recorded T244M mutation mapping, compare the WT and mutant cholesterol oxidase energy reports and preserve side-specific evidence."
+    report_ids:
+      - 1mxt_mut_clean
+      - 1mxt_wt_energy
+      - 1mxt_mut_energy
+    target_term: "amino acid substitution"
+    definition_question: "What is the definition of ‘amino acid substitution’?"
+    reference_definition: "A sequence variant of a codon resulting in the substitution of one amino acid for another in the resulting polypeptide."
+  - case_id: T2-MC-02
+    enzyme_id: 1MXT
+    scope: paired
+    question: "Compare WT and T244M cholesterol oxidase flexibility results."
+    report_ids:
+      - 1mxt_wt_flexibility
+      - 1mxt_mut_flexibility
+    target_term: "root mean square fluctuation"
+    definition_question: "What is the definition of ‘root mean square fluctuation’?"
+    reference_definition: "gmx rmsf computes the root mean square fluctuation (RMSF, i.e. standard deviation) of atomic positions in the trajectory (supplied with -f ) after (optionally) fitting to a reference frame (supplied with -s )."
+  - case_id: T2-MC-03
+    enzyme_id: 1MXT
+    scope: paired
+    question: "Compare the WT and T244M disorder reports and state any uncertainty."
+    report_ids:
+      - 1mxt_wt_disorder
+      - 1mxt_mut_disorder
+    target_term: "intrinsically disordered region"
+    definition_question: "What is the definition of ‘intrinsically disordered region’?"
+    reference_definition: "An intrinsically disordered region (IDR) is a segment of a protein that lacks a stable, well-defined three-dimensional structure under physiological conditions when considered in isolation."
+  - case_id: T2-MC-04
+    enzyme_id: 1MXT
+    scope: cross_report
+    question: "Compare the current cholesterol oxidase pocket report with its current hydrophobic-cluster report."
+    report_ids:
+      - 1mxt_wt_pocket
+      - 1mxt_wt_hydrocluster
+    target_term: "hydrophobic cluster"
+    definition_question: "What is the definition of ‘hydrophobic cluster’?"
+    reference_definition: "Hydrophobic clusters are connected groups of contacting hydrophobic residues in a protein, often involving isoleucine, leucine and valine side chains; ProteinTools identifies clusters from a residue-contact graph."
+  - case_id: T2-MC-05
+    enzyme_id: 1IU4
+    scope: paired
+    question: "Using the recorded S72N mutation mapping, compare the WT and mutant microbial transglutaminase conservation reports."
+    report_ids:
+      - 1iu4_mut_clean
+      - 1iu4_wt_conservation
+      - 1iu4_mut_conservation
+    target_term: "sequence conservation"
+    definition_question: "What is the definition of ‘sequence conservation’?"
+    reference_definition: "Sequence conservation describes the retention of identical or similar residues at corresponding positions across evolutionarily related sequences, often assessed using multiple sequence alignments."
+  - case_id: T2-MC-06
+    enzyme_id: 1IU4
+    scope: paired
+    question: "Compare WT and S72N embedding reports and explain what differs at the representation level."
+    report_ids:
+      - 1iu4_wt_embedding
+      - 1iu4_mut_embedding
+    target_term: "embedding"
+    definition_question: "What is the definition of ‘embedding’?"
+    reference_definition: "An embedding is a dense numerical vector representation of an item in which learned relationships can be represented by distances or directions in vector space."
+  - case_id: T2-MC-07
+    enzyme_id: 1IU4
+    scope: cross_report
+    question: "Compare microbial transglutaminase energy and flexibility reports as complementary dimensions."
+    report_ids:
+      - 1iu4_wt_energy
+      - 1iu4_wt_flexibility
+    target_term: "potential energy"
+    definition_question: "What is the definition of ‘potential energy’?"
+    reference_definition: "Potential energy is the energy of position or orientation in a field of force."
+  - case_id: T2-MC-08
+    enzyme_id: 1IU4
+    scope: cross_report
+    question: "Compare the microbial transglutaminase pocket and hydrophobic-cluster reports."
+    report_ids:
+      - 1iu4_wt_pocket
+      - 1iu4_wt_hydrocluster
+    target_term: "binding pocket"
+    definition_question: "What is the definition of ‘binding pocket’?"
+    reference_definition: "In PyVOL, a protein binding pocket is a cavity identified from the protein's solvent-excluded geometry; PyVOL can calculate its volume and partition it into sub-pockets."
+  - case_id: T2-MC-09
+    enzyme_id: 1TCA
+    scope: paired
+    question: "Using the recorded G107A mutation mapping, compare the WT and mutant CALB energy reports."
+    report_ids:
+      - 1tca_mut_clean
+      - 1tca_wt_energy
+      - 1tca_mut_energy
+    target_term: "amino acid substitution"
+    definition_question: "What is the definition of ‘amino acid substitution’?"
+    reference_definition: "A sequence variant of a codon resulting in the substitution of one amino acid for another in the resulting polypeptide."
+  - case_id: T2-MC-10
+    enzyme_id: 1TCA
+    scope: paired
+    question: "Compare WT and G107A CALB pocket predictions."
+    report_ids:
+      - 1tca_wt_pocket
+      - 1tca_mut_pocket
+    target_term: "binding pocket"
+    definition_question: "What is the definition of ‘binding pocket’?"
+    reference_definition: "In PyVOL, a protein binding pocket is a cavity identified from the protein's solvent-excluded geometry; PyVOL can calculate its volume and partition it into sub-pockets."
+  - case_id: T2-MC-11
+    enzyme_id: 1TCA
+    scope: paired
+    question: "Compare WT and G107A CALB docking reports for 4-nitrophenyl butyrate."
+    report_ids:
+      - 1tca_wt_dock
+      - 1tca_mut_dock
+    target_term: "binding affinity"
+    definition_question: "What is the definition of ‘binding affinity’?"
+    reference_definition: "In AutoDock Vina output, binding affinity is a predicted receptor-ligand binding score reported in kcal/mol for a docking pose."
+  - case_id: T2-MC-12
+    enzyme_id: 1TCA
+    scope: paired
+    question: "Compare WT and G107A CALB interaction reports and preserve the contact evidence for each side."
+    report_ids:
+      - 1tca_wt_interaction
+      - 1tca_mut_interaction
+    target_term: "hydrogen bond"
+    definition_question: "What is the definition of ‘hydrogen bond’?"
+    reference_definition: "A hydrogen bond is an attractive interaction involving a hydrogen atom attached to an electronegative atom and another electronegative atom or electron-rich site."

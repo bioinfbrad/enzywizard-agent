@@ -1,0 +1,427 @@
+schema_version: 1
+category_id: input_staging_workspace
+title: "Input staging and managed-workspace errors"
+description: "Conflicts created inside the current Agent-managed step workspace are removed and staging is rebuilt before one bounded retry."
+automatic_recovery_expected: true
+expected_case_count: 5
+cases:
+  - case_id: T3-SW01
+    description: "Residual energy report conflicts with single-protein integration staging"
+    scenario: tool_execution
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: report_staging, fault_type: existing_destination_report, artifact_type: energy_report_json, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    reference_answer: "Recognize the managed report-staging conflict. Clean the current step workspace, stage the correct source report again, retry only the failed step, and verify the staged report. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify path or file at the preparation stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: path_or_file
+            stage: preparation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - rebuild_managed_workspace
+              - rebuild_report_staging
+              - retry_current_step
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: rebuild_managed_workspace
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: staged_report
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: delete_upstream_artifacts
+        - kind: action
+          match:
+            action: modify_source_report
+        - kind: action
+          match:
+            action: retry_limit_exceeded
+  - case_id: T3-SW02
+    description: "Residual pocket report conflicts with integration staging"
+    scenario: tool_execution
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: report_staging, fault_type: existing_destination_report, artifact_type: pocket_report_json, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    reference_answer: "Recognize the managed report-staging conflict. Clean the current step workspace, stage the correct source report again, retry only the failed step, and verify the staged report. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify path or file at the preparation stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: path_or_file
+            stage: preparation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - rebuild_managed_workspace
+              - rebuild_report_staging
+              - retry_current_step
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: rebuild_managed_workspace
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: staged_report
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: delete_upstream_artifacts
+        - kind: action
+          match:
+            action: modify_source_report
+        - kind: action
+          match:
+            action: retry_limit_exceeded
+  - case_id: T3-SW03
+    description: "Residual WT report conflicts with paired integration staging"
+    scenario: tool_execution
+    tool_name: enzywizard-mut-integrate
+    fault_injection: {injection_point: report_staging, fault_type: existing_side_destination_report, artifact_type: flexibility_report_json, side: wt, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    reference_answer: "Recognize the managed report-staging conflict. Clean the current step workspace, stage the correct source report again, retry only the failed step, and verify the staged report. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify path or file at the preparation stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: path_or_file
+            stage: preparation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - rebuild_managed_workspace
+              - rebuild_report_staging
+              - retry_current_step
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: rebuild_managed_workspace
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: staged_report
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: delete_upstream_artifacts
+        - kind: action
+          match:
+            action: swap_sides
+        - kind: action
+          match:
+            action: retry_limit_exceeded
+  - case_id: T3-SW04
+    description: "Residual mutant report conflicts with paired integration staging"
+    scenario: tool_execution
+    tool_name: enzywizard-mut-integrate
+    fault_injection: {injection_point: report_staging, fault_type: existing_side_destination_report, artifact_type: disorder_report_json, side: mut, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    reference_answer: "Recognize the managed report-staging conflict. Clean the current step workspace, stage the correct source report again, retry only the failed step, and verify the staged report. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify path or file at the preparation stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: path_or_file
+            stage: preparation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - rebuild_managed_workspace
+              - rebuild_report_staging
+              - retry_current_step
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: rebuild_managed_workspace
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: staged_report
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: delete_upstream_artifacts
+        - kind: action
+          match:
+            action: swap_sides
+        - kind: action
+          match:
+            action: retry_limit_exceeded
+  - case_id: T3-SW05
+    description: "Partially staged interaction report blocks a clean integration retry"
+    scenario: tool_execution
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: report_staging, fault_type: partial_destination_report, artifact_type: interaction_report_json, occurrence: first_attempt_only, error_message: "Staging would overwrite an existing report in the current step workspace."}
+    reference_answer: "Recognize the managed report-staging conflict. Clean the current step workspace, stage the correct source report again, retry only the failed step, and verify the staged report. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify path or file at the preparation stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: path_or_file
+            stage: preparation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - rebuild_managed_workspace
+              - rebuild_report_staging
+              - retry_current_step
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: rebuild_managed_workspace
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: staged_report
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: delete_upstream_artifacts
+        - kind: action
+          match:
+            action: accept_partial_report
+        - kind: action
+          match:
+            action: retry_limit_exceeded

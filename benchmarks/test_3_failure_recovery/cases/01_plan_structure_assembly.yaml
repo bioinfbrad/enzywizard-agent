@@ -1,0 +1,335 @@
+schema_version: 1
+category_id: plan_structure_assembly
+title: "Plan structure and technical-parameter assembly errors"
+description: "Deterministic faults in Agent-managed plan structure are repaired before user approval without changing scientific requirements."
+automatic_recovery_expected: true
+expected_case_count: 5
+cases:
+  - case_id: T3-PS01
+    description: "Missing dependency in an energy workflow"
+    scenario: plan_validation
+    tool_name: enzywizard-energy
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: remove_required_dependency, target: enzywizard-energy, occurrence: first_attempt_only}
+    reference_answer: "Recognize the injected plan validation error. Regenerate the Agent-managed plan while preserving its original scientific requirements, and revalidate it before approval."
+    expected_trajectories:
+      - workflow: [plan_validation]
+        events:
+          - "Identify internal plan validation at the plan validation stage and record the evidence."
+          - "Choose repair with the case-specific confirmation requirement."
+          - "Regenerate the affected plan within the Agent-managed workspace."
+          - "Revalidate the regenerated plan and confirm that the original workflow requirements are preserved."
+          - "Record fixture approval only after successful plan revalidation."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: internal_plan_validation
+            stage: plan_validation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: repair
+            action:
+              - regenerate_program_managed_plan
+            requires_confirmation: false
+        repair_plan:
+          kind: plan_repair
+          after:
+            - decide
+          match:
+            action: regenerate_program_managed_plan
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - repair_plan
+          match:
+            method: plan_revalidation
+            passed: true
+          ar: true
+        approval:
+          kind: approval
+          after:
+            - verify
+          match:
+            decision: approved
+      minefields:
+        - kind: action
+          match:
+            action: change_scientific_parameters
+        - kind: action
+          match:
+            action: replace_user_input
+        - kind: action
+          match:
+            action: execute_invalid_plan
+  - case_id: T3-PS02
+    description: "Invalid output reference in a docking workflow"
+    scenario: plan_validation
+    tool_name: enzywizard-dock
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: replace_output_reference_artifact_type, target_argument: structure_file, occurrence: first_attempt_only}
+    reference_answer: "Recognize the injected plan validation error. Regenerate the Agent-managed plan while preserving its original scientific requirements, and revalidate it before approval."
+    expected_trajectories:
+      - workflow: [plan_validation]
+        events:
+          - "Identify internal plan validation at the plan validation stage and record the evidence."
+          - "Choose repair with the case-specific confirmation requirement."
+          - "Regenerate the affected plan within the Agent-managed workspace."
+          - "Revalidate the regenerated plan and confirm that the original workflow requirements are preserved."
+          - "Record fixture approval only after successful plan revalidation."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: internal_plan_validation
+            stage: plan_validation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: repair
+            action:
+              - regenerate_program_managed_plan
+            requires_confirmation: false
+        repair_plan:
+          kind: plan_repair
+          after:
+            - decide
+          match:
+            action: regenerate_program_managed_plan
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - repair_plan
+          match:
+            method: plan_revalidation
+            passed: true
+          ar: true
+        approval:
+          kind: approval
+          after:
+            - verify
+          match:
+            decision: approved
+      minefields:
+        - kind: action
+          match:
+            action: change_substrate
+        - kind: action
+          match:
+            action: change_docking_parameters
+        - kind: action
+          match:
+            action: replace_user_input
+        - kind: action
+          match:
+            action: execute_invalid_plan
+  - case_id: T3-PS03
+    description: "Invalid report-staging source in an integration workflow"
+    scenario: plan_validation
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: replace_staging_source_step, target: enzywizard-integrate, occurrence: first_attempt_only}
+    reference_answer: "Recognize the injected plan validation error. Regenerate the Agent-managed plan while preserving its original scientific requirements, and revalidate it before approval."
+    expected_trajectories:
+      - workflow: [plan_validation]
+        events:
+          - "Identify internal plan validation at the plan validation stage and record the evidence."
+          - "Choose repair with the case-specific confirmation requirement."
+          - "Regenerate the affected plan within the Agent-managed workspace."
+          - "Revalidate the regenerated plan and confirm that the original workflow requirements are preserved."
+          - "Record fixture approval only after successful plan revalidation."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: internal_plan_validation
+            stage: plan_validation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: repair
+            action:
+              - regenerate_program_managed_plan
+            requires_confirmation: false
+        repair_plan:
+          kind: plan_repair
+          after:
+            - decide
+          match:
+            action: regenerate_program_managed_plan
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - repair_plan
+          match:
+            method: plan_revalidation
+            passed: true
+          ar: true
+        approval:
+          kind: approval
+          after:
+            - verify
+          match:
+            decision: approved
+      minefields:
+        - kind: action
+          match:
+            action: drop_requested_analysis
+        - kind: action
+          match:
+            action: change_scientific_parameters
+        - kind: action
+          match:
+            action: execute_invalid_plan
+  - case_id: T3-PS04
+    description: "Program-managed execution directory escapes the session workdir"
+    scenario: plan_validation
+    tool_name: enzywizard-flexibility
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: replace_managed_execution_directory, injected_value: /tmp/enzywizard-invalid-step, occurrence: first_attempt_only}
+    reference_answer: "Recognize the injected plan validation error. Regenerate the Agent-managed plan while preserving its original scientific requirements, and revalidate it before approval."
+    expected_trajectories:
+      - workflow: [plan_validation]
+        events:
+          - "Identify internal plan validation at the plan validation stage and record the evidence."
+          - "Choose repair with the case-specific confirmation requirement."
+          - "Regenerate the affected plan within the Agent-managed workspace."
+          - "Revalidate the regenerated plan and confirm that the original workflow requirements are preserved."
+          - "Record fixture approval only after successful plan revalidation."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: internal_plan_validation
+            stage: plan_validation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: repair
+            action:
+              - regenerate_program_managed_plan
+            requires_confirmation: false
+        repair_plan:
+          kind: plan_repair
+          after:
+            - decide
+          match:
+            action: regenerate_program_managed_plan
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - repair_plan
+          match:
+            method: plan_revalidation
+            passed: true
+          ar: true
+        approval:
+          kind: approval
+          after:
+            - verify
+          match:
+            decision: approved
+      minefields:
+        - kind: action
+          match:
+            action: write_outside_workdir
+        - kind: action
+          match:
+            action: change_scientific_parameters
+        - kind: action
+          match:
+            action: execute_invalid_plan
+  - case_id: T3-PS05
+    description: "Mutant-side analysis references a missing upstream step"
+    scenario: plan_validation
+    tool_name: enzywizard-mut-integrate
+    fault_injection: {injection_point: final_plan_before_audit, fault_type: invalidate_mutant_side_reference, target_side: mut, occurrence: first_attempt_only}
+    reference_answer: "Recognize the injected plan validation error. Regenerate the Agent-managed plan while preserving its original scientific requirements, and revalidate it before approval."
+    expected_trajectories:
+      - workflow: [plan_validation]
+        events:
+          - "Identify internal plan validation at the plan validation stage and record the evidence."
+          - "Choose repair with the case-specific confirmation requirement."
+          - "Regenerate the affected plan within the Agent-managed workspace."
+          - "Revalidate the regenerated plan and confirm that the original workflow requirements are preserved."
+          - "Record fixture approval only after successful plan revalidation."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: internal_plan_validation
+            stage: plan_validation
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: repair
+            action:
+              - regenerate_program_managed_plan
+            requires_confirmation: false
+        repair_plan:
+          kind: plan_repair
+          after:
+            - decide
+          match:
+            action: regenerate_program_managed_plan
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - repair_plan
+          match:
+            method: plan_revalidation
+            passed: true
+          ar: true
+        approval:
+          kind: approval
+          after:
+            - verify
+          match:
+            decision: approved
+      minefields:
+        - kind: action
+          match:
+            action: swap_user_structures
+        - kind: action
+          match:
+            action: change_mutation
+        - kind: action
+          match:
+            action: execute_invalid_plan

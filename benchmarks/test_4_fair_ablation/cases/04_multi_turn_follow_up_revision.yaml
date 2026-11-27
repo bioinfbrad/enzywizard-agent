@@ -1,0 +1,125 @@
+schema_version: 1
+category_id: multi_turn_follow_up_revision
+case_count: 12
+cases:
+  - case_id: T2-MF-01
+    enzyme_id: 1MXT
+    initial_question: "Summarize the cholesterol oxidase flexibility and disorder reports."
+    follow_up_question: "Retain only conclusions that can be jointly justified when considering both reports, and clearly label any report-specific observations."
+    report_ids:
+      - 1mxt_wt_flexibility
+      - 1mxt_wt_disorder
+    target_term: "root mean square fluctuation"
+    definition_question: "What is the definition of ‘root mean square fluctuation’?"
+    reference_definition: "gmx rmsf computes the root mean square fluctuation (RMSF, i.e. standard deviation) of atomic positions in the trajectory (supplied with -f ) after (optionally) fitting to a reference frame (supplied with -s )."
+  - case_id: T2-MF-02
+    enzyme_id: 1MXT
+    initial_question: "Explain the cholesterol oxidase pocket report."
+    follow_up_question: "Rewrite the answer with explicit evidence labels and no claims about experimental binding."
+    report_ids:
+      - 1mxt_wt_pocket
+    target_term: "binding pocket"
+    definition_question: "What is the definition of ‘binding pocket’?"
+    reference_definition: "In PyVOL, a protein binding pocket is a cavity identified from the protein's solvent-excluded geometry; PyVOL can calculate its volume and partition it into sub-pockets."
+  - case_id: T2-MF-03
+    enzyme_id: 1MXT
+    initial_question: "Compare WT and T244M disorder results."
+    follow_up_question: "Which statements in your previous answer were direct observations and which were hypotheses?"
+    report_ids:
+      - 1mxt_wt_disorder
+      - 1mxt_mut_disorder
+    target_term: "intrinsically disordered region"
+    definition_question: "What is the definition of ‘intrinsically disordered region’?"
+    reference_definition: "An intrinsically disordered region (IDR) is a segment of a protein that lacks a stable, well-defined three-dimensional structure under physiological conditions when considered in isolation."
+  - case_id: T2-MF-04
+    enzyme_id: 1MXT
+    initial_question: "Integrate cholesterol oxidase substrate and docking results."
+    follow_up_question: "Correct any statement in your previous answer that implies measured affinity."
+    report_ids:
+      - 1mxt_wt_substrate
+      - 1mxt_wt_dock
+    target_term: "binding affinity"
+    definition_question: "What is the definition of ‘binding affinity’?"
+    reference_definition: "In AutoDock Vina output, binding affinity is a predicted receptor-ligand binding score reported in kcal/mol for a docking pose."
+  - case_id: T2-MF-05
+    enzyme_id: 1IU4
+    initial_question: "Summarize microbial transglutaminase conservation and embedding evidence."
+    follow_up_question: "Revise your previous explanation to focus only on residue-level observations."
+    report_ids:
+      - 1iu4_wt_conservation
+      - 1iu4_wt_embedding
+    target_term: "embedding"
+    definition_question: "What is the definition of ‘embedding’?"
+    reference_definition: "An embedding is a dense numerical vector representation of an item in which learned relationships can be represented by distances or directions in vector space."
+  - case_id: T2-MF-06
+    enzyme_id: 1IU4
+    initial_question: "Integrate microbial transglutaminase energy, flexibility, and disorder."
+    follow_up_question: "Which conclusion in your previous answer is least certain, and why?"
+    report_ids:
+      - 1iu4_wt_energy
+      - 1iu4_wt_flexibility
+      - 1iu4_wt_disorder
+    target_term: "potential energy"
+    definition_question: "What is the definition of ‘potential energy’?"
+    reference_definition: "Potential energy is the energy of position or orientation in a field of force."
+  - case_id: T2-MF-07
+    enzyme_id: 1IU4
+    initial_question: "Compare WT and S72N conservation."
+    follow_up_question: "Revise your answer to state explicitly that this is not functional validation."
+    report_ids:
+      - 1iu4_wt_conservation
+      - 1iu4_mut_conservation
+    target_term: "sequence conservation"
+    definition_question: "What is the definition of ‘sequence conservation’?"
+    reference_definition: "Sequence conservation describes the retention of identical or similar residues at corresponding positions across evolutionarily related sequences, often assessed using multiple sequence alignments."
+  - case_id: T2-MF-08
+    enzyme_id: 1IU4
+    initial_question: "Explain microbial transglutaminase docking and interactions."
+    follow_up_question: "Reorganize your previous answer by evidence source without changing its supported facts."
+    report_ids:
+      - 1iu4_wt_dock
+      - 1iu4_wt_interaction
+    target_term: "docking"
+    definition_question: "What is the definition of ‘docking’?"
+    reference_definition: "Docking comprises computational methods that optimize the placement of a ligand in a macromolecular binding site of known or proposed three-dimensional structure and score the quality of the fit."
+  - case_id: T2-MF-09
+    enzyme_id: 1TCA
+    initial_question: "Summarize the CALB pocket and hydrophobic-cluster reports."
+    follow_up_question: "Focus your previous answer on the highest-priority structural evidence and state its source."
+    report_ids:
+      - 1tca_wt_pocket
+      - 1tca_wt_hydrocluster
+    target_term: "hydrophobic cluster"
+    definition_question: "What is the definition of ‘hydrophobic cluster’?"
+    reference_definition: "Hydrophobic clusters are connected groups of contacting hydrophobic residues in a protein, often involving isoleucine, leucine and valine side chains; ProteinTools identifies clusters from a residue-contact graph."
+  - case_id: T2-MF-10
+    enzyme_id: 1TCA
+    initial_question: "Compare WT and G107A CALB energy."
+    follow_up_question: "Explain what cannot be inferred about activity from your previous comparison."
+    report_ids:
+      - 1tca_wt_energy
+      - 1tca_mut_energy
+    target_term: "potential energy"
+    definition_question: "What is the definition of ‘potential energy’?"
+    reference_definition: "Potential energy is the energy of position or orientation in a field of force."
+  - case_id: T2-MF-11
+    enzyme_id: 1TCA
+    initial_question: "Integrate CALB substrate, docking, and interaction reports."
+    follow_up_question: "Rewrite your previous answer as a concise evidence chain from substrate preparation to contacts."
+    report_ids:
+      - 1tca_wt_substrate
+      - 1tca_wt_dock
+      - 1tca_wt_interaction
+    target_term: "substrate"
+    definition_question: "What is the definition of ‘substrate’?"
+    reference_definition: "A substrate in biocatalysis is a chemical entity that is converted into one or more products through a reaction catalyzed by an enzyme."
+  - case_id: T2-MF-12
+    enzyme_id: 1TCA
+    initial_question: "Compare WT and G107A CALB interaction reports."
+    follow_up_question: "Check your previous answer and correct any swapped WT/MUT attribution."
+    report_ids:
+      - 1tca_wt_interaction
+      - 1tca_mut_interaction
+    target_term: "hydrogen bond"
+    definition_question: "What is the definition of ‘hydrogen bond’?"
+    reference_definition: "A hydrogen bond is an attractive interaction involving a hydrogen atom attached to an electronegative atom and another electronegative atom or electron-rich site."

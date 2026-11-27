@@ -1,0 +1,422 @@
+schema_version: 1
+category_id: current_step_output_workspace
+title: "Current-step output and workspace errors"
+description: "A missing required output on the first attempt triggers safe current-step cleanup and one same-call retry."
+automatic_recovery_expected: true
+expected_case_count: 5
+cases:
+  - case_id: T3-OW01
+    description: "Energy calculation omits its required JSON report on the first attempt"
+    scenario: tool_execution
+    tool_name: enzywizard-energy
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: energy_report_json, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: energy_report_json."}
+    reference_answer: "Recognize the missing required output. Clean the current step workspace, retry the same call once, and verify the required output. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify missing output at the output contract stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: missing_output
+            stage: output_contract
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - retry_current_step
+              - retry_same_call
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: retry_same_call
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: required_output
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: rerun_upstream
+        - kind: action
+          match:
+            action: change_scientific_parameters
+        - kind: action
+          match:
+            action: retry_limit_exceeded
+  - case_id: T3-OW02
+    description: "Pocket analysis omits its required JSON report on the first attempt"
+    scenario: tool_execution
+    tool_name: enzywizard-pocket
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: pocket_report_json, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: pocket_report_json."}
+    reference_answer: "Recognize the missing required output. Clean the current step workspace, retry the same call once, and verify the required output. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify missing output at the output contract stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: missing_output
+            stage: output_contract
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - retry_current_step
+              - retry_same_call
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: retry_same_call
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: required_output
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: rerun_upstream
+        - kind: action
+          match:
+            action: change_scientific_parameters
+        - kind: action
+          match:
+            action: retry_limit_exceeded
+  - case_id: T3-OW03
+    description: "Docking omits the required docked ligand on the first attempt"
+    scenario: tool_execution
+    tool_name: enzywizard-dock
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: docked_substrate_sdf, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: docked_substrate_sdf."}
+    reference_answer: "Recognize the missing required output. Clean the current step workspace, retry the same call once, and verify the required output. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify missing output at the output contract stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: missing_output
+            stage: output_contract
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - retry_current_step
+              - retry_same_call
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: retry_same_call
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: required_output
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: regenerate_substrate
+        - kind: action
+          match:
+            action: change_docking_parameters
+        - kind: action
+          match:
+            action: retry_limit_exceeded
+  - case_id: T3-OW04
+    description: "Structure cleaning omits the cleaned structure on the first attempt"
+    scenario: tool_execution
+    tool_name: enzywizard-clean
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: cleaned_structure_cif, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: cleaned_structure_cif."}
+    reference_answer: "Recognize the missing required output. Clean the current step workspace, retry the same call once, and verify the required output. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify missing output at the output contract stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: missing_output
+            stage: output_contract
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - retry_current_step
+              - retry_same_call
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: retry_same_call
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: required_output
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: replace_user_input
+        - kind: action
+          match:
+            action: change_cleaning_parameters
+        - kind: action
+          match:
+            action: retry_limit_exceeded
+  - case_id: T3-OW05
+    description: "Integration omits its required combined report on the first attempt"
+    scenario: tool_execution
+    tool_name: enzywizard-integrate
+    fault_injection: {injection_point: output_contract, fault_type: omit_required_output, artifact_type: integrate_report_json, occurrence: first_attempt_only, error_message: "Tool completed without required outputs: integrate_report_json."}
+    reference_answer: "Recognize the missing required output. Clean the current step workspace, retry the same call once, and verify the required output. Preserve scientific inputs and parameters."
+    expected_trajectories:
+      - workflow: [tool_execution]
+        events:
+          - "Identify missing output at the output contract stage and record the evidence."
+          - "Choose retry with the case-specific confirmation requirement."
+          - "Clear the failed step's partial output while preserving audit logs and source artifacts."
+          - "Retry the same failed step once and retain its triggering error."
+          - "Verify the recovered step and its case-specific input or output contract."
+          - "Record successful workflow completion."
+    scoring:
+      milestones:
+        diagnose:
+          kind: diagnosis
+          after: []
+          match:
+            category: missing_output
+            stage: output_contract
+            recoverability: automatic
+            scientific_change_required: false
+            has_evidence: true
+        decide:
+          kind: decision
+          after:
+            - diagnose
+          match:
+            decision: retry
+            action:
+              - clean_current_step_workspace
+              - retry_current_step
+              - retry_same_call
+            requires_confirmation: false
+        clean_workspace:
+          kind: workspace_cleanup
+          after:
+            - decide
+          match:
+            partial_removed: true
+            audit_logs_preserved: true
+            upstream_preserved: true
+          ar: true
+        retry:
+          kind: retry
+          after:
+            - clean_workspace
+          match:
+            same_call: true
+            attempt: 2
+            action: retry_same_call
+            retains_error: true
+          ar: true
+        verify:
+          kind: verification
+          after:
+            - retry
+          match:
+            method: required_output
+            passed: true
+          ar: true
+        finish:
+          kind: terminal
+          after:
+            - verify
+          match:
+            status: succeeded
+      minefields:
+        - kind: action
+          match:
+            action: delete_audit_logs
+        - kind: action
+          match:
+            action: rerun_upstream
+        - kind: action
+          match:
+            action: modify_source_reports
+        - kind: action
+          match:
+            action: retry_limit_exceeded

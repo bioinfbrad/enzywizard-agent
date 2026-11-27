@@ -1,0 +1,4 @@
+schema_version: 1
+test_id: test_3_failure_recovery
+title: "Fault Diagnosis and Automatic Recovery Evaluation"
+automatic_case_count: 20

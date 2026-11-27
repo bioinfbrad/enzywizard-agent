@@ -1,0 +1,132 @@
+schema_version: 1
+category_id: multi_report_integration
+case_count: 12
+cases:
+  - case_id: T2-MI-01
+    enzyme_id: 1MXT
+    scope: wt
+    question: "Integrate the cholesterol oxidase flexibility and disorder reports."
+    report_ids:
+      - 1mxt_wt_flexibility
+      - 1mxt_wt_disorder
+    target_term: "intrinsically disordered region"
+    definition_question: "What is the definition of ‘intrinsically disordered region’?"
+    reference_definition: "An intrinsically disordered region (IDR) is a segment of a protein that lacks a stable, well-defined three-dimensional structure under physiological conditions when considered in isolation."
+  - case_id: T2-MI-02
+    enzyme_id: 1MXT
+    scope: wt
+    question: "Integrate cholesterol oxidase residue properties, hydrophobic clusters, and pocket predictions."
+    report_ids:
+      - 1mxt_wt_aaprops
+      - 1mxt_wt_hydrocluster
+      - 1mxt_wt_pocket
+    target_term: "solvent accessibility"
+    definition_question: "What is the definition of ‘solvent accessibility’?"
+    reference_definition: "Data on the solvent accessible or buried surface area of a protein structure."
+  - case_id: T2-MI-03
+    enzyme_id: 1MXT
+    scope: wt
+    question: "Combine cholesterol oxidase conservation and embedding results into a sequence-level interpretation."
+    report_ids:
+      - 1mxt_wt_conservation
+      - 1mxt_wt_embedding
+    target_term: "embedding"
+    definition_question: "What is the definition of ‘embedding’?"
+    reference_definition: "An embedding is a dense numerical vector representation of an item in which learned relationships can be represented by distances or directions in vector space."
+  - case_id: T2-MI-04
+    enzyme_id: 1MXT
+    scope: wt
+    question: "Integrate the cholesterol oxidase substrate, docking, and interaction reports."
+    report_ids:
+      - 1mxt_wt_substrate
+      - 1mxt_wt_dock
+      - 1mxt_wt_interaction
+    target_term: "docking"
+    definition_question: "What is the definition of ‘docking’?"
+    reference_definition: "Docking comprises computational methods that optimize the placement of a ligand in a macromolecular binding site of known or proposed three-dimensional structure and score the quality of the fit."
+  - case_id: T2-MI-05
+    enzyme_id: 1IU4
+    scope: wt
+    question: "Integrate microbial transglutaminase energy, flexibility, and disorder results."
+    report_ids:
+      - 1iu4_wt_energy
+      - 1iu4_wt_flexibility
+      - 1iu4_wt_disorder
+    target_term: "potential energy"
+    definition_question: "What is the definition of ‘potential energy’?"
+    reference_definition: "Potential energy is the energy of position or orientation in a field of force."
+  - case_id: T2-MI-06
+    enzyme_id: 1IU4
+    scope: wt
+    question: "Integrate microbial transglutaminase residue properties, hydrophobic clusters, and pockets."
+    report_ids:
+      - 1iu4_wt_aaprops
+      - 1iu4_wt_hydrocluster
+      - 1iu4_wt_pocket
+    target_term: "hydrophobic cluster"
+    definition_question: "What is the definition of ‘hydrophobic cluster’?"
+    reference_definition: "Hydrophobic clusters are connected groups of contacting hydrophobic residues in a protein, often involving isoleucine, leucine and valine side chains; ProteinTools identifies clusters from a residue-contact graph."
+  - case_id: T2-MI-07
+    enzyme_id: 1IU4
+    scope: wt
+    question: "Combine microbial transglutaminase conservation and embedding evidence."
+    report_ids:
+      - 1iu4_wt_conservation
+      - 1iu4_wt_embedding
+    target_term: "sequence conservation"
+    definition_question: "What is the definition of ‘sequence conservation’?"
+    reference_definition: "Sequence conservation describes the retention of identical or similar residues at corresponding positions across evolutionarily related sequences, often assessed using multiple sequence alignments."
+  - case_id: T2-MI-08
+    enzyme_id: 1IU4
+    scope: wt
+    question: "Integrate substrate preparation, docking, and interactions for microbial transglutaminase."
+    report_ids:
+      - 1iu4_wt_substrate
+      - 1iu4_wt_dock
+      - 1iu4_wt_interaction
+    target_term: "substrate"
+    definition_question: "What is the definition of ‘substrate’?"
+    reference_definition: "A substrate in biocatalysis is a chemical entity that is converted into one or more products through a reaction catalyzed by an enzyme."
+  - case_id: T2-MI-09
+    enzyme_id: 1TCA
+    scope: wt
+    question: "Integrate CALB flexibility, disorder, and energy results."
+    report_ids:
+      - 1tca_wt_flexibility
+      - 1tca_wt_disorder
+      - 1tca_wt_energy
+    target_term: "root mean square fluctuation"
+    definition_question: "What is the definition of ‘root mean square fluctuation’?"
+    reference_definition: "gmx rmsf computes the root mean square fluctuation (RMSF, i.e. standard deviation) of atomic positions in the trajectory (supplied with -f ) after (optionally) fitting to a reference frame (supplied with -s )."
+  - case_id: T2-MI-10
+    enzyme_id: 1TCA
+    scope: wt
+    question: "Integrate CALB residue properties, hydrophobic clusters, and pocket predictions."
+    report_ids:
+      - 1tca_wt_aaprops
+      - 1tca_wt_hydrocluster
+      - 1tca_wt_pocket
+    target_term: "binding pocket"
+    definition_question: "What is the definition of ‘binding pocket’?"
+    reference_definition: "In PyVOL, a protein binding pocket is a cavity identified from the protein's solvent-excluded geometry; PyVOL can calculate its volume and partition it into sub-pockets."
+  - case_id: T2-MI-11
+    enzyme_id: 1TCA
+    scope: wt
+    question: "Combine CALB conservation and embedding results."
+    report_ids:
+      - 1tca_wt_conservation
+      - 1tca_wt_embedding
+    target_term: "embedding"
+    definition_question: "What is the definition of ‘embedding’?"
+    reference_definition: "An embedding is a dense numerical vector representation of an item in which learned relationships can be represented by distances or directions in vector space."
+  - case_id: T2-MI-12
+    enzyme_id: 1TCA
+    scope: wt
+    question: "Integrate CALB substrate, docking, and interaction reports for 4-nitrophenyl butyrate."
+    report_ids:
+      - 1tca_wt_substrate
+      - 1tca_wt_dock
+      - 1tca_wt_interaction
+    target_term: "hydrogen bond"
+    definition_question: "What is the definition of ‘hydrogen bond’?"
+    reference_definition: "A hydrogen bond is an attractive interaction involving a hydrogen atom attached to an electronegative atom and another electronegative atom or electron-rich site."
